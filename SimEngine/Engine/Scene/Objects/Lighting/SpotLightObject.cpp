@@ -1,7 +1,5 @@
 ﻿#include "SpotLightObject.h"
 
-#include <string>
-
 #include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Shader.h"
 

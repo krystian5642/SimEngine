@@ -1,8 +1,5 @@
 ﻿#include "GLOmniShadowMap.h"
 
-#include <iostream>
-#include <ostream>
-
 namespace SimEngine
 {
     GLOmniShadowMap::GLOmniShadowMap(int width, int height)
@@ -15,7 +12,7 @@ namespace SimEngine
 
         for (size_t i = 0; i < 6; i++)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT
+            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_DEPTH_COMPONENT
                 , width, width, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
         }
 

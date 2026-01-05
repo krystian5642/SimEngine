@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <GLM/glm.hpp>
-#include <memory>
 #include "Rendering/UniformNames.h"
 
 namespace SimEngine

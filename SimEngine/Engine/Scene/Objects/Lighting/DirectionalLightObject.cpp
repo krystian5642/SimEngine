@@ -5,9 +5,6 @@
 #include "Rendering/Core/Shader.h"
 #include "Rendering/Renderer/Renderer.h"
 
-#include <execution>
-#include <string>
-
 namespace SimEngine
 {
     DirectionalLightObject::DirectionalLightObject(ObjectBase* parent, Scene* scene, const std::string& name)

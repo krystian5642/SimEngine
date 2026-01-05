@@ -1,8 +1,5 @@
 ﻿#include "GLShadowMap.h"
 
-#include <iostream>
-#include <ostream>
-
 namespace SimEngine
 {
     GLShadowMap::GLShadowMap(int width, int height)

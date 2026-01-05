@@ -1,10 +1,6 @@
 ﻿#pragma once
 
-#include <memory>
-#include <GLM/vec3.hpp>
-
 #include "Component.h"
-#include "SceneComponent.h"
 
 namespace SimEngine
 {

@@ -1,8 +1,6 @@
 ﻿
 #include "PointLightObject.h"
 
-#include <string>
-
 #include "Rendering/Core/Shader.h"
 #include "Scene/Scene.h"
 

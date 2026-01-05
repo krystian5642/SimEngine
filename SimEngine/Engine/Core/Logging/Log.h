@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-
 #include "spdlog/spdlog.h"
 
 #define LOG_INFO(...)  ::SimEngine::Log::GetLogger()->info("INFO : {}", __VA_ARGS__)

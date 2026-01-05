@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #define UNIFORM_NAME inline constexpr std::string_view
-#include <string_view>
 
 namespace SimEngine
 {

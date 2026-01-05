@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-#include <functional>
-#include <vector>
-#include <memory>
-#include <string>
-
 namespace SimEngine
 {
     class ObjectBase;

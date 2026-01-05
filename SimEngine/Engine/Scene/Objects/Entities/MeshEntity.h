@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-
 #include "Entity.h"
 #include "Components/MeshComponent.h"
 

@@ -1,9 +1,5 @@
 ﻿#include "File.h"
 
-#include <stdexcept>
-#include <fstream>
-#include <iostream>
-
 namespace SimEngine
 {
     std::string File::ReadFile(const std::string& filePath)

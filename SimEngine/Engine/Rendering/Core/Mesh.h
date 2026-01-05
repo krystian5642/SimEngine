@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <vector>
-
 namespace SimEngine
 {
     struct MeshData

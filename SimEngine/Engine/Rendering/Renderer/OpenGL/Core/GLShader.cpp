@@ -2,11 +2,6 @@
 
 #include "Core/Files/File.h"
 
-#include <iostream>
-#include <ostream>
-#include <stdexcept>
-#include <glm/gtc/type_ptr.hpp>
-
 namespace SimEngine
 {
     GLShader::GLShader(const ShaderData& shaderData)

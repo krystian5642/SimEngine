@@ -33,7 +33,7 @@ namespace SimEngine
 
     void GLMesh::LoadGPUData(const MeshData& meshData)
     {
-        drawCount = meshData.vertices.size();
+        drawCount = static_cast<GLsizei>(meshData.vertices.size());
         
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
@@ -49,7 +49,7 @@ namespace SimEngine
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize * sizeof(unsigned int), meshData.indices.data(), GL_STATIC_DRAW);
             
-            drawCount = indicesSize / sizeof(unsigned int);
+            drawCount = static_cast<GLsizei>(indicesSize / sizeof(unsigned int));
         }
         
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);

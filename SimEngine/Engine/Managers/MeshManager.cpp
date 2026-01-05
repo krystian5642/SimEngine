@@ -6,12 +6,6 @@
 #include "Rendering/Core/Mesh.h"
 #include "Rendering/Renderer/Renderer.h"
 
-#include <iostream>
-#include <ostream>
-#include <GLM/common.hpp>
-#include <GLM/vec2.hpp>
-#include <GLM/vec3.hpp>
-
 namespace SimEngine
 {
     MeshManager& MeshManager::Get()
@@ -83,7 +77,7 @@ namespace SimEngine
                 vertices.push_back(normal.y);
                 vertices.push_back(normal.z);
                 
-                indices.push_back(indices.size());
+                indices.push_back(static_cast<unsigned int>(indices.size()));
             }
         }
 

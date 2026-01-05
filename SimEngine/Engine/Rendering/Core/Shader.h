@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <string>
-#include <GLM/fwd.hpp>
-
 namespace SimEngine
 {
     struct ShaderData

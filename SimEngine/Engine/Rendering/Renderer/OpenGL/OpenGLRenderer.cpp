@@ -1,9 +1,5 @@
 ﻿#include "OpenGLRenderer.h"
 
-#include <stdexcept>
-#include <string>
-#include <glm/gtc/type_ptr.inl>
-
 #include "Rendering/Renderer/OpenGL/Core/GLMesh.h"
 #include "Rendering/Renderer/OpenGL/Core/GLTexture.h"
 #include "Rendering/Renderer/OpenGL/Core/GLShader.h"
@@ -15,6 +11,7 @@
 #include "Scene/Objects/Lighting/PointLightObject.h"
 #include "Components/RenderComponent.h"
 #include "Components/CameraComponent.h"
+#include "Core/App.h"
 #include "Core/Window.h"
 
 #define CREATE_SHADER(shaderData) std::dynamic_pointer_cast<const GLShader>(CreateShader(shaderData))
@@ -23,6 +20,14 @@ namespace SimEngine
 {
     OpenGLRenderer::OpenGLRenderer()
     {
+        glewExperimental = GL_TRUE;
+        if (glewInit() != GLEW_OK)
+        {
+            glfwDestroyWindow(App::GetCurrentWindow()->GetGLFWWindow());
+            glfwTerminate();
+            throw std::runtime_error("Failed to initialize GLEW");
+        }
+        
         InitSceneShaders();
         
         glEnable(GL_DEPTH_TEST);

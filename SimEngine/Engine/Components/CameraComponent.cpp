@@ -1,9 +1,5 @@
 ﻿#include "CameraComponent.h"
 
-#include <iostream>
-#include <ostream>
-#include <GLM/ext/matrix_transform.hpp>
-
 #include "Scene/Scene.h"
 #include "Components/InputComponent.h"
 

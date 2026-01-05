@@ -2,8 +2,6 @@
 
 #include "Rendering/Core/Skybox.h"
 
-#include <GL/glew.h>
-
 namespace SimEngine
 {
     class GLSkybox : public Skybox
