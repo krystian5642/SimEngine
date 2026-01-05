@@ -2,9 +2,7 @@
 
 #include "Scene/Objects/Core/SceneObject.h"
 #include "Components/SceneComponent.h"
-
-#include <string>
-#include <GLM/vec3.hpp>
+#include "Scene/Objects/Core/ObjectContainer.h"
 
 namespace SimEngine
 {

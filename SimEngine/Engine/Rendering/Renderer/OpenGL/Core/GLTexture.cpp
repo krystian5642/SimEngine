@@ -1,8 +1,5 @@
 ﻿#include "GLTexture.h"
 
-#include <stdexcept>
-#include <GL/gl.h>
-
 namespace SimEngine
 {
     GLTexture::GLTexture(const std::string& fileLocation)

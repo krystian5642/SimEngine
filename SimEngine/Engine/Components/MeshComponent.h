@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-
 #include "RenderComponent.h"
 #include "SceneComponent.h"
 

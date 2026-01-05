@@ -2,8 +2,6 @@
 
 #include "LightObjectBase.h"
 #include "Rendering/UniformNames.h"
-#include <vector>
-#include <GLM/vec3.hpp>
 
 namespace SimEngine
 {
@@ -30,7 +28,7 @@ namespace SimEngine
         
         const std::vector<glm::mat4>& GetLightMatrices() const { return lightMatrices; }
     
-        static inline size_t lightCount{};
+        static inline int lightCount{};
         
     private:
         void UpdateLightMatrices();

@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <string>
-#include <GL/glew.h>
-
 struct GLFWwindow;
 
 namespace SimEngine
@@ -26,6 +23,8 @@ namespace SimEngine
     
         void SetWindowTitle(const std::string& title);
     
+        GLFWwindow* GetGLFWWindow() const { return window; }
+        
     private:
         static void OnWindowSizeChanged(GLFWwindow* window, int width, int height);
         static void OnMouseEvent(GLFWwindow* window, double xPos, double yPos);

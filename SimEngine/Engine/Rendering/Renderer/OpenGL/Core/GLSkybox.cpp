@@ -1,12 +1,9 @@
 ﻿#include "GLSkybox.h"
 
-#include <stb_image.h>
-#include <stdexcept>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "Rendering/Renderer/Renderer.h"
 #include "Managers/MeshManager.h"
 #include "Rendering/UniformNames.h"
+
+#include "stb_image.h"
 
 namespace SimEngine
 {
@@ -62,7 +59,7 @@ namespace SimEngine
                 throw std::runtime_error("Failed to load texture " + faceLocations[i]);
             }
         
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+            glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
             stbi_image_free(textureData);
         
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

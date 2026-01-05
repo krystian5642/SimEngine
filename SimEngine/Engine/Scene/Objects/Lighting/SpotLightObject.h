@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "PointLightObject.h"
-#include <string>
 #include "Rendering/UniformNames.h"
 
 namespace SimEngine

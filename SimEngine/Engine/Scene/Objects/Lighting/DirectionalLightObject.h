@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-#include <string>
-#include <GLM/fwd.hpp>
-#include <GLM/vec3.hpp>
-#include <GLM/gtc/matrix_transform.hpp>
-
 #include "Rendering/UniformNames.h"
 #include "LightObjectBase.h"
 
@@ -36,7 +31,7 @@ namespace SimEngine
         const glm::vec3& GetDirection() const { return direction; }
         void SetDirection(const glm::vec3& newDirection);
         
-        static inline size_t lightCount{};
+        static inline int lightCount{};
         
     private:
         void UpdateViewProjectionMatrix();

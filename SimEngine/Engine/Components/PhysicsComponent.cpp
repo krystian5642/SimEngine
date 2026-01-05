@@ -3,9 +3,6 @@
 
 #include "Scene/Objects/Entities/MeshEntity.h"
 
-#include <iostream>
-#include <ostream>
-
 namespace SimEngine
 {
     PhysicsComponent::PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name)

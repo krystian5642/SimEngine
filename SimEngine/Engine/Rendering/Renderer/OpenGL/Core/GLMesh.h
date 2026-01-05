@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <GL/glew.h>
-
 #include "Rendering/Core/Mesh.h"
 
 namespace SimEngine

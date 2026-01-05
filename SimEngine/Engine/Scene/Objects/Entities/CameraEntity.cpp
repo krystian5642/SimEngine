@@ -2,8 +2,6 @@
 
 #include "Components/CameraComponent.h"
 #include "Components/InputComponent.h"
-#include "Core/Window.h"
-#include <GLFW/glfw3.h>
 
 namespace SimEngine
 {

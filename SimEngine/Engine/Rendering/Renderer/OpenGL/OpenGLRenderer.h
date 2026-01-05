@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <string>
-#include <GL/glew.h>
-#include <GLM/fwd.hpp>
-
 #include "Rendering/Renderer/Renderer.h"
 
 namespace SimEngine

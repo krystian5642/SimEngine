@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <GLM/fwd.hpp>
-#include <GLM/vec3.hpp>
-#include <GLM/ext/matrix_transform.hpp>
-
 #include "Component.h"
 
 namespace SimEngine

@@ -1,10 +1,6 @@
 ﻿#pragma once
 
-#include <vector>
-#include <GLM/ext/matrix_transform.hpp>
-
 #include "RenderComponent.h"
-#include "Scene/Objects/Core/ObjectContainer.h"
 
 namespace SimEngine
 {

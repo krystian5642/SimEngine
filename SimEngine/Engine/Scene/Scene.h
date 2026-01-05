@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <vector>
-
 #include "Scene/Objects/Core/SceneObject.h"
 #include "Scene/Objects/Core/ObjectContainer.h"
 

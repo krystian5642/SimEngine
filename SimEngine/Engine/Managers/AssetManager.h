@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-#include <unordered_map>
-#include <functional>
-#include <string>
-#include <iostream>
-
 namespace SimEngine
 {
     template<class AssetClass>

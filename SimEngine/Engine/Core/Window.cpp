@@ -1,9 +1,6 @@
 ﻿
 #include "Window.h"
 
-#include <stdexcept>
-#include <GLFW/glfw3.h>
-
 namespace SimEngine
 {
     Window::Window(int width, int height, const std::string& title)
@@ -29,14 +26,6 @@ namespace SimEngine
         }
         
         glfwMakeContextCurrent(window);
-
-        glewExperimental = GL_TRUE;
-        if (glewInit() != GLEW_OK)
-        {
-            glfwDestroyWindow(window);
-            glfwTerminate();
-            throw std::runtime_error("Failed to initialize GLEW");
-        }
 
         glfwSetWindowUserPointer(window, this);
         

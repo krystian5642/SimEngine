@@ -2,9 +2,6 @@
 
 #include "Rendering/Core/Texture.h"
 
-#include <string>
-#include <GL/glew.h>
-
 namespace SimEngine
 {
     class GLTexture : public Texture

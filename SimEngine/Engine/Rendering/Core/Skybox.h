@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-#include <GLM/fwd.hpp>
-
 #include "Mesh.h"
 #include "Shader.h"
 

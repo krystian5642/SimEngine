@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-#include <GLM/fwd.hpp>
-#include <GLM/vec3.hpp>
-#include <GLM/gtc/matrix_transform.hpp>
-
 #include "Scene/Objects/Core/SceneObject.h"
 
 namespace SimEngine

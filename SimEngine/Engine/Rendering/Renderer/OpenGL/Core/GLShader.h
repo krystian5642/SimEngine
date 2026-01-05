@@ -2,8 +2,6 @@
 
 #include "Rendering/Core/Shader.h"
 
-#include <GL/glew.h>
-
 namespace SimEngine
 {
     class GLShader : public Shader

@@ -1,11 +1,8 @@
 ﻿#include "MeshComponent.h"
 
+#include "Rendering/Core/Shader.h"
 #include "Rendering/Core/Material.h"
 #include "Rendering/Core/Mesh.h"
-#include "Rendering/Core/Shader.h"
-
-#include <iostream>
-#include <ostream>
 
 namespace SimEngine
 {
