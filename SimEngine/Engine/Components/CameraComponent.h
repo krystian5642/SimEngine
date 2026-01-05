@@ -40,7 +40,7 @@ namespace SimEngine
         glm::vec3 up;
         glm::vec3 right;
         
-        glm::vec3 position{0.0f, 1.0f, 10.0f};
+        glm::vec3 position{5.0f, 5.0f, 15.0f};
         float pitch{};
         float yaw{180.0f};
     

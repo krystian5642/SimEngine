@@ -8,13 +8,14 @@ namespace SimEngine
     SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name)
         : RenderComponent(parent, scene, name)
     {
+        UpdateForwardVector();
     }
 
     SceneComponent::~SceneComponent()
     {
     }
 
-    void SceneComponent::Draw(const std::shared_ptr<const Shader>& shader) const
+    void SceneComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
     {
         shader->SetMat4f(UniformNames::model, modelMatrix);
     }

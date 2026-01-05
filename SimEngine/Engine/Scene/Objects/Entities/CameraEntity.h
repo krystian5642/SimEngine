@@ -12,6 +12,8 @@ namespace SimEngine
     public:
         CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name);
         ~CameraEntity() override;
+        
+        void SetAsActiveCamera();
     
         const CameraComponent* GetCameraComponent() const { return cameraComponent; }
     

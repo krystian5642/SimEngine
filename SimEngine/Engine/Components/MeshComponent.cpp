@@ -15,7 +15,7 @@ namespace SimEngine
     {
     }
 
-    void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader) const
+    void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
     {
         if (!mesh)
         {
@@ -23,12 +23,12 @@ namespace SimEngine
             return;
         }
         
-        if (material)
+        if (visualPass && material)
         {
             material->Use(shader);
         }
     
-        SceneComponent::Draw(shader);
+        SceneComponent::Draw(shader, visualPass);
         mesh->Draw();
     }
 }

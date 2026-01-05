@@ -14,8 +14,9 @@ namespace SimEngine
         ObjectClass* AddObject(ObjectBase* parent, Scene* scene, const std::string& name)
         {
             auto newObject = std::make_unique<ObjectClass>(parent, scene, name);
+            auto rawPtr = newObject.get();
             objects.push_back(std::move(newObject));
-            return newObject.get();
+            return rawPtr;
         }
         
         template <class ObjectClass>
@@ -29,7 +30,7 @@ namespace SimEngine
         {
             for (const auto& object : objects)
             {
-                auto typedObject = dynamic_cast<ObjectClass*>(object.object.get());
+                auto typedObject = dynamic_cast<ObjectClass*>(object.get());
                 if (typedObject) 
                 {
                     return typedObject; 

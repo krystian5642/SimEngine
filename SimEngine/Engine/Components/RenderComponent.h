@@ -4,7 +4,6 @@
 
 namespace SimEngine
 {
-    
     class Shader;
 
     class RenderComponent : public Component
@@ -16,6 +15,6 @@ namespace SimEngine
         void Init() override;
         void OnDestroy() override;
     
-        virtual void Draw(const std::shared_ptr<const Shader>& shader) const = 0;
+        virtual void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const = 0;
     };
 }

@@ -17,7 +17,7 @@ namespace SimEngine
         SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name);
         ~SceneComponent() override;
         
-        void Draw(const std::shared_ptr<const Shader>& shader) const override;
+        void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
     
         void Move(const glm::vec3& moveDelta);
         void Rotate(const glm::vec3& rotationDelta);

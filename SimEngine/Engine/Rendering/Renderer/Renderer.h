@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Rendering/Core/Skybox.h"
+
 namespace SimEngine
 {
     class Window;
@@ -8,7 +10,6 @@ namespace SimEngine
     struct ShaderData;
     struct MeshData;
     class Shader;
-    class Skybox;
     class Texture;
     class Material;
     class Mesh;
@@ -18,7 +19,7 @@ namespace SimEngine
     {
     public:
         Renderer() = default;
-        virtual ~Renderer() {}
+        virtual ~Renderer() = 0 {}
         
         static void InitStatic(std::unique_ptr<Renderer> renderer)
         {
@@ -45,7 +46,7 @@ namespace SimEngine
             return rendererAPI->CreateMesh(meshData);
         }
         
-        static std::shared_ptr<Skybox> CreateSkyboxStatic(const std::vector<std::string>& faceLocations)
+        static std::unique_ptr<Skybox> CreateSkyboxStatic(const std::vector<std::string>& faceLocations)
         {
             return rendererAPI->CreateSkybox(faceLocations);
         }
@@ -70,7 +71,7 @@ namespace SimEngine
         virtual std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const = 0;
         virtual std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const = 0;
     
-        virtual std::shared_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const { return nullptr; }
+        virtual std::unique_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const { return nullptr; }
         
         virtual std::shared_ptr<ShadowMap> CreateShadowMap(int width, int height) const { return nullptr; }
         virtual std::shared_ptr<ShadowMap> CreateOmniShadowMap(int width, int height) const { return nullptr; }
