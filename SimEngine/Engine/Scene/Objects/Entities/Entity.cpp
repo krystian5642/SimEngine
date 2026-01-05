@@ -1,0 +1,90 @@
+﻿#include "Entity.h"
+
+#include "Components/Component.h"
+#include "Components/SceneComponent.h"
+
+namespace SimEngine
+{
+    Entity::Entity(ObjectBase* parent, Scene* scene, const std::string& name)
+        : SceneObject(parent, scene, name)
+    {
+        rootComponent = AddComponent<SceneComponent>();
+    }
+
+    Entity::~Entity()
+    {
+    }
+    
+    void Entity::Move(const glm::vec3& moveDelta)
+    {
+        rootComponent->Move(moveDelta);
+        
+        childEntities.ForEach([moveDelta](Entity* child, int index)
+        {
+            child->Move(moveDelta);
+        });
+    }
+
+    void Entity::Rotate(const glm::vec3& rotationDelta)
+    {
+        rootComponent->Rotate(rotationDelta);
+        
+        childEntities.ForEach([rotationDelta](Entity* child, int index)
+        {
+            child->Rotate(rotationDelta);
+        });
+    }
+
+    void Entity::Scale(const glm::vec3& scaleDelta)
+    {
+        rootComponent->Scale(scaleDelta);
+        
+        childEntities.ForEach([scaleDelta](Entity* child, int index)
+        {
+            child->Scale(scaleDelta);
+        });
+    }
+
+    void Entity::SetPosition(const glm::vec3& newPosition)
+    {
+        rootComponent->SetPosition(newPosition);
+        
+        childEntities.ForEach([newPosition](Entity* child, int index)
+        {
+            child->SetPosition(newPosition);
+        });
+    }
+
+    void Entity::SetRotation(const glm::vec3& newRotation)
+    {
+        rootComponent->SetRotation(newRotation);
+        
+        childEntities.ForEach([newRotation](Entity* child, int index)
+        {
+            child->SetRotation(newRotation);
+        });
+    }
+
+    void Entity::SetScale(const glm::vec3& newScale)
+    {
+        rootComponent->SetScale(newScale);
+        
+        childEntities.ForEach([newScale](Entity* child, int index)
+        {
+            child->SetScale(newScale);
+        });
+    }
+
+    void Entity::DestroyChild(ObjectBase* child)
+    {
+        auto* entity = dynamic_cast<Entity*>(child);
+        if (entity)
+        {
+            childEntities.DestroyObject(entity);
+        }
+        else
+        {
+            components.DestroyObject(child);
+        }
+    }
+}

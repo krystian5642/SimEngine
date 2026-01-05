@@ -1,0 +1,47 @@
+﻿#pragma once
+
+#include <memory>
+#include <unordered_map>
+#include <functional>
+#include <string>
+#include <iostream>
+
+namespace SimEngine
+{
+    template<class AssetClass>
+    class AssetManager
+    {
+    public:
+        std::shared_ptr<AssetClass> GetAssetByName(const std::string& name);
+    
+    protected:
+        AssetManager() = default;
+    
+        using CreateAssetFunc = std::function<std::shared_ptr<AssetClass>()>;
+    
+        std::unordered_map<std::string, std::weak_ptr<AssetClass>> loadedAssets;
+        std::unordered_map<std::string, CreateAssetFunc> createAssetFuncs;
+    
+    };
+
+    template <class AssetClass>
+    std::shared_ptr<AssetClass> AssetManager<AssetClass>::GetAssetByName(const std::string& name)
+    {
+        auto it = loadedAssets.find(name);
+        if (it != loadedAssets.end())
+        {
+            return it->second.lock();
+        }
+    
+        auto createFuncIt = createAssetFuncs.find(name);
+        if (createFuncIt == createAssetFuncs.end())
+        {
+            std::cout << "WARNING: Trying to get an asset but no create func is specified !!" << std::endl;
+            return nullptr;
+        }
+    
+        auto asset = createFuncIt->second();
+        loadedAssets[name] = asset;
+        return asset;
+    }
+}
