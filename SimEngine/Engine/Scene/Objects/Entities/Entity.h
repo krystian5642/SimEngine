@@ -52,10 +52,13 @@ namespace SimEngine
         T* AddComponent(const std::string& componentName = "")
         {
             auto* newComponent = components.AddObject<T>(this, scene, componentName);
-            auto* sceneComponent = dynamic_cast<SceneComponent*>(newComponent);
-            if (sceneComponent)
+            if (rootComponent)
             {
-                rootComponent->AttachComponent(sceneComponent);
+                auto* sceneComponent = dynamic_cast<SceneComponent*>(newComponent);
+                if (sceneComponent)
+                {
+                    rootComponent->AttachComponent(sceneComponent);
+                }
             }
             return newComponent;
         }
@@ -75,7 +78,7 @@ namespace SimEngine
     protected:
         void DestroyChild(ObjectBase* child) override;
         
-        SceneComponent* rootComponent;
+        SceneComponent* rootComponent{};
         
         ObjectContainer<Entity> childEntities;
         ObjectContainer<Component> components;

@@ -269,7 +269,11 @@
     <ClCompile Include="Engine\Scene\Objects\Lighting\SpotLightObject.cpp" />
     <ClCompile Include="Engine\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
+    <ClCompile Include="ExampleScene\BallLauncher.cpp" />
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
+    <ClCompile Include="ExampleScene\GravityComponent.cpp" />
+    <ClCompile Include="ExampleScene\GravitySystem.cpp" />
+    <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -317,7 +321,11 @@
     <ClInclude Include="Engine\Scene\Objects\Lighting\SpotLightObject.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
+    <ClInclude Include="ExampleScene\BallLauncher.h" />
     <ClInclude Include="ExampleScene\ExampleApp.h" />
+    <ClInclude Include="ExampleScene\GravityComponent.h" />
+    <ClInclude Include="ExampleScene\GravitySystem.h" />
+    <ClInclude Include="ExampleScene\PlanetSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.frag" />

@@ -14,6 +14,8 @@
 #include "Core/App.h"
 #include "Core/Window.h"
 
+#include <GLFW/glfw3.h>
+
 #define CREATE_SHADER(shaderData) std::dynamic_pointer_cast<const GLShader>(CreateShader(shaderData))
 
 namespace SimEngine
@@ -136,9 +138,9 @@ namespace SimEngine
         return std::make_shared<GLMesh>(meshData);
     }
     
-    std::shared_ptr<Skybox> OpenGLRenderer::CreateSkybox(const std::vector<std::string>& faceLocations) const
+    std::unique_ptr<Skybox> OpenGLRenderer::CreateSkybox(const std::vector<std::string>& faceLocations) const
     {
-        return std::make_shared<GLSkybox>(faceLocations);
+        return std::make_unique<GLSkybox>(faceLocations);
     }
     
     std::shared_ptr<ShadowMap> OpenGLRenderer::CreateShadowMap(int width, int height) const
@@ -178,6 +180,8 @@ namespace SimEngine
 
     void OpenGLRenderer::RenderScene(const Scene* scene, const Window& window) const
     {
+        glEnable(GL_DEPTH_TEST);
+        
         const auto& lightData = scene->GetLightsData();
         
         for (auto* dirLight : lightData.dirLights)
@@ -197,8 +201,6 @@ namespace SimEngine
         }
     
         glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
-        glEnable(GL_DEPTH_TEST);
-    
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
         // temporally enable stencil mask to clear it
@@ -225,12 +227,12 @@ namespace SimEngine
         sceneShaders.screenShader->Unbind();
     }
 
-    void OpenGLRenderer::Render(const std::shared_ptr<const Shader>& shader, const Scene* scene) const
+    void OpenGLRenderer::Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const
     {
         const auto& renderData = scene->GetRenderData();
         for (auto* renderComponent : renderData.renderComponents)
         {
-            renderComponent->Draw(shader);
+            renderComponent->Draw(shader, visualPass);
         }
     }
 
@@ -246,7 +248,7 @@ namespace SimEngine
         sceneShaders.directionalShadowMapShader->SetMat4f(UniformNames::directionalLightProjection, dirLightComp->GetViewProjectionMatrix());
 
         sceneShaders.directionalShadowMapShader->Validate();
-        Render(sceneShaders.directionalShadowMapShader, scene);
+        Render(sceneShaders.directionalShadowMapShader, scene, false);
 
         sceneShaders.directionalShadowMapShader->Unbind();
     }
@@ -271,7 +273,7 @@ namespace SimEngine
         }
         
         sceneShaders.omniShadowMapShader->Validate();
-        Render(sceneShaders.omniShadowMapShader, scene);
+        Render(sceneShaders.omniShadowMapShader, scene, false);
     
         sceneShaders.omniShadowMapShader->Unbind();
     }
@@ -310,12 +312,12 @@ namespace SimEngine
         for (size_t i = 0; i < SceneLightsData::maxLights; i++)
         {
             const std::string shadowMapName = "dirShadowMaps[" + std::to_string(i) + "]";
-            sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i));
+            sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+1));
             
             if (i < DirectionalLightObject::lightCount)
             {
                 const auto* dirLight = lightData.dirLights[i];
-                dirLight->GetShadowMap()->Read(GL_TEXTURE0 + static_cast<int>(i));
+                dirLight->GetShadowMap()->Read(GL_TEXTURE1 + static_cast<int>(i));
         
                 sceneShaders.meshShader->SetMat4f(UniformNames::directionalLightProjection, dirLight->GetViewProjectionMatrix());
             }
@@ -324,17 +326,17 @@ namespace SimEngine
         for (size_t i = SceneLightsData::maxLights; i < 2 * SceneLightsData::maxLights; i++)
         {
             const std::string shadowMapName = "omniShadowMaps[" + std::to_string(i - 10) + "].shadowMap";
-            sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i));
+            sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+1));
         
             if (i < PointLightObject::lightCount + SceneLightsData::maxLights)
             {
                 const auto* pointLight = lightData.pointLights[i - SceneLightsData::maxLights];
-                pointLight->GetShadowMap()->Read(GL_TEXTURE0 + static_cast<int>(i));
+                pointLight->GetShadowMap()->Read(GL_TEXTURE1 + static_cast<int>(i));
             }
         }
 
         sceneShaders.meshShader->Validate();
-        Render(sceneShaders.meshShader, scene);
+        Render(sceneShaders.meshShader, scene, true);
 
         auto* skybox = scene->GetSkybox();
         if (skybox)

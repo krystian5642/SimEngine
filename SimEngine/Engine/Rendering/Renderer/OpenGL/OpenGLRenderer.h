@@ -36,7 +36,7 @@ namespace SimEngine
         std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const override;
         std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const override;
         
-        std::shared_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const override;
+        std::unique_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const override;
         
         std::shared_ptr<ShadowMap> CreateShadowMap(int width, int height) const override;
         std::shared_ptr<ShadowMap> CreateOmniShadowMap(int width, int height) const override;
@@ -46,7 +46,7 @@ namespace SimEngine
         
         void RenderScene(const Scene* scene, const Window& window) const override;
         
-        void Render(const std::shared_ptr<const Shader>& shader, const Scene* scene) const;
+        void Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const;
         
         // Render passes
         void DirectionalShadowMapPass(const DirectionalLightObject* dirLightComp, const Scene* scene) const;

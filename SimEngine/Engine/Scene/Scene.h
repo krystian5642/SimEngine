@@ -2,6 +2,7 @@
 
 #include "Scene/Objects/Core/SceneObject.h"
 #include "Scene/Objects/Core/ObjectContainer.h"
+#include "Rendering/Core/Skybox.h"
 
 namespace SimEngine
 {
@@ -13,7 +14,7 @@ namespace SimEngine
     class CameraComponent;
     class Scene;
     class System;
-    
+  
     struct SceneLightsData
     {
         static constexpr size_t maxLights{10};
@@ -68,11 +69,18 @@ namespace SimEngine
         {
             return objects.AddObject<T>(this, this, objectName);
         }
+        
+        template<class T>
+        T* GetObjectByClass()
+        {
+            return objects.GetObjectByClass<T>();
+        }
     
         void SetActiveCamera(CameraComponent* camera) { activeCamera = camera; }
         const CameraComponent* GetActiveCamera() const { return activeCamera; }
         
-        const Skybox* GetSkybox() const { return skybox; }
+        void SetSkybox(std::unique_ptr<Skybox> newSkybox) { skybox = std::move(newSkybox); }
+        const Skybox* GetSkybox() const { return skybox.get(); }
         
         const SceneLightsData& GetLightsData() const { return lightsData; }
         const SceneRenderData& GetRenderData() const { return renderData; }
@@ -81,6 +89,8 @@ namespace SimEngine
         void DestroyChild(ObjectBase* child) override;
         
         ObjectContainer<SceneObject> objects;
+        
+        std::unique_ptr<Skybox> skybox;
   
     private:
         SceneLightsData lightsData;
@@ -88,6 +98,5 @@ namespace SimEngine
         SceneObjectsData objectsData;
         
         CameraComponent* activeCamera{};
-        Skybox* skybox{};
     };
 }

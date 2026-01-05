@@ -47,7 +47,7 @@ namespace SimEngine
         {
             glGenBuffers(1, &IBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize * sizeof(unsigned int), meshData.indices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, meshData.indices.data(), GL_STATIC_DRAW);
             
             drawCount = static_cast<GLsizei>(indicesSize / sizeof(unsigned int));
         }

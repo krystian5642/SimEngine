@@ -29,6 +29,8 @@ namespace SimEngine
         {
             std::cout << "ERROR::ShadowMap: Framebuffer not complete!" << " ERROR code " << status << std::endl;
         }
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     GLShadowMap::~GLShadowMap()

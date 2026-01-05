@@ -3,6 +3,8 @@
 #include "Components/CameraComponent.h"
 #include "Components/InputComponent.h"
 
+#include <GLFW/glfw3.h>
+
 namespace SimEngine
 {
     CameraEntity::CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name)
@@ -21,5 +23,10 @@ namespace SimEngine
 
     CameraEntity::~CameraEntity()
     {
+    }
+
+    void CameraEntity::SetAsActiveCamera()
+    {
+        cameraComponent->SetAsActiveCamera();
     }
 }

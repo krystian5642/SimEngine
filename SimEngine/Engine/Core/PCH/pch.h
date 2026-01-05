@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <execution>
+#include <random>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -26,5 +27,3 @@
 #if SUPPORT_OPENGL
 #include <GL/glew.h>
 #endif
-
-#include <GLFW/glfw3.h>

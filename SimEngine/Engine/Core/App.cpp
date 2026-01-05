@@ -5,6 +5,8 @@
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
 
+#include <GLFW/glfw3.h>
+
 namespace SimEngine
 {
     App::App()

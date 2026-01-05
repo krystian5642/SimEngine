@@ -5,14 +5,15 @@ namespace SimEngine
     template<class AssetClass>
     class AssetManager
     {
+        using CreateAssetFunc = std::function<std::shared_ptr<AssetClass>()>;
     public:
         std::shared_ptr<AssetClass> GetAssetByName(const std::string& name);
+        
+        void RegisterCreateAsset(const std::string& name, CreateAssetFunc createFunc);
     
     protected:
         AssetManager() = default;
-    
-        using CreateAssetFunc = std::function<std::shared_ptr<AssetClass>()>;
-    
+        
         std::unordered_map<std::string, std::weak_ptr<AssetClass>> loadedAssets;
         std::unordered_map<std::string, CreateAssetFunc> createAssetFuncs;
     
@@ -37,5 +38,11 @@ namespace SimEngine
         auto asset = createFuncIt->second();
         loadedAssets[name] = asset;
         return asset;
+    }
+
+    template <class AssetClass>
+    void AssetManager<AssetClass>::RegisterCreateAsset(const std::string& name, CreateAssetFunc createFunc)
+    {
+        createAssetFuncs[name] = createFunc;
     }
 }

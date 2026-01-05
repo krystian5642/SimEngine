@@ -4,6 +4,7 @@
 #include "Rendering/UniformNames.h"
 
 #include "stb_image.h"
+#include "Rendering/Renderer/Renderer.h"
 
 namespace SimEngine
 {
@@ -39,11 +40,13 @@ namespace SimEngine
 
     void GLSkybox::Create(const std::vector<std::string>& faceLocations)
     {
-        ShaderData skyboxShaderData;
-        skyboxShaderData.fragShader = "skybox.frag";
-        skyboxShaderData.vertShader = "skybox.vert";
+        const std::string shadersFolder = "Engine/Rendering/Shaders/";
         
-        //shader = Renderer::CreateShader(skyboxShaderData);
+        ShaderData skyboxShaderData;
+        skyboxShaderData.fragShader = shadersFolder + "skybox.frag";
+        skyboxShaderData.vertShader = shadersFolder + "skybox.vert";
+        
+        shader = Renderer::CreateShaderStatic(skyboxShaderData);
         mesh = MeshManager::Get().GetAssetByName("skybox");
         
         glGenTextures(1, &textureId);

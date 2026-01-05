@@ -1,0 +1,38 @@
+﻿#pragma once
+
+#include "Scene/Objects/Entities/MeshEntity.h"
+
+using namespace SimEngine;
+
+namespace SimEngine
+{
+    class PhysicsComponent;
+    struct InputData;
+    class InputComponent;
+}
+
+class BallLauncher : public MeshEntity
+{
+public:
+    BallLauncher(ObjectBase* parent, Scene* scene, const std::string& name);
+    
+protected:
+    void RotateBarrelLeft(const InputData& inputData);
+    void RotateBarrelRight(const InputData& inputData);
+    void Fire(const InputData& inputData);
+    
+    void RotateLeft(const InputData& inputData);
+    void RotateRight(const InputData& inputData);
+    void MoveForward(const InputData& inputData);
+    void MoveBackward(const InputData& inputData);
+    
+    MeshComponent* barrelComponent;
+    InputComponent* inputComponent;
+    PhysicsComponent* physicsComponent;
+    
+    float rotationSpeed = 60.0f;
+    float moveSpeed = 10.0f;
+    double fireCooldown = 0.2;
+private:
+    double lastFireTime{};
+};
