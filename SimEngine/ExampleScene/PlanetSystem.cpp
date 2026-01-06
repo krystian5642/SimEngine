@@ -2,12 +2,11 @@
 
 #include "GravityComponent.h"
 #include "Planet.h"
-#include "Components/LineComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Scene/Objects/Entities/MeshEntity.h"
 
-PlanetSystem::PlanetSystem(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name)
+PlanetSystem::PlanetSystem(SimEngine::ObjectBase* parent, SimEngine::Scene* scene, const std::string& name)
     : Entity(parent, scene, name)
 {
     planet = AddChild<SimEngine::MeshEntity>();
