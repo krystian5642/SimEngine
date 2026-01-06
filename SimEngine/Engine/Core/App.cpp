@@ -60,6 +60,11 @@ namespace SimEngine
             {
                 SceneManager::LoadDefaultScene();
             }
+            
+            if (window.IsKeyDown(GLFW_KEY_B))
+            {
+                SceneManager::LoadScene("Scene2");
+            }
         }
         
         SceneManager::OnDestroy();

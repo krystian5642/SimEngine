@@ -116,7 +116,32 @@ ExampleApp::ExampleApp()
         return scene;
     };
     
+    auto scene2 = []
+    {
+        auto scene = std::make_unique<Scene>();
+        
+        auto camera = scene->AddObject<CameraEntity>("Camera");
+        camera->SetAsActiveCamera();
+
+        scene->AddObject<GravitySystem>();
+        scene->AddObject<PlanetSystem>();
+        
+        auto light = scene->AddObject<DirectionalLightObject>("Directional Light");
+        light->SetDirection({0.1f, 0.1f, -60.0f});
+        light->lightData.ambient = 0.1f;
+        light->lightData.diffuse = 0.8f;
+        
+        auto sun = scene->AddObject<MeshEntity>();
+        sun->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
+        sun->SetMaterial(MaterialManager::Get().GetAssetByName("emerald"));
+        sun->Move({-4.0f, 0.0f, -20.0f});
+        sun->SetScale({5.0f, 5.0f, 5.0f});
+        
+        return scene;
+    };
+    
     SceneManager::RegisterScene("DefaultScene", defaultScene);
+    SceneManager::RegisterScene("Scene2", scene2);
 }
 
 ExampleApp::~ExampleApp()
