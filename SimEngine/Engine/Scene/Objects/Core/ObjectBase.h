@@ -11,6 +11,8 @@ namespace SimEngine
         ObjectBase(ObjectBase* parent, const std::string& name);
         virtual ~ObjectBase() = 0;
         
+        virtual void DestroyChild(ObjectBase* child) {}
+        
         ObjectBase* GetParent() const { return parent; }
         void SetParent(ObjectBase* newParent) { parent = newParent; }
         
@@ -18,8 +20,6 @@ namespace SimEngine
         void SetName(std::string newName) { name = std::move(newName); }
     
     protected:
-        virtual void DestroyChild(ObjectBase* child) {}
-        
         ObjectBase* parent;
         std::string name;
     };

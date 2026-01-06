@@ -25,7 +25,12 @@ namespace SimEngine
         auto it = loadedAssets.find(name);
         if (it != loadedAssets.end())
         {
-            return it->second.lock();
+            auto asset = it->second.lock();
+            if (asset)
+            {
+                return asset;
+            }
+            loadedAssets.erase(it);
         }
     
         auto createFuncIt = createAssetFuncs.find(name);

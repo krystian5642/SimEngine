@@ -18,6 +18,11 @@ namespace SimEngine
         Entity(ObjectBase* parent, Scene* scene, const std::string& name);
         ~Entity() override;
         
+        void Tick(float deltaTime) override;
+        void OnDestroy() override;
+        
+        void DestroyChild(ObjectBase* child) override;
+        
         void Move(const glm::vec3& moveDelta);
         void Rotate(const glm::vec3& rotationDelta);
         void Scale(const glm::vec3& scaleDelta);
@@ -76,8 +81,6 @@ namespace SimEngine
         }
     
     protected:
-        void DestroyChild(ObjectBase* child) override;
-        
         SceneComponent* rootComponent{};
         
         ObjectContainer<Entity> childEntities;

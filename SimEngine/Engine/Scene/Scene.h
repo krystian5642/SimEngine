@@ -44,9 +44,11 @@ namespace SimEngine
         Scene(const std::string& name = "DefaultScene");
         ~Scene() override;
     
-        virtual void Init();
-        virtual void Start();
+        virtual void Init() {}
+        virtual void Start() {}
         virtual void Tick(float deltaTime);
+        
+        void DestroyChild(ObjectBase* child) override;
         
         void OnDestroy();
     
@@ -86,8 +88,6 @@ namespace SimEngine
         const SceneRenderData& GetRenderData() const { return renderData; }
         
     protected:
-        void DestroyChild(ObjectBase* child) override;
-        
         ObjectContainer<SceneObject> objects;
         
         std::unique_ptr<Skybox> skybox;
@@ -95,7 +95,7 @@ namespace SimEngine
     private:
         SceneLightsData lightsData;
         SceneRenderData renderData;
-        SceneObjectsData objectsData;
+        SceneObjectsData objectsData; // It is only used as a global handle when destroying objects
         
         CameraComponent* activeCamera{};
     };

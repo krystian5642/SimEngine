@@ -21,10 +21,7 @@ namespace SimEngine
 
     void SceneObject::Destroy()
     {
-        OnDestroy();
-        
-        auto* myParent = dynamic_cast<SceneObject*>(parent);
-        myParent->DestroyChild(this);
+        parent->DestroyChild(this);
     }
 
     void SceneObject::OnDestroy()

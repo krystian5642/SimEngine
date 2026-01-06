@@ -35,11 +35,15 @@ namespace SimEngine
         std::shared_ptr<Texture> CreateTexture(const std::string& fileLocation) const override;
         std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const override;
         std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const override;
+        std::unique_ptr<Line> CreateLine() const override;
         
         std::unique_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const override;
         
         std::shared_ptr<ShadowMap> CreateShadowMap(int width, int height) const override;
         std::shared_ptr<ShadowMap> CreateOmniShadowMap(int width, int height) const override;
+        
+        std::shared_ptr<Material> CreateRefractMaterial(const MaterialResources& resources) const;
+        std::shared_ptr<Material> CreateReflectMaterial(const MaterialResources& resources) const;
         
     private:
         void InitSceneShaders();

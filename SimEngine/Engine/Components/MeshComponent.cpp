@@ -23,12 +23,25 @@ namespace SimEngine
             return;
         }
         
+        auto activeShader = shader;
+        
         if (visualPass && material)
         {
             material->Use(shader);
+            auto materialShader = material->GetResources().shader;
+            if (materialShader)
+            {
+                materialShader->Bind();
+                activeShader = materialShader;
+            }
         }
-    
-        SceneComponent::Draw(shader, visualPass);
+        
+        SceneComponent::Draw(activeShader, visualPass);
         mesh->Draw();
+        
+        if (activeShader != shader)
+        {
+            activeShader->Unbind();
+        }
     }
 }

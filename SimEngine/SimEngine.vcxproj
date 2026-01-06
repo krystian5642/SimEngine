@@ -144,6 +144,7 @@
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\InputComponent.cpp" />
+    <ClCompile Include="Engine\Components\LineComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Components\PhysicsComponent.cpp" />
     <ClCompile Include="Engine\Components\RenderComponent.cpp" />
@@ -239,17 +240,21 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="Engine\Core\PhysicsHelpers.cpp" />
     <ClCompile Include="Engine\Core\SimEngine.cpp" />
     <ClCompile Include="Engine\Core\Window.cpp" />
     <ClCompile Include="Engine\Managers\MaterialManager.cpp" />
     <ClCompile Include="Engine\Managers\MeshManager.cpp" />
     <ClCompile Include="Engine\Managers\TextureManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Core\Line.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Material.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Mesh.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Shader.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Skybox.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Texture.cpp" />
     <ClCompile Include="Engine\Rendering\Lighting\ShadowMap.cpp" />
+    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.cpp" />
+    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLShader.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLSkybox.cpp" />
@@ -273,12 +278,14 @@
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
     <ClCompile Include="ExampleScene\GravityComponent.cpp" />
     <ClCompile Include="ExampleScene\GravitySystem.cpp" />
+    <ClCompile Include="ExampleScene\Planet.cpp" />
     <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\InputComponent.h" />
+    <ClInclude Include="Engine\Components\LineComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\PhysicsComponent.h" />
     <ClInclude Include="Engine\Components\RenderComponent.h" />
@@ -288,17 +295,21 @@
     <ClInclude Include="Engine\Core\Files\File.h" />
     <ClInclude Include="Engine\Core\Logging\Log.h" />
     <ClInclude Include="Engine\Core\PCH\pch.h" />
+    <ClInclude Include="Engine\Core\PhysicsHelpers.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\Managers\AssetManager.h" />
     <ClInclude Include="Engine\Managers\MaterialManager.h" />
     <ClInclude Include="Engine\Managers\MeshManager.h" />
     <ClInclude Include="Engine\Managers\TextureManager.h" />
+    <ClInclude Include="Engine\Rendering\Core\Line.h" />
     <ClInclude Include="Engine\Rendering\Core\Material.h" />
     <ClInclude Include="Engine\Rendering\Core\Mesh.h" />
     <ClInclude Include="Engine\Rendering\Core\Shader.h" />
     <ClInclude Include="Engine\Rendering\Core\Skybox.h" />
     <ClInclude Include="Engine\Rendering\Core\Texture.h" />
     <ClInclude Include="Engine\Rendering\Lighting\ShadowMap.h" />
+    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.h" />
+    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLShader.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLSkybox.h" />
@@ -325,6 +336,7 @@
     <ClInclude Include="ExampleScene\ExampleApp.h" />
     <ClInclude Include="ExampleScene\GravityComponent.h" />
     <ClInclude Include="ExampleScene\GravitySystem.h" />
+    <ClInclude Include="ExampleScene\Planet.h" />
     <ClInclude Include="ExampleScene\PlanetSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -334,10 +346,10 @@
     <Content Include="Engine\Rendering\Shaders\instanced_mesh.vert" />
     <Content Include="Engine\Rendering\Shaders\line.frag" />
     <Content Include="Engine\Rendering\Shaders\line.vert" />
-    <Content Include="Engine\Rendering\Shaders\main_shader.frag" />
-    <Content Include="Engine\Rendering\Shaders\main_shader.vert" />
-    <Content Include="Engine\Rendering\Shaders\mirror.frag" />
-    <Content Include="Engine\Rendering\Shaders\mirror.vert" />
+    <Content Include="Engine\Rendering\Shaders\mesh.frag" />
+    <Content Include="Engine\Rendering\Shaders\mesh.vert" />
+    <Content Include="Engine\Rendering\Shaders\reflect.frag" />
+    <Content Include="Engine\Rendering\Shaders\reflect.vert" />
     <Content Include="Engine\Rendering\Shaders\omni_shadow_map.frag" />
     <Content Include="Engine\Rendering\Shaders\omni_shadow_map.geom" />
     <Content Include="Engine\Rendering\Shaders\omni_shadow_map.vert" />
@@ -347,8 +359,8 @@
     <Content Include="Engine\Rendering\Shaders\screen.vert" />
     <Content Include="Engine\Rendering\Shaders\skybox.frag" />
     <Content Include="Engine\Rendering\Shaders\skybox.vert" />
-    <Content Include="Engine\Rendering\Shaders\water.frag" />
-    <Content Include="Engine\Rendering\Shaders\water.vert" />
+    <Content Include="Engine\Rendering\Shaders\refract.frag" />
+    <Content Include="Engine\Rendering\Shaders\refract.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,14 +23,13 @@ namespace SimEngine
         virtual void Init() {}
         virtual void Start() {}
         virtual void Tick(float deltaTime) {}
+        virtual void OnDestroy();
         
         void Destroy();
         
         const SceneObjectHandle& GetHandle() const { return handle; }
         
     protected:
-        virtual void OnDestroy();
-        
         Scene* const scene;
         
     private:

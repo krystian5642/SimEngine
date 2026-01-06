@@ -60,6 +60,16 @@ ExampleApp::ExampleApp()
         return std::make_shared<Material>(resources); 
     });
     
+    MaterialManager::Get().RegisterCreateAsset("reflect", []
+    {
+        return Renderer::CreateReflectMaterialStatic();
+    });
+    
+    MaterialManager::Get().RegisterCreateAsset("refract", []
+    {
+        return Renderer::CreateRefractMaterialStatic();
+    });
+    
     auto defaultScene = []
     {
         const std::vector<std::string> skyboxFaces = {
@@ -92,6 +102,16 @@ ExampleApp::ExampleApp()
         light->SetDirection({0.1f, -60.0f, 0.1f});
         light->lightData.ambient = 0.5f;
         light->lightData.diffuse = 0.8f;
+        
+        auto ball1 = scene->AddObject<MeshEntity>();
+        ball1->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
+        ball1->SetMaterial(MaterialManager::Get().GetAssetByName("reflect"));
+        ball1->Move({4.0f, 2.0f, 4.0f});
+        
+        auto ball2 = scene->AddObject<MeshEntity>();
+        ball2->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
+        ball2->SetMaterial(MaterialManager::Get().GetAssetByName("refract"));
+        ball2->Move({-4.0f, 2.0f, 4.0f});
         
         return scene;
     };

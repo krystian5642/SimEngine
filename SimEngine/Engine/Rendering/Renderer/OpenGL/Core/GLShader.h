@@ -39,6 +39,7 @@ namespace SimEngine
     private:
         void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
         
-        GLuint shaderID{};
+        GLuint programID{};
+        mutable GLuint previousProgramID{};
     };
 }

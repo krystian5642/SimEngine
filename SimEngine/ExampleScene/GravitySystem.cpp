@@ -23,7 +23,7 @@ void GravitySystem::Tick(float deltaTime)
             const float distance = sqrt(distanceSquared);
             const glm::vec3 directionNormalized = direction / distance;
             
-            float forceMagnitude = G * grav1->gravityData.mass * grav2->gravityData.mass / distanceSquared;
+            float forceMagnitude = GravitySystemConstants::G * grav1->gravityData.mass * grav2->gravityData.mass / distanceSquared;
             
             const glm::vec3 force = forceMagnitude * directionNormalized;
             

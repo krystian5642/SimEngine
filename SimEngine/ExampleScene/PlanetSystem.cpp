@@ -1,6 +1,8 @@
 ﻿#include "PlanetSystem.h"
 
 #include "GravityComponent.h"
+#include "Planet.h"
+#include "Components/LineComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Scene/Objects/Entities/MeshEntity.h"
@@ -17,26 +19,17 @@ PlanetSystem::PlanetSystem(ObjectBase* parent, SimEngine::Scene* scene, const st
     planet->SetScale({3.0f, 3.0f, 3.0f});
     planet->Move({10.0f, 10.0f, -10.0f});
     
+    /*
     std::random_device rd;
     std::mt19937 gen(rd());
     
     std::uniform_real_distribution dist(-80.0f, 0.0f);
     std::uniform_real_distribution dist2(-110.0f, -90.f);
+    */
     
     for (int i = 0; i < 1; i++)
     {
-        auto child = AddChild<SimEngine::MeshEntity>();
-        
-        child->SetMesh(SimEngine::MeshManager::Get().GetAssetByName("planet"));
-        child->SetMaterial(SimEngine::MaterialManager::Get().GetAssetByName("moon"));
-
-        auto physicsComp = child->AddComponent<GravityComponent>();
-        physicsComp->showTrajectory = false;
-        physicsComp->gravityData.mass = 0.001f;
-        physicsComp->gravityData.velocity = {0.0f, 2.0, 2.0f};
-        
-        child->Move({20.0f, 10.0f, -10.0f});
-        //child->Move({0.0f, 100.0f, -100.0f});
+        AddChild<Planet>();
     }
 }
 

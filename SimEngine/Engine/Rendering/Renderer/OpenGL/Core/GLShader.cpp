@@ -16,60 +16,64 @@ namespace SimEngine
 
     void GLShader::Compile(const ShaderData& shaderData)
     {
-        shaderID = glCreateProgram();
-        if (shaderID == 0)
+        programID = glCreateProgram();
+        if (programID == 0)
         {
             throw std::runtime_error("Can't create shader program");
         }
 
         auto vertCode = File::ReadFile(shaderData.vertShader);
-        AddShader(shaderID, vertCode.c_str(), GL_VERTEX_SHADER);
+        AddShader(programID, vertCode.c_str(), GL_VERTEX_SHADER);
     
         if (!shaderData.geomShader.empty())
         {
             auto geomCode = File::ReadFile(shaderData.geomShader);
-            AddShader(shaderID, geomCode.c_str(), GL_GEOMETRY_SHADER);
+            AddShader(programID, geomCode.c_str(), GL_GEOMETRY_SHADER);
         }
     
         auto fragCode = File::ReadFile(shaderData.fragShader);
-        AddShader(shaderID, fragCode.c_str(), GL_FRAGMENT_SHADER);
+        AddShader(programID, fragCode.c_str(), GL_FRAGMENT_SHADER);
 
-        glLinkProgram(shaderID);
+        glLinkProgram(programID);
     
         GLint result;
-        glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
+        glGetProgramiv(programID, GL_LINK_STATUS, &result);
         if (result == GL_FALSE)
         {
             GLchar eLog[1024];
-            glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
+            glGetProgramInfoLog(programID, sizeof(eLog), nullptr, eLog);
             throw std::runtime_error(eLog);
         }
     }
 
     void GLShader::Bind() const
     {
-        if (shaderID == 0)
+        if (programID == 0)
         {
             throw std::runtime_error("ERROR : Shader is not complied !!!");
         }
         
-        glUseProgram(shaderID);
+        GLint prevProgram = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &prevProgram);
+        previousProgramID = static_cast<GLuint>(prevProgram);
+        
+        glUseProgram(programID);
     }
 
     void GLShader::Unbind() const
     {
-        glUseProgram(0);
+        glUseProgram(previousProgramID);
     }
 
     void GLShader::Validate() const
     {
         GLint result;
-        glValidateProgram(shaderID);
-        glGetProgramiv(shaderID, GL_VALIDATE_STATUS, &result);
+        glValidateProgram(programID);
+        glGetProgramiv(programID, GL_VALIDATE_STATUS, &result);
         if (result == GL_FALSE)
         {
             GLchar eLog[1024];
-            glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
+            glGetProgramInfoLog(programID, sizeof(eLog), nullptr, eLog);
             throw std::runtime_error(eLog);
         }
     }
@@ -151,7 +155,7 @@ namespace SimEngine
 
     GLint GLShader::GetUniformLocation(std::string_view name) const
     {
-        auto uniformLocation = glGetUniformLocation(shaderID, name.data());
+        auto uniformLocation = glGetUniformLocation(programID, name.data());
         if (uniformLocation == -1)
         {
             std::cout <<"Trying to get uniform location " << name << " failed" << std::endl;

@@ -15,14 +15,14 @@ namespace SimEngine
         {
             auto newObject = std::make_unique<ObjectClass>(parent, scene, name);
             auto rawPtr = newObject.get();
-            objects.push_back(std::move(newObject));
+            objectsToAdd.push_back(std::move(newObject));
             return rawPtr;
         }
         
         template <class ObjectClass>
-        void DestroyObject(const ObjectClass* object)
+        void DestroyObject(ObjectClass* object)
         {
-            std::erase_if(objects, [object](const ObjectBasePtr& objectPtr) { return objectPtr.get() == object; });
+            objectsToRemove.push_back(static_cast<ObjectBaseClass*>(object));
         }
         
         template <class ObjectClass>
@@ -64,8 +64,47 @@ namespace SimEngine
                 }
             }
         }
+        
+        void Tick(float deltaTime)
+        {
+            for (const auto& object : objectsToAdd)
+            {
+                object->Init();
+            }
+            for (const auto& object : objectsToAdd)
+            {
+                object->Start();
+            }
+            for (auto& object : objectsToAdd)
+            {
+                objects.push_back(std::move(object));
+            }
+            objectsToAdd.clear();
+            
+            for (auto* object : objectsToRemove)
+            {
+                object->OnDestroy();
+                std::erase_if(objects, [object](const ObjectBasePtr& objectPtr) { return objectPtr.get() == object; });
+            }
+            objectsToRemove.clear();
+            
+            for (const auto& object : objects)
+            {
+                object->Tick(deltaTime);
+            }
+        }
+        
+        void OnDestroy()
+        {
+            for (const auto& object : objects)
+            {
+                object->OnDestroy();
+            }
+        }
     
     private:
         std::vector<ObjectBasePtr> objects;
+        std::vector<ObjectBasePtr> objectsToAdd;
+        std::vector<ObjectBaseClass*> objectsToRemove;
     };
 }

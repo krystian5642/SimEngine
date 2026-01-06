@@ -16,6 +16,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Core/GLLine.h"
+#include "Core/GLMaterial.h"
+
 #define CREATE_SHADER(shaderData) std::dynamic_pointer_cast<const GLShader>(CreateShader(shaderData))
 
 namespace SimEngine
@@ -137,7 +140,12 @@ namespace SimEngine
     {
         return std::make_shared<GLMesh>(meshData);
     }
-    
+
+    std::unique_ptr<Line> OpenGLRenderer::CreateLine() const
+    {
+        return std::make_unique<GLLine>();
+    }
+
     std::unique_ptr<Skybox> OpenGLRenderer::CreateSkybox(const std::vector<std::string>& faceLocations) const
     {
         return std::make_unique<GLSkybox>(faceLocations);
@@ -153,13 +161,23 @@ namespace SimEngine
         return std::make_shared<GLOmniShadowMap>(width, height);
     }
 
+    std::shared_ptr<Material> OpenGLRenderer::CreateRefractMaterial(const MaterialResources& resources) const
+    {
+        return std::make_shared<GLRefractMaterial>(resources);
+    }
+
+    std::shared_ptr<Material> OpenGLRenderer::CreateReflectMaterial(const MaterialResources& resources) const
+    {
+        return std::make_shared<GLReflectMaterial>(resources);
+    }
+
     void OpenGLRenderer::InitSceneShaders()
     {
         const std::string shadersFolder = "Engine/Rendering/Shaders/";
         
         ShaderData meshShaderData;
-        meshShaderData.vertShader = shadersFolder + "main_shader.vert";
-        meshShaderData.fragShader = shadersFolder + "main_shader.frag";
+        meshShaderData.vertShader = shadersFolder + "mesh.vert";
+        meshShaderData.fragShader = shadersFolder + "mesh.frag";
         sceneShaders.meshShader = CREATE_SHADER(meshShaderData);
         
         ShaderData directionalShadowMapShaderData;

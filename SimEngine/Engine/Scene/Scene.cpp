@@ -16,36 +16,19 @@ namespace SimEngine
     {
     }
 
-    void Scene::Init()
-    {
-        for (const auto& slot : objectsData.objectSlots)
-        {
-            slot.object->Init();
-        }
-    }
-
-    void Scene::Start()
-    {
-        for (const auto& slot : objectsData.objectSlots)
-        {
-            slot.object->Start();
-        }
-    }
-
     void Scene::Tick(float deltaTime)
     {
-        for (const auto& slot : objectsData.objectSlots)
-        {
-            slot.object->Tick(deltaTime);
-        }
+        objects.Tick(deltaTime);
+    }
+
+    void Scene::DestroyChild(ObjectBase* child)
+    {
+        objects.DestroyObject(child);
     }
 
     void Scene::OnDestroy()
     {
-        for (const auto& slot : objectsData.objectSlots)
-        {
-            slot.object->OnDestroy();
-        }
+        objects.OnDestroy();
     }
 
     void Scene::Render(const Window& window) const
@@ -117,10 +100,5 @@ namespace SimEngine
         }
         
         return objectsData.objectSlots[handle.index].object;
-    }
-
-    void Scene::DestroyChild(ObjectBase* child)
-    {
-        objects.DestroyObject(child);
     }
 }

@@ -15,6 +15,35 @@ namespace SimEngine
     {
     }
     
+    void Entity::Tick(float deltaTime)
+    {
+        SceneObject::Tick(deltaTime);
+        
+        components.Tick(deltaTime);
+        childEntities.Tick(deltaTime);
+    }
+
+    void Entity::OnDestroy()
+    {
+        SceneObject::OnDestroy();
+        
+        components.OnDestroy();
+        childEntities.OnDestroy();
+    }
+
+    void Entity::DestroyChild(ObjectBase* child)
+    {
+        auto* entity = dynamic_cast<Entity*>(child);
+        if (entity)
+        {
+            childEntities.DestroyObject(entity);
+        }
+        else
+        {
+            components.DestroyObject(child);
+        }
+    }
+
     void Entity::Move(const glm::vec3& moveDelta)
     {
         rootComponent->Move(moveDelta);
@@ -73,18 +102,5 @@ namespace SimEngine
         {
             child->SetScale(newScale);
         });
-    }
-
-    void Entity::DestroyChild(ObjectBase* child)
-    {
-        auto* entity = dynamic_cast<Entity*>(child);
-        if (entity)
-        {
-            childEntities.DestroyObject(entity);
-        }
-        else
-        {
-            components.DestroyObject(child);
-        }
     }
 }
