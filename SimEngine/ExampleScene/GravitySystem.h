@@ -4,12 +4,15 @@
 
 class GravityComponent;
 
+struct GravitySystemConstants
+{
+    static constexpr float G{100.0f};
+};
+
 class GravitySystem : public SimEngine::SceneObject
 {
 public:
     GravitySystem(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name);
-    
-    static constexpr float G{100.0f};
     
     void Tick(float deltaTime) override;
     

@@ -13,18 +13,7 @@ GravityComponent::GravityComponent(ObjectBase* parent, SimEngine::Scene* scene, 
 
 void GravityComponent::Init()
 {
-    if (parent == nullptr)
-    {
-        std::cout << "WARNING : GravityComponent::Init() parent is not set!!" << std::endl;
-        return;
-    }
-    
     parentEntity = dynamic_cast<SimEngine::Entity*>(parent);
-    if (!parentEntity)
-    {
-        std::cout << "WARNING : GravityComponent::Init() parent is not an actor!!" << std::endl;
-        return;
-    }
     
     gravitySystem = scene->GetObjectByClass<GravitySystem>();
     gravitySystem->RegisterGravityComponent(this);
@@ -32,12 +21,6 @@ void GravityComponent::Init()
 
 void GravityComponent::Tick(float deltaTime)
 {
-    if (!parentEntity)
-    {
-        std::cout << "WARNING : GravityComponent::Tick() parent is not an actor!!" << std::endl;
-        return;
-    }
-    
     const glm::vec3 currentAcceleration = gravityData.currentGravityForce / gravityData.mass;
     gravityData.currentGravityForce = glm::vec3{0.0f};
     

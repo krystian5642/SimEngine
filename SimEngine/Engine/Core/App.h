@@ -29,5 +29,8 @@ namespace SimEngine
         double lastFrameTime{};
         
         static inline Window* currentWindow;
+        
+        double lastSetWindowTitleTime{};
+        double setWindowTitleInterval = 0.2;
     };
 }

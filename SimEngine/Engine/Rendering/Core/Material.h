@@ -40,7 +40,21 @@ namespace SimEngine
         
         virtual void Use(const std::shared_ptr<const Shader>& shader) const;
         
+        const MaterialResources& GetResources() const { return resources; }
+        
     protected:
         MaterialResources resources;
+    };
+    
+    class ReflectMaterial : public Material
+    {
+    public:
+        virtual ~ReflectMaterial() = 0 {}
+    };
+    
+    class RefractMaterial : public Material
+    {
+    public:
+        virtual ~RefractMaterial() = 0 {}
     };
 }

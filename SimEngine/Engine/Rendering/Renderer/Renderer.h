@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#include "Rendering/Core/Line.h"
 #include "Rendering/Core/Skybox.h"
+#include "Rendering/Core/Material.h"
 
 namespace SimEngine
 {
@@ -20,6 +22,8 @@ namespace SimEngine
     public:
         Renderer() = default;
         virtual ~Renderer() = 0 {}
+        
+        static inline const std::string shadersFolder = "Engine/Rendering/Shaders/";
         
         static void InitStatic(std::unique_ptr<Renderer> renderer)
         {
@@ -46,6 +50,11 @@ namespace SimEngine
             return rendererAPI->CreateMesh(meshData);
         }
         
+        static std::unique_ptr<Line> CreateLineStatic()
+        {
+            return rendererAPI->CreateLine();
+        }
+        
         static std::unique_ptr<Skybox> CreateSkyboxStatic(const std::vector<std::string>& faceLocations)
         {
             return rendererAPI->CreateSkybox(faceLocations);
@@ -61,6 +70,30 @@ namespace SimEngine
             return rendererAPI->CreateOmniShadowMap(width, height);
         }
         
+        static std::shared_ptr<Material> CreateRefractMaterialStatic()
+        {
+            ShaderData shaderData;
+            shaderData.fragShader = shadersFolder + "refract.frag";
+            shaderData.vertShader = shadersFolder + "refract.vert";
+            
+            MaterialResources resources;
+            resources.shader = rendererAPI->CreateShader(shaderData);
+            
+            return rendererAPI->CreateRefractMaterial(resources);
+        }
+        
+        static std::shared_ptr<Material> CreateReflectMaterialStatic()
+        {
+            ShaderData shaderData;
+            shaderData.fragShader = shadersFolder + "reflect.frag";
+            shaderData.vertShader = shadersFolder + "reflect.vert";
+            
+            MaterialResources resources;
+            resources.shader = rendererAPI->CreateShader(shaderData);
+            
+            return rendererAPI->CreateReflectMaterial(resources);
+        }
+        
     protected:
         static inline std::unique_ptr<Renderer> rendererAPI;
         
@@ -70,10 +103,14 @@ namespace SimEngine
         virtual std::shared_ptr<Texture> CreateTexture(const std::string& fileLocation) const = 0;
         virtual std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const = 0;
         virtual std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const = 0;
-    
+        virtual std::unique_ptr<Line> CreateLine() const = 0;
+        
         virtual std::unique_ptr<Skybox> CreateSkybox(const std::vector<std::string>& faceLocations) const { return nullptr; }
         
         virtual std::shared_ptr<ShadowMap> CreateShadowMap(int width, int height) const { return nullptr; }
         virtual std::shared_ptr<ShadowMap> CreateOmniShadowMap(int width, int height) const { return nullptr; }
+        
+        virtual std::shared_ptr<Material> CreateRefractMaterial(const MaterialResources& resources) const { return nullptr; }
+        virtual std::shared_ptr<Material> CreateReflectMaterial(const MaterialResources& resources) const { return nullptr; }
     };
 }

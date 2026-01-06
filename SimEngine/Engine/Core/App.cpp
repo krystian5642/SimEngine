@@ -25,14 +25,19 @@ namespace SimEngine
         SceneManager::Init();
 
         lastFrameTime = glfwGetTime();
+        lastSetWindowTitleTime = lastFrameTime;
         while (!window.ShouldClose())
         {
             double currentFrameTime = glfwGetTime();
             float deltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
             lastFrameTime = currentFrameTime;
 
-            const std::string title = "Sim Engine | FPS: " + std::to_string(static_cast<int>(1.0f / deltaTime));
-            window.SetWindowTitle(title);
+            if (lastSetWindowTitleTime + setWindowTitleInterval <= currentFrameTime)
+            {
+                const std::string title = "Sim Engine | FPS: " + std::to_string(static_cast<int>(1.0f / deltaTime));
+                window.SetWindowTitle(title);
+                lastSetWindowTitleTime = currentFrameTime;
+            }
 
             window.Update();
             glStencilMask(0x00);
