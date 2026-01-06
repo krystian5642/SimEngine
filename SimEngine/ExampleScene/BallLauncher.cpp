@@ -1,6 +1,5 @@
 ﻿#include "BallLauncher.h"
 
-#include "GravityComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Components/InputComponent.h"
@@ -74,9 +73,6 @@ void BallLauncher::Fire(const InputData& inputData)
     ball = scene->AddObject<MeshEntity>();
     ball->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     ball->SetMaterial(MaterialManager::Get().GetAssetByName("turquoise"));
-    
-    //auto grav = ball->AddComponent<GravityComponent>();
-    //grav->gravityData.mass = 100.0f;
     
     auto physicsComp = ball->AddComponent<PhysicsComponent>();
     physicsComp->physicsData.velocity = startVelocity;

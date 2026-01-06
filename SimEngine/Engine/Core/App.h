@@ -22,6 +22,9 @@ namespace SimEngine
         void Run();
         
         static Window* GetCurrentWindow() { return currentWindow; }
+        
+    protected:
+        bool isRunning{true};
     
     private:
         Window window{1920, 1080, "Sim Engine"};

@@ -20,7 +20,7 @@ namespace SimEngine
 
     void App::Run()
     {
-        //Log::Init();
+        Log::Init();
         Renderer::InitStatic(std::make_unique<OpenGLRenderer>());
         SceneManager::Init();
 
@@ -42,10 +42,24 @@ namespace SimEngine
             window.Update();
             glStencilMask(0x00);
 
-            SceneManager::Tick(deltaTime);
+            if (isRunning)
+            {
+                SceneManager::Tick(deltaTime);
+            }
+            
             SceneManager::Render(window);
 
             window.SwapBuffers();
+            
+            if (window.IsKeyDown(GLFW_KEY_P))
+            {
+                isRunning = !isRunning;
+            }
+            
+            if (window.IsKeyDown(GLFW_KEY_N))
+            {
+                SceneManager::LoadDefaultScene();
+            }
         }
         
         SceneManager::OnDestroy();
