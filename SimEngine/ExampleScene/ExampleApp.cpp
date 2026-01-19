@@ -74,12 +74,12 @@ ExampleApp::ExampleApp()
     auto defaultScene = []
     {
         const std::vector<std::string> skyboxFaces = {
-            "Textures/Skybox/cupertin-lake_rt.tga",
-            "Textures/Skybox/cupertin-lake_lf.tga",
-            "Textures/Skybox/cupertin-lake_up.tga",
-            "Textures/Skybox/cupertin-lake_dn.tga",
-            "Textures/Skybox/cupertin-lake_bk.tga",
-            "Textures/Skybox/cupertin-lake_ft.tga",
+            "Textures/Skybox/right.jpg",
+            "Textures/Skybox/left.jpg",
+            "Textures/Skybox/top.jpg",
+            "Textures/Skybox/bottom.jpg",
+            "Textures/Skybox/front.jpg",
+            "Textures/Skybox/back.jpg"
         };
     
         auto scene = std::make_unique<Scene>();
