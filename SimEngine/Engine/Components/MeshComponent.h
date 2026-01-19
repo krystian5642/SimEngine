@@ -3,20 +3,16 @@
 #include "RenderComponent.h"
 #include "SceneComponent.h"
 
-namespace SimEngine
-{
-    class Mesh;
-    class Material;
+class Mesh;
+class Material;
 
-    class MeshComponent : public SceneComponent
-    {
-    public:
-        MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name);
-        ~MeshComponent() override;
+class MeshComponent : public SceneComponent
+{
+public:
+    MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+
+    void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
     
-        void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
-        
-        std::shared_ptr<Mesh> mesh;
-        std::shared_ptr<Material> material;
-    };
-}
+    std::shared_ptr<Mesh> mesh;
+    std::shared_ptr<Material> material;
+};

@@ -1,12 +1,7 @@
 ﻿#include "Mesh.h"
 
-namespace SimEngine
-{
-    Mesh::Mesh(const MeshData& meshData)
-    {
-    }
 
-    Mesh::~Mesh()
-    {
-    }
+Mesh::Mesh(const MeshData& meshData)
+{
+    
 }

@@ -1,25 +1,23 @@
 ﻿#pragma once
 
 #include "MeshEntity.h"
+#include "Components/CameraComponent.h"
 
-namespace SimEngine
+class InputComponent;
+class CameraComponent;
+class Projection;
+
+class CameraEntity : public Entity
 {
-    class InputComponent;
-    class CameraComponent;
-
-    class CameraEntity : public Entity
-    {
-    public:
-        CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name);
-        ~CameraEntity() override;
-        
-        void SetAsActiveCamera();
+public:
+    CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name);
     
-        const CameraComponent* GetCameraComponent() const { return cameraComponent; }
+    void SetAsActiveCamera();
     
-    private:
-        CameraComponent* cameraComponent;
-        InputComponent* inputComponent;
-    };
+    CameraComponent* GetCameraComponent() const { return cameraComponent; }
 
-}
+private:
+    CameraComponent* cameraComponent;
+    InputComponent* inputComponent;
+};
+

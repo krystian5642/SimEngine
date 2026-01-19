@@ -2,12 +2,9 @@
 
 #include "Scene/Objects/Core/SceneObject.h"
 
-namespace SimEngine
+class Component : public SceneObject
 {
-    class Component : public SceneObject
-    {
-    public:
-        Component(ObjectBase* parent, Scene* scene, const std::string& name);
-        virtual ~Component() = 0;
-    };
-}
+public:
+    Component(ObjectBase* parent, Scene* scene, const std::string& name);
+    virtual ~Component() = 0 {}
+};

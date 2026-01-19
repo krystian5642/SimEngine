@@ -1,5 +1,9 @@
 ﻿#include "App.h"
 
+#include "imgui_impl_glfw.h"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
+
 #include "Logging/Log.h"
 #include "Rendering/Renderer/OpenGL/OpenGLRenderer.h"
 #include "Scene/SceneManager.h"
@@ -7,68 +11,87 @@
 
 #include <GLFW/glfw3.h>
 
-namespace SimEngine
+App::App()
 {
-    App::App()
-    {
-        currentWindow = &window;
-    }
+    currentWindow = &window;
+}
 
-    App::~App()
-    {
-    }
+void App::Run()
+{
+    Log::Init();
+    Renderer::InitStatic(std::make_unique<OpenGLRenderer>());
+    SceneManager::Init();
+    
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    
+    ImGui_ImplGlfw_InitForOpenGL(window.GetGLFWWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 460 core");
 
-    void App::Run()
+    lastFrameTime = glfwGetTime();
+    while (!window.ShouldClose())
     {
-        Log::Init();
-        Renderer::InitStatic(std::make_unique<OpenGLRenderer>());
-        SceneManager::Init();
-
-        lastFrameTime = glfwGetTime();
-        lastSetWindowTitleTime = lastFrameTime;
-        while (!window.ShouldClose())
+        double currentFrameTime = glfwGetTime();
+        float deltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
+        lastFrameTime = currentFrameTime;
+        
+        window.Update();
+        if (glfwGetWindowAttrib(window.GetGLFWWindow(), GLFW_ICONIFIED) != 0)
         {
-            double currentFrameTime = glfwGetTime();
-            float deltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
-            lastFrameTime = currentFrameTime;
-
-            if (lastSetWindowTitleTime + setWindowTitleInterval <= currentFrameTime)
+            ImGui_ImplGlfw_Sleep(10);
+            continue;
+        }
+        
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        
+        const double tickTime1 = glfwGetTime();
+        SceneManager::Tick(deltaTime);
+        const double tickTime2 = glfwGetTime();
+        
+        const double renderTime1 = glfwGetTime();
+        SceneManager::Render();
+        const double renderTime2 = glfwGetTime();
+        
+        ImGui::Begin("Menu");
+        
+        ImGui::Text("Stats");
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+        ImGui::Text("Tick Time: %.3f ms", (tickTime2 - tickTime1) * 1000.0f);
+        ImGui::Text("Render Time: %.3f ms", (renderTime2 - renderTime1) * 1000.0f);
+        ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
+        
+        ImGui::Separator();
+        if (ImGui::Button(isPaused ? "Resume" : "Pause"))
+        {
+            isPaused = !isPaused;
+        }
+        
+        ImGui::Separator();
+        ImGui::Text("Scenes");
+        const auto scenes = SceneManager::GetSceneNames();
+        for (const auto& scene : scenes)
+        {
+            if (ImGui::Button(scene.c_str()))
             {
-                const std::string title = "Sim Engine | FPS: " + std::to_string(static_cast<int>(1.0f / deltaTime));
-                window.SetWindowTitle(title);
-                lastSetWindowTitleTime = currentFrameTime;
-            }
-
-            window.Update();
-            glStencilMask(0x00);
-
-            if (isRunning)
-            {
-                SceneManager::Tick(deltaTime);
-            }
-            
-            SceneManager::Render(window);
-
-            window.SwapBuffers();
-            
-            if (window.IsKeyDown(GLFW_KEY_P))
-            {
-                isRunning = !isRunning;
-            }
-            
-            if (window.IsKeyDown(GLFW_KEY_N))
-            {
-                SceneManager::LoadDefaultScene();
-            }
-            
-            if (window.IsKeyDown(GLFW_KEY_B))
-            {
-                SceneManager::LoadScene("Scene2");
+                SceneManager::LoadScene(scene);
             }
         }
         
-        SceneManager::OnDestroy();
-
-        glfwTerminate();   
+        ImGui::End(); 
+        
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        
+        window.SwapBuffers();
     }
+    
+    SceneManager::OnDestroy();
+    
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    
+    glfwTerminate();
 }

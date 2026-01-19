@@ -2,14 +2,13 @@
 
 #include "Core/App.h"
 
-class ExampleApp : public SimEngine::App
+class ExampleApp : public App
 {
 public:
     ExampleApp();
-    ~ExampleApp() override;
 };
 
-SimEngine::App* CreateApplication()
+App* CreateApplication()
 {
     return new ExampleApp();
 }

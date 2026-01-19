@@ -2,38 +2,33 @@
 
 #include "Window.h"
 
-namespace SimEngine
+class App;
+
+extern App* CreateApplication();
+
+class Scene;
+
+class App
 {
-    class App;
-}
+public:
+    App();
+    virtual ~App() = 0 {}
 
-extern SimEngine::App* CreateApplication();
+    void Run();
+    
+    static Window* GetCurrentWindow() { return currentWindow; }
+    
+    bool GetIsPaused() const { return isPaused; }
+    
+    static inline App* currentApp = nullptr;
+    
+protected:
+    bool isPaused{false};
 
-namespace SimEngine
-{
-    class Scene;
-    
-    class App
-    {
-    public:
-        App();
-        virtual ~App() = 0;
-    
-        void Run();
-        
-        static Window* GetCurrentWindow() { return currentWindow; }
-        
-    protected:
-        bool isRunning{true};
-    
-    private:
-        Window window{1920, 1080, "Sim Engine"};
+private:
+    Window window{1920, 1080, "Sim Engine"};
 
-        double lastFrameTime{};
-        
-        static inline Window* currentWindow;
-        
-        double lastSetWindowTitleTime{};
-        double setWindowTitleInterval = 0.2;
-    };
-}
+    double lastFrameTime{};
+    
+    static inline Window* currentWindow;
+};

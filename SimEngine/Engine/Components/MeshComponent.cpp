@@ -4,44 +4,37 @@
 #include "Rendering/Core/Material.h"
 #include "Rendering/Core/Mesh.h"
 
-namespace SimEngine
+MeshComponent::MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name)
+    : SceneComponent(parent, scene, name)
 {
-    MeshComponent::MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-        : SceneComponent(parent, scene, name)
+}
+    
+void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
+{
+    if (!mesh)
     {
+        std::cout << "No mesh specified" << std::endl;
+        return;
     }
-
-    MeshComponent::~MeshComponent()
+    
+    auto activeShader = shader;
+    
+    if (visualPass && material)
     {
+        material->Use(shader);
+        auto materialShader = material->GetResources().shader;
+        if (materialShader)
+        {
+            materialShader->Bind();
+            activeShader = materialShader;
+        }
     }
-
-    void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
+    
+    SceneComponent::Draw(activeShader, visualPass);
+    mesh->Draw();
+    
+    if (activeShader != shader)
     {
-        if (!mesh)
-        {
-            std::cout << "No mesh specified" << std::endl;
-            return;
-        }
-        
-        auto activeShader = shader;
-        
-        if (visualPass && material)
-        {
-            material->Use(shader);
-            auto materialShader = material->GetResources().shader;
-            if (materialShader)
-            {
-                materialShader->Bind();
-                activeShader = materialShader;
-            }
-        }
-        
-        SceneComponent::Draw(activeShader, visualPass);
-        mesh->Draw();
-        
-        if (activeShader != shader)
-        {
-            activeShader->Unbind();
-        }
+        activeShader->Unbind();
     }
 }

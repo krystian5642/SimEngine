@@ -2,16 +2,13 @@
 
 #include "AssetManager.h"
 
-namespace SimEngine
-{
-    class Texture;
+class Texture;
 
-    class TextureManager : public AssetManager<Texture>
-    {
-    public:
-        static TextureManager& Get();
-    
-    private:
-        TextureManager();
-    };
-}
+class TextureManager : public AssetManager<Texture>
+{
+public:
+    static TextureManager& Get();
+
+private:
+    TextureManager() {}
+};

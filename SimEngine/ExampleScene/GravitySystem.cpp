@@ -1,7 +1,7 @@
 ﻿#include "GravitySystem.h"
 #include "GravityComponent.h"
 
-GravitySystem::GravitySystem(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name)
+GravitySystem::GravitySystem(ObjectBase* parent, Scene* scene, const std::string& name)
     : SceneObject(parent, scene, name)
 {
 }
