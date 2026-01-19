@@ -87,6 +87,8 @@ public:
     
     const SceneLightsData& GetLightsData() const { return lightsData; }
     const SceneRenderData& GetRenderData() const { return renderData; }
+    
+    size_t GetObjectCount() const { return objects.GetCount(); }
 
 protected:
     ObjectContainer<SceneObject> objects;

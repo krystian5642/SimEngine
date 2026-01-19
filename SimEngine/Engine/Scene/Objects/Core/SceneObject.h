@@ -2,13 +2,15 @@
 
 #include "ObjectBase.h"
 
+class SceneObject;
+
 struct SceneObjectHandle
 {
     const Scene* scene{};
     size_t index{};
     unsigned int version{};
     
-    ObjectBase* Resolve() const;
+    SceneObject* Resolve() const;
 };
 
 class SceneObject : public ObjectBase
@@ -27,7 +29,7 @@ public:
     const SceneObjectHandle& GetHandle() const { return handle; }
     
     bool tickWhenPaused = false;
-    
+
 protected:
     Scene* const scene;
     
