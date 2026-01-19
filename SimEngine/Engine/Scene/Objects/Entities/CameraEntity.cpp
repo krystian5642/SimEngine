@@ -5,7 +5,6 @@
 
 #include <GLFW/glfw3.h>
 
-
 CameraEntity::CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name)
     : Entity(parent, scene, name)
 {

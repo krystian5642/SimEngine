@@ -61,6 +61,9 @@ void App::Run()
         ImGui::Text("Tick Time: %.3f ms", (tickTime2 - tickTime1) * 1000.0f);
         ImGui::Text("Render Time: %.3f ms", (renderTime2 - renderTime1) * 1000.0f);
         ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
+        ImGui::Separator();
+        
+        ImGui::Text("Object count: %zu", SceneManager::GetCurrentScene()->GetObjectCount());
         
         ImGui::Separator();
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))

@@ -68,36 +68,55 @@ void Scene::UnregisterRenderComponent(const RenderComponent* renderComponent)
     
 SceneObjectHandle Scene::RegisterObject(SceneObject* object)
 {
-    SceneObjectHandle handle;
-    handle.scene = this;
-    handle.index = objectsData.objectSlots.size();
-    handle.version = 1;
+    unsigned int version = 1;
+    bool added = false;
+    size_t index = 0;
     
-    SceneObjectSlot slot;
-    slot.object = object;
-    slot.version = 1;
+    for (size_t i = 0; i < objectsData.objectSlots.size(); i++)
+    {
+        auto& slot = objectsData.objectSlots[i];
+        if (slot.object == nullptr)
+        {
+            slot.object = object;
+            version = slot.version;
+            added = true;
+            index = i;
+            break;
+        }
+    }
     
-    objectsData.objectSlots.push_back(slot);
+    if (!added)
+    {
+        index = objectsData.objectSlots.size();
+        const SceneObjectSlot slot{object, 1};
+        objectsData.objectSlots.push_back(slot);
+    }
     
+    const SceneObjectHandle handle{this, index, version};
     return handle;
 }
     
 void Scene::UnregisterObject(SceneObject* object)
 {
-    std::erase_if(objectsData.objectSlots, [object](const auto& slot)
+    for (auto& slot : objectsData.objectSlots)
     {
-        return object == slot.object;
-    });
+        if (slot.object == object)
+        {
+            slot.object = nullptr;
+            slot.version++;
+        }
+    }
 }
     
 SceneObject* Scene::GetObjectByHandle(const SceneObjectHandle& handle) const
 {
-    if (handle.scene != this || handle.index >= objectsData.objectSlots.size())
+    if (handle.scene == nullptr || handle.scene != this || handle.index >= objectsData.objectSlots.size())
     {
         return nullptr;
     }
     
-    return objectsData.objectSlots[handle.index].object;
+    const auto& slot = objectsData.objectSlots[handle.index];
+    return slot.version == handle.version ? slot.object : nullptr;
 }
     
 glm::mat4 Scene::GetProjectionMatrix() const

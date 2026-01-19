@@ -90,6 +90,7 @@ ExampleApp::ExampleApp()
         auto camera = scene->AddObject<CameraEntity>("Camera");
         camera->SetAsActiveCamera();
         
+        scene->AddObject<PhysicsSystem>();
         scene->AddObject<GravitySystem>();
         scene->AddObject<PlanetSystem>();
     
@@ -213,5 +214,5 @@ ExampleApp::ExampleApp()
     SceneManager::RegisterScene("Scene2", scene2);
     SceneManager::RegisterScene("Scene3", scene3);
 
-    SceneManager::SetDefaultScene("Scene3");
+    //SceneManager::SetDefaultScene("Scene3");
 }

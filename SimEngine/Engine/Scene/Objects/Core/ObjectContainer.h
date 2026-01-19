@@ -62,7 +62,7 @@ public:
             }
         }
     }
-    
+
     void Tick(float deltaTime, bool isPaused)
     {
         for (const auto& object : objectsToAdd)
@@ -82,8 +82,11 @@ public:
         for (auto* object : objectsToRemove)
         {
             object->OnDestroy();
-            std::erase_if(objects, [object](const ObjectBasePtr& objectPtr) { return objectPtr.get() == object; });
         }
+        std::erase_if(objects, [&](const ObjectBasePtr& objectPtr)
+        {
+            return std::find(objectsToRemove.begin(), objectsToRemove.end(), objectPtr.get()) != objectsToRemove.end();
+        });
         objectsToRemove.clear();
         
         for (const auto& object : objects)
@@ -102,6 +105,8 @@ public:
             object->OnDestroy();
         }
     }
+    
+    size_t GetCount() const { return objects.size(); }
 
 private:
     std::vector<ObjectBasePtr> objects;

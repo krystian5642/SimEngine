@@ -70,7 +70,10 @@ void BallLauncher::Fire(const InputData& inputData)
     const auto startVelocity = GetBallStartVelocity();
     const auto spawn = GetBallSpawnPosition();
 
-    ball = scene->AddObject<MeshEntity>();
+    auto ball = scene->AddObject<MeshEntity>();
+    
+    lastBallHandle = ball->GetHandle();
+    
     ball->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     ball->SetMaterial(MaterialManager::Get().GetAssetByName("turquoise"));
 
@@ -90,13 +93,13 @@ void BallLauncher::Fire(const InputData& inputData)
 
 void BallLauncher::DeleteLastBall(const InputData& inputData)
 {
-    if (ball == nullptr)
+    auto las = lastBallHandle.Resolve();
+    if (las == nullptr)
     {
         return;
-
-        ball->Destroy();
-        ball = nullptr;
     }
+    
+    las->Destroy();
 }
 
 void BallLauncher::RotateLeft(const InputData& inputData)

@@ -41,5 +41,5 @@ private:
 
     double lastFireTime{};
 
-    MeshEntity* ball{};
+    SceneObjectHandle lastBallHandle{};
 };

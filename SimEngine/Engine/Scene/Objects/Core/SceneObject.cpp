@@ -1,7 +1,7 @@
 ﻿#include "SceneObject.h"
 #include "Scene/Scene.h"
 
-ObjectBase* SceneObjectHandle::Resolve() const
+SceneObject* SceneObjectHandle::Resolve() const
 {
     return scene->GetObjectByHandle(*this);
 }
