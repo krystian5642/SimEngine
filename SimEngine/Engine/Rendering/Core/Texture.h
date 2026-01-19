@@ -1,33 +1,30 @@
 ﻿#pragma once
 
-namespace SimEngine
+struct TextureData
 {
-    struct TextureData
-    {
-        std::string fileLocation;
-        unsigned char* data{};
-        int width, height, bitDepth;
-    };
+    std::string fileLocation;
+    unsigned char* data{};
+    int width, height, bitDepth;
+};
 
-    class Texture
-    {
-    public:
-        Texture(const std::string& fileLocation);
-        virtual ~Texture() = 0;
+class Texture
+{
+public:
+    Texture(const std::string& fileLocation);
+    virtual ~Texture();
 
-        virtual void Bind() const = 0;
-        
-        void Load();
+    virtual void Bind() const = 0;
     
-        void SetFileLocation(const std::string& newLocation, bool reload = true);
+    void Load();
 
-    protected:
-        virtual void LoadGPUData() = 0;
-        virtual void FreeGPUData() = 0;
-        
-        void LoadCPUData();
-        void FreeCPUData();
-        
-        TextureData textureData;
-    };
-}
+    void SetFileLocation(const std::string& newLocation, bool reload = true);
+
+protected:
+    virtual void LoadGPUData() = 0;
+    virtual void FreeGPUData() = 0;
+    
+    void LoadCPUData();
+    void FreeCPUData();
+    
+    TextureData textureData;
+};

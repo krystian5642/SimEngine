@@ -5,16 +5,16 @@
 #include "Scene/Objects/Entities/Entity.h"
 #include "GravitySystem.h"
 
-GravityComponent::GravityComponent(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name)
-    : Component(parent, scene, name)
+GravityComponent::GravityComponent(ObjectBase* parent, Scene* scene, const std::string& name)
+: Component(parent, scene, name)
 {
     trajectory.reserve(trajectoryLength);
 }
 
 void GravityComponent::Init()
 {
-    parentEntity = dynamic_cast<SimEngine::Entity*>(parent);
-    
+    parentEntity = dynamic_cast<Entity*>(parent);
+
     gravitySystem = scene->GetObjectByClass<GravitySystem>();
     gravitySystem->RegisterGravityComponent(this);
 }
@@ -23,7 +23,7 @@ void GravityComponent::Tick(float deltaTime)
 {
     const glm::vec3 currentAcceleration = gravityData.currentGravityForce / gravityData.mass;
     gravityData.currentGravityForce = glm::vec3{0.0f};
-    
+
     gravityData.velocity += currentAcceleration * deltaTime;
     const glm::vec3 deltaMove = gravityData.velocity * deltaTime;
     parentEntity->Move(deltaMove);
@@ -36,5 +36,5 @@ void GravityComponent::OnDestroy()
 
 const glm::vec3& GravityComponent::GetPosition() const
 {
-    return parentEntity->GetComponentByClass<SimEngine::SceneComponent>()->GetPosition();
+    return parentEntity->GetComponentByClass<SceneComponent>()->GetPosition();
 }

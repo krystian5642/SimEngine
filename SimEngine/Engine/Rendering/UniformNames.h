@@ -2,14 +2,10 @@
 
 #define UNIFORM_NAME inline constexpr std::string_view
 
-namespace SimEngine
+namespace UniformNames
 {
-    namespace UniformNames
-    {
-        UNIFORM_NAME model = "model";
-        UNIFORM_NAME view = "view";
-        UNIFORM_NAME projection = "projection";
-        UNIFORM_NAME cameraPosition = "cameraPosition";
-    }
+    UNIFORM_NAME model = "model";
+    UNIFORM_NAME view = "view";
+    UNIFORM_NAME projection = "projection";
+    UNIFORM_NAME cameraPosition = "cameraPosition";
 }
-

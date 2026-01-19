@@ -4,20 +4,17 @@
 
 class GravityComponent;
 
-namespace SimEngine
-{
-    class LineComponent;
-}
+class LineComponent;
 
-class Planet : public SimEngine::MeshEntity
+class Planet : public MeshEntity
 {
 public:
-    Planet(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name);
-    
+    Planet(ObjectBase* parent, Scene* scene, const std::string& name);
+
     void Tick(float deltaTime) override;
-    
+
 private:
     GravityComponent* gravityComponent;
-    SimEngine::LineComponent* lineComponent;
-    
+    LineComponent* lineComponent;
+
 };

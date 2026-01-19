@@ -2,22 +2,19 @@
 
 #include "Rendering/Core/Mesh.h"
 
-namespace SimEngine
+class GLMesh : public Mesh
 {
-    class GLMesh : public Mesh
-    {
-    public:
-        GLMesh(const MeshData& meshData);
-        ~GLMesh() override;
-        
-        void Draw() const override;
-        
-    protected:
-        void LoadGPUData(const MeshData& meshData) override;
-        void FreeGPUData() override;
-        
-    private:
-        GLuint VAO{}, VBO{}, IBO{};
-        GLsizei drawCount{};
-    };
-}
+public:
+    GLMesh(const MeshData& meshData);
+    ~GLMesh();
+    
+    void Draw() const override;
+    
+protected:
+    void LoadGPUData(const MeshData& meshData) override;
+    void FreeGPUData() override;
+    
+private:
+    GLuint VAO{}, VBO{}, IBO{};
+    GLsizei drawCount{};
+};

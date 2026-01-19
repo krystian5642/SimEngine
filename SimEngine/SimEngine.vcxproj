@@ -103,7 +103,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -126,7 +126,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -152,6 +152,7 @@
     <ClCompile Include="Engine\Core\App.cpp" />
     <ClCompile Include="Engine\Core\Files\File.cpp" />
     <ClCompile Include="Engine\Core\Logging\Log.cpp" />
+    <ClCompile Include="Engine\Core\MathUtils.cpp" />
     <ClCompile Include="Engine\Core\PCH\pch.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -226,7 +227,6 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\kryst\Desktop\SimEngine\\External\GLEW\include;C:\Users\kryst\Desktop\SimEngine\\External\GLFW\include;C:\Users\kryst\Desktop\SimEngine\\External;C:\Users\kryst\Desktop\SimEngine\\External\spdlog\include;C:\Users\kryst\Desktop\SimEngine\\SimEngine\Engine;</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -239,8 +239,10 @@
       </ForcedIncludeFiles>
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Engine\Core\PhysicsHelpers.cpp" />
+    <ClCompile Include="Engine\Core\PhysicsUtils.cpp" />
     <ClCompile Include="Engine\Core\SimEngine.cpp" />
     <ClCompile Include="Engine\Core\Window.cpp" />
     <ClCompile Include="Engine\Managers\MaterialManager.cpp" />
@@ -261,7 +263,6 @@
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLTexture.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLOmniShadowMap.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLShadowMap.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLShadowMapTypes.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\ObjectBase.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\SceneObject.cpp" />
@@ -274,12 +275,20 @@
     <ClCompile Include="Engine\Scene\Objects\Lighting\SpotLightObject.cpp" />
     <ClCompile Include="Engine\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
+    <ClCompile Include="Engine\Scene\Systems\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="ExampleScene\BallLauncher.cpp" />
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
     <ClCompile Include="ExampleScene\GravityComponent.cpp" />
     <ClCompile Include="ExampleScene\GravitySystem.cpp" />
     <ClCompile Include="ExampleScene\Planet.cpp" />
     <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
+    <ClCompile Include="External\imgui\imgui.cpp" />
+    <ClCompile Include="External\imgui\imgui_demo.cpp" />
+    <ClCompile Include="External\imgui\imgui_draw.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="External\imgui\imgui_tables.cpp" />
+    <ClCompile Include="External\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -294,8 +303,9 @@
     <ClInclude Include="Engine\Core\Concepts.h" />
     <ClInclude Include="Engine\Core\Files\File.h" />
     <ClInclude Include="Engine\Core\Logging\Log.h" />
+    <ClInclude Include="Engine\Core\MathUtils.h" />
     <ClInclude Include="Engine\Core\PCH\pch.h" />
-    <ClInclude Include="Engine\Core\PhysicsHelpers.h" />
+    <ClInclude Include="Engine\Core\PhysicsUtils.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\Managers\AssetManager.h" />
     <ClInclude Include="Engine\Managers\MaterialManager.h" />
@@ -332,12 +342,21 @@
     <ClInclude Include="Engine\Scene\Objects\Lighting\SpotLightObject.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
+    <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsSystem.h" />
     <ClInclude Include="ExampleScene\BallLauncher.h" />
     <ClInclude Include="ExampleScene\ExampleApp.h" />
     <ClInclude Include="ExampleScene\GravityComponent.h" />
     <ClInclude Include="ExampleScene\GravitySystem.h" />
     <ClInclude Include="ExampleScene\Planet.h" />
     <ClInclude Include="ExampleScene\PlanetSystem.h" />
+    <ClInclude Include="External\imgui\imconfig.h" />
+    <ClInclude Include="External\imgui\imgui.h" />
+    <ClInclude Include="External\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="External\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="External\imgui\imgui_internal.h" />
+    <ClInclude Include="External\imgui\imstb_rectpack.h" />
+    <ClInclude Include="External\imgui\imstb_textedit.h" />
+    <ClInclude Include="External\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.frag" />

@@ -2,16 +2,13 @@
 
 #include "AssetManager.h"
 
-namespace SimEngine
-{
-    class Material;
+class Material;
 
-    class MaterialManager : public AssetManager<Material>
-    {
-    public:
-        static MaterialManager& Get();
-    
-    private:
-        MaterialManager();
-    };
-}
+class MaterialManager : public AssetManager<Material>
+{
+public:
+    static MaterialManager& Get();
+
+private:
+    MaterialManager();
+};

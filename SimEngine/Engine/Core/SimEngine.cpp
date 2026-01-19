@@ -2,9 +2,9 @@
 
 int main()
 {
-    SimEngine::App* app = CreateApplication();
-    app->Run();
-    delete app;
+    App::currentApp = CreateApplication();
+    App::currentApp->Run();
+    delete App::currentApp;
     
     return 0;
 }

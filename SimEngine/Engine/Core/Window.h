@@ -2,42 +2,45 @@
 
 struct GLFWwindow;
 
-namespace SimEngine
+class Window
 {
-    class Window
-    {
-    public:
-        Window(int width, int height, const std::string& title);
-        ~Window();
-    
-        void Update();
-        void SwapBuffers();
+public:
+    Window(int width, int height, const std::string& title);
+    ~Window();
 
-        double ConsumeXMouseDelta();
-        double ConsumeYMouseDelta();
+    void Update();
+    void SwapBuffers();
 
-        float GetAspectRatio() const;
-        bool IsKeyDown(int key) const;
-        bool ShouldClose() const;
-        void SetWindowShouldClose(int value) const;
+    double ConsumeXMouseDelta();
+    double ConsumeYMouseDelta();
     
-        void SetWindowTitle(const std::string& title);
-    
-        GLFWwindow* GetGLFWWindow() const { return window; }
-        
-    private:
-        static void OnWindowSizeChanged(GLFWwindow* window, int width, int height);
-        static void OnMouseEvent(GLFWwindow* window, double xPos, double yPos);
-        static void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
-    
-        int width, height;
+    double ConsumeYMouseScrollDelta();
 
-        int bufferWidth, bufferHeight;
-    
-        GLFWwindow* window;
+    float GetAspectRatio() const;
+    bool IsKeyDown(int key) const;
+    bool IsMouseButtonDown(int button) const;
+    bool ShouldClose() const;
+    void SetWindowShouldClose(int value) const;
 
-        bool firstMouseMove = true;
-        double lastXMouse, lastYMouse;
-        double mouseXDelta{}, mouseYDelta{};
-    };
-}
+    void SetWindowTitle(const std::string& title);
+
+    GLFWwindow* GetGLFWWindow() const { return window; }
+    
+private:
+    static void OnWindowSizeChanged(GLFWwindow* window, int width, int height);
+    static void OnMouseEvent(GLFWwindow* window, double xPos, double yPos);
+    static void OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
+    static void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+    int width, height;
+
+    int bufferWidth, bufferHeight;
+
+    GLFWwindow* window;
+
+    bool firstMouseMove = true;
+    double lastXMouse, lastYMouse;
+    double mouseXDelta{}, mouseYDelta{};
+    
+    double lastYMouseScroll{};
+};

@@ -1,10 +1,7 @@
 ﻿#pragma once
 
-namespace SimEngine
+struct GLShadowMapData
 {
-    struct GLShadowMapData
-    {
-        GLuint FBO{};
-        GLuint shadowMap{};
-    };
-}
+    GLuint FBO{};
+    GLuint shadowMap{};
+};

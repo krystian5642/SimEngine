@@ -2,105 +2,100 @@
 
 #include "Components/Component.h"
 #include "Components/SceneComponent.h"
+#include "Core/App.h"
 
-namespace SimEngine
+Entity::Entity(ObjectBase* parent, Scene* scene, const std::string& name)
+    : SceneObject(parent, scene, name)
 {
-    Entity::Entity(ObjectBase* parent, Scene* scene, const std::string& name)
-        : SceneObject(parent, scene, name)
-    {
-        rootComponent = AddComponent<SceneComponent>();
-    }
+    rootComponent = AddComponent<SceneComponent>();
+}
 
-    Entity::~Entity()
-    {
-    }
+void Entity::Tick(float deltaTime)
+{
+    SceneObject::Tick(deltaTime);
     
-    void Entity::Tick(float deltaTime)
+    const bool isPaused = App::currentApp->GetIsPaused();
+    components.Tick(deltaTime, isPaused);
+    childEntities.Tick(deltaTime, isPaused);
+}
+    
+void Entity::OnDestroy()
+{
+    SceneObject::OnDestroy();
+    
+    components.OnDestroy();
+    childEntities.OnDestroy();
+}
+    
+void Entity::DestroyChild(ObjectBase* child)
+{
+    auto* entity = dynamic_cast<Entity*>(child);
+    if (entity)
     {
-        SceneObject::Tick(deltaTime);
-        
-        components.Tick(deltaTime);
-        childEntities.Tick(deltaTime);
+        childEntities.DestroyObject(entity);
     }
-
-    void Entity::OnDestroy()
+    else
     {
-        SceneObject::OnDestroy();
-        
-        components.OnDestroy();
-        childEntities.OnDestroy();
+        components.DestroyObject(child);
     }
-
-    void Entity::DestroyChild(ObjectBase* child)
+}
+    
+void Entity::Move(const glm::vec3& moveDelta)
+{
+    rootComponent->Move(moveDelta);
+    
+    childEntities.ForEach([moveDelta](Entity* child, int index)
     {
-        auto* entity = dynamic_cast<Entity*>(child);
-        if (entity)
-        {
-            childEntities.DestroyObject(entity);
-        }
-        else
-        {
-            components.DestroyObject(child);
-        }
-    }
-
-    void Entity::Move(const glm::vec3& moveDelta)
+        child->Move(moveDelta);
+    });
+}
+    
+void Entity::Rotate(const glm::vec3& rotationDelta)
+{
+    rootComponent->Rotate(rotationDelta);
+    
+    childEntities.ForEach([rotationDelta](Entity* child, int index)
     {
-        rootComponent->Move(moveDelta);
-        
-        childEntities.ForEach([moveDelta](Entity* child, int index)
-        {
-            child->Move(moveDelta);
-        });
-    }
-
-    void Entity::Rotate(const glm::vec3& rotationDelta)
+        child->Rotate(rotationDelta);
+    });
+}
+    
+void Entity::Scale(const glm::vec3& scaleDelta)
+{
+    rootComponent->Scale(scaleDelta);
+    
+    childEntities.ForEach([scaleDelta](Entity* child, int index)
     {
-        rootComponent->Rotate(rotationDelta);
-        
-        childEntities.ForEach([rotationDelta](Entity* child, int index)
-        {
-            child->Rotate(rotationDelta);
-        });
-    }
-
-    void Entity::Scale(const glm::vec3& scaleDelta)
+        child->Scale(scaleDelta);
+    });
+}
+    
+void Entity::SetPosition(const glm::vec3& newPosition)
+{
+    rootComponent->SetPosition(newPosition);
+    
+    childEntities.ForEach([newPosition](Entity* child, int index)
     {
-        rootComponent->Scale(scaleDelta);
-        
-        childEntities.ForEach([scaleDelta](Entity* child, int index)
-        {
-            child->Scale(scaleDelta);
-        });
-    }
-
-    void Entity::SetPosition(const glm::vec3& newPosition)
+        child->SetPosition(newPosition);
+    });
+}
+    
+void Entity::SetRotation(const glm::vec3& newRotation)
+{
+    rootComponent->SetRotation(newRotation);
+    
+    childEntities.ForEach([newRotation](Entity* child, int index)
     {
-        rootComponent->SetPosition(newPosition);
-        
-        childEntities.ForEach([newPosition](Entity* child, int index)
-        {
-            child->SetPosition(newPosition);
-        });
-    }
-
-    void Entity::SetRotation(const glm::vec3& newRotation)
+        child->SetRotation(newRotation);
+    });
+}
+    
+void Entity::SetScale(const glm::vec3& newScale)
+{
+    rootComponent->SetScale(newScale);
+    
+    childEntities.ForEach([newScale](Entity* child, int index)
     {
-        rootComponent->SetRotation(newRotation);
-        
-        childEntities.ForEach([newRotation](Entity* child, int index)
-        {
-            child->SetRotation(newRotation);
-        });
-    }
-
-    void Entity::SetScale(const glm::vec3& newScale)
-    {
-        rootComponent->SetScale(newScale);
-        
-        childEntities.ForEach([newScale](Entity* child, int index)
-        {
-            child->SetScale(newScale);
-        });
-    }
+        child->SetScale(newScale);
+    });
 }

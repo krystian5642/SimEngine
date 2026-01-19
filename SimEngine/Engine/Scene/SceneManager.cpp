@@ -2,48 +2,56 @@
 
 #include "Scene.h"
 
-namespace SimEngine
+void SceneManager::LoadDefaultScene()
 {
-    void SceneManager::LoadDefaultScene()
-    {
-        LoadScene(defaultSceneName);
-    }
-        
-    void SceneManager::RegisterScene(const std::string& sceneName, SceneFunc sceneFunc)
-    {
-        loadSceneFuncs[sceneName] = sceneFunc;
-    }
+    LoadScene(defaultSceneName);
+}
     
-    void SceneManager::LoadScene(const std::string& sceneName)
-    {
-        if (currentScene)
-        {
-            currentScene->OnDestroy();
-        }
-            
-        currentScene = loadSceneFuncs[sceneName]();
-            
-        currentScene->Init();
-        currentScene->Start();
-    }
-        
-    void SceneManager::Init()
-    {
-        LoadDefaultScene();
-    }
-        
-    void SceneManager::Tick(float deltaTime)
-    {
-        currentScene->Tick(deltaTime);
-    }
-        
-    void SceneManager::OnDestroy()
+void SceneManager::RegisterScene(const std::string& sceneName, SceneFunc sceneFunc)
+{
+    loadSceneFuncs[sceneName] = sceneFunc;
+}
+
+void SceneManager::LoadScene(const std::string& sceneName)
+{
+    if (currentScene)
     {
         currentScene->OnDestroy();
     }
         
-    void SceneManager::Render(const Window& window)
+    currentScene = loadSceneFuncs[sceneName]();
+        
+    currentScene->Init();
+    currentScene->Start();
+}
+    
+void SceneManager::Init()
+{
+    LoadDefaultScene();
+}
+    
+void SceneManager::Tick(float deltaTime)
+{
+    currentScene->Tick(deltaTime);
+}
+    
+void SceneManager::OnDestroy()
+{
+    currentScene->OnDestroy();
+}
+    
+void SceneManager::Render()
+{
+    currentScene->Render();
+}
+
+std::vector<std::string> SceneManager::GetSceneNames()
+{
+    std::vector<std::string> keys;
+    keys.reserve(loadSceneFuncs.size());
+    for (const auto& func : loadSceneFuncs)
     {
-        currentScene->Render(window);
+        keys.push_back(func.first);
     }
+    return keys;
 }

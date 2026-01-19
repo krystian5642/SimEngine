@@ -1,10 +1,7 @@
 ﻿#pragma once
 
-namespace SimEngine
+class File
 {
-    class File
-    {
-    public:
-        static std::string ReadFile(const std::string& filePath);
-    };
-}
+public:
+    static std::string ReadFile(const std::string& filePath);
+};

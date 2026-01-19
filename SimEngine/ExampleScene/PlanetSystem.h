@@ -2,18 +2,15 @@
 
 #include "Scene/Objects/Entities/Entity.h"
 
-namespace SimEngine
-{
-    class MeshEntity;
-}
+class MeshEntity;
 
-class PlanetSystem : public SimEngine::Entity
+class PlanetSystem : public Entity
 {
 public:
-    PlanetSystem(ObjectBase* parent, SimEngine::Scene* scene, const std::string& name);
-    
+    PlanetSystem(ObjectBase* parent, Scene* scene, const std::string& name);
+
     void Tick(float deltaTime) override;
-    
-private:
-    SimEngine::MeshEntity* planet;
+
+    private:
+    MeshEntity* planet;
 };

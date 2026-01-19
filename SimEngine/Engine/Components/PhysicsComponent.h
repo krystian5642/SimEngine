@@ -2,40 +2,52 @@
 
 #include "Component.h"
 
-namespace SimEngine
+class PhysicsSystem;
+class Entity;
+
+struct PhysicsData
 {
-    class Entity;
+    float mass{1.0f};
+    glm::vec3 velocity{};
+    bool enableGravity{false};
+    bool applyFriction{true};
+};
 
-    struct PhysicsData
-    {
-        float mass{1.0f};
-        glm::vec3 velocity{};
-        bool enableGravity{false};
-        bool applyFriction{true};
-    };
-    
-    struct ScenePhysicsConstants
-    {
-        static constexpr float gravity{9.81f};
-        static constexpr float groundLevel{-2.0f};
-    };
+struct PhysicsBoundingBox
+{
+    glm::vec3 minBounds{-2.0f, -2.0f, -22.0f};
+    glm::vec3 maxBounds{26.0f, 26.0f, 6.0f};
+};
 
-    class PhysicsComponent : public Component
-    {
-    public:
-        PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name);
-        ~PhysicsComponent() override;
-        
-        void Init() override;
-        void Tick(float deltaTime) override;
+struct ScenePhysicsConstants
+{
+    static constexpr float gravity{9.81f};
+    static constexpr float groundLevel{-2.0f};
+};
+
+class PhysicsComponent : public Component
+{
+public:
+    PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name);
     
-        void ApplyForce(const glm::vec3& force);
+    void Init() override;
+    void Tick(float deltaTime) override;
+    void OnDestroy() override;
     
-        PhysicsData physicsData;
+    bool CollidesWith(const PhysicsComponent* other) const;
+
+    void ApplyForce(const glm::vec3& force);
     
-    private:
-        glm::vec3 forceAccumulator{};
-        
-        Entity* parentEntity{};
-    };
-}
+    const glm::vec3& GetPosition() const;
+    
+    void Move(const glm::vec3& moveDelta);
+
+    PhysicsData physicsData;
+    PhysicsBoundingBox boundingBox;
+
+private:
+    glm::vec3 forceAccumulator{};
+    
+    Entity* parentEntity{};
+    PhysicsSystem* physicsSystem{};
+};
