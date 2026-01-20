@@ -24,11 +24,12 @@ public:
     const glm::vec3& GetPosition() const;
 
     GravityData gravityData;
-    bool showTrajectory = false;
+    bool showTrajectory{false};
+    glm::bvec3 gravityConstraints{false};
 
 private:
     std::vector<glm::vec3> trajectory;
-    static constexpr size_t trajectoryLength = 100000;
+    static constexpr size_t trajectoryLength{100000};
 
     Entity* parentEntity{};
     GravitySystem* gravitySystem{};

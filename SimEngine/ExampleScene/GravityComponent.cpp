@@ -6,7 +6,7 @@
 #include "GravitySystem.h"
 
 GravityComponent::GravityComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-: Component(parent, scene, name)
+    : Component(parent, scene, name)
 {
     trajectory.reserve(trajectoryLength);
 }
@@ -21,11 +21,15 @@ void GravityComponent::Init()
 
 void GravityComponent::Tick(float deltaTime)
 {
-    const glm::vec3 currentAcceleration = gravityData.currentGravityForce / gravityData.mass;
+    deltaTime = std::min(deltaTime, 1.0f / 120.0f);
+    
+    const auto mask = glm::vec3{1.0f} - glm::vec3(gravityConstraints);
+    
+    const auto currentAcceleration = gravityData.currentGravityForce * mask / gravityData.mass;
     gravityData.currentGravityForce = glm::vec3{0.0f};
-
+    
     gravityData.velocity += currentAcceleration * deltaTime;
-    const glm::vec3 deltaMove = gravityData.velocity * deltaTime;
+    const auto deltaMove = gravityData.velocity * deltaTime;
     parentEntity->Move(deltaMove);
 }
 

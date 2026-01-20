@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <execution>
 #include <random>
+#include <array>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>

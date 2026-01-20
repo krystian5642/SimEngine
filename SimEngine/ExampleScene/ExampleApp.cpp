@@ -2,8 +2,11 @@
 
 #include "BallLauncher.h"
 #include "GravityComponent.h"
+#include "GravityShip.h"
 #include "GravitySystem.h"
+#include "imgui.h"
 #include "PlanetSystem.h"
+#include "SphereGrid.h"
 #include "Core/MathUtils.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
@@ -16,6 +19,79 @@
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
 #include "Rendering/Core/Texture.h"
 #include "Scene/Systems/Physics/PhysicsSystem.h"
+
+class Scene5 : public Scene
+{
+public:
+    Scene5(const std::string& name = "Scene5") 
+        : Scene(name)
+    {
+        AddObject<PhysicsSystem>();
+        
+        auto camera = AddObject<CameraEntity>("Camera");
+        auto cameraComp = camera->GetCameraComponent();
+        cameraComp->SetAsActiveCamera();
+        cameraComp->lockRotation = true;
+        cameraComp->SetPosition({0.0f, 0.0f, 20.0f});
+        
+        auto light = AddObject<DirectionalLightObject>("Directional Light");
+        light->SetDirection({0.1f, 0.1f, -40.0f});
+        light->lightData.ambient = 1.0f;
+        
+        sphereGrid = AddObject<SphereGrid>();
+    }
+    
+    void DrawImGui() const override
+    {
+        if (ImGui::Button("Apply Force"))
+        {
+            sphereGrid->CustomForce({});
+        }
+    }
+    
+private:
+    SphereGrid* sphereGrid;
+};
+
+class Scene4 : public Scene
+{
+public:
+    Scene4(const std::string& name = "Scene4") 
+        : Scene(name)
+    {
+        AddObject<GravitySystem>();
+    
+        auto camera = AddObject<CameraEntity>("Camera");
+        auto cameraComp = camera->GetCameraComponent();
+        cameraComp->SetAsActiveCamera();
+        cameraComp->lockRotation = true;
+        cameraComp->SetPosition({2.8f, 0.0f, 13.0f});
+        
+        auto light = AddObject<DirectionalLightObject>("Directional Light");
+        light->SetDirection({0.1f, 0.1f, -40.0f});
+        light->lightData.ambient = 1.0f;
+        
+        auto sphere = AddObject<MeshEntity>();
+        sphereGravComp = sphere->AddComponent<GravityComponent>();
+        sphere->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
+        sphere->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
+        sphere->SetPosition({2.0f, 0.0f, -2.0f});
+        sphere->SetScale({0.5f, 0.5f, 0.5f});
+        
+        AddObject<GravityShip>();
+    }
+    
+    void Tick(float deltaTime) override
+    {
+        Scene::Tick(deltaTime);
+        
+        sphereGravComp->gravityData.velocity *= 0.99f;
+    }
+    
+private:
+    GravityComponent* sphereGravComp;
+};
+
 
 ExampleApp::ExampleApp()
 {
@@ -205,14 +281,59 @@ ExampleApp::ExampleApp()
                 plane->SetScale({0.5f, 0.5f, 0.5f});
             }
         }
+        
+        return scene;
+    };
     
+    auto scene4 = [] -> std::unique_ptr<Scene>
+    {
+        return std::make_unique<Scene4>();
+    };
     
+    auto scene5 = [] -> std::unique_ptr<Scene>
+    {
+        return std::make_unique<Scene5>();
+    };
+    
+    auto scene6 = [] -> std::unique_ptr<Scene>
+    {
+        auto scene = std::make_unique<Scene>();
+        
+        auto camera = scene->AddObject<CameraEntity>("Camera");
+        auto cameraComp = camera->GetCameraComponent();
+        cameraComp->SetAsActiveCamera();
+        cameraComp->SetPosition({0.0f, 0.0f, 30.0f});
+        
+        auto light = scene->AddObject<DirectionalLightObject>("Directional Light");
+        light->SetDirection({0.1f, 0.1f, -40.0f});
+        light->lightData.ambient = 1.0f;
+    
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                for (int k = 0; k < 7; k++)
+                {
+                    double num = MathUtils::randomNum(0.0, 1.0);
+                    if (num > 0.1) continue;
+                    
+                    auto cube = scene->AddObject<MeshEntity>();
+                    cube->SetMesh(MeshManager::Get().GetAssetByName("cube"));
+                    cube->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
+                    cube->SetPosition({i, j, k});
+                }
+            }
+        }
+        
         return scene;
     };
 
     SceneManager::RegisterScene("DefaultScene", defaultScene);
     SceneManager::RegisterScene("Scene2", scene2);
     SceneManager::RegisterScene("Scene3", scene3);
+    SceneManager::RegisterScene("Scene4", scene4);
+    SceneManager::RegisterScene("Scene5", scene5);
+    SceneManager::RegisterScene("Scene6", scene6);
 
-    //SceneManager::SetDefaultScene("Scene3");
+    SceneManager::SetDefaultScene("Scene6");
 }

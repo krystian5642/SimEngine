@@ -7,10 +7,12 @@ class Entity;
 
 struct PhysicsData
 {
-    float mass{1.0f};
     glm::vec3 velocity{};
+    float mass{1.0f};
+    float linearDamping{0.999f};
     bool enableGravity{false};
     bool applyFriction{true};
+    bool useBounds{true};
 };
 
 struct PhysicsBoundingBox
