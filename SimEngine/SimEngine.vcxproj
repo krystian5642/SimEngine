@@ -279,9 +279,11 @@
     <ClCompile Include="ExampleScene\BallLauncher.cpp" />
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
     <ClCompile Include="ExampleScene\GravityComponent.cpp" />
+    <ClCompile Include="ExampleScene\GravityShip.cpp" />
     <ClCompile Include="ExampleScene\GravitySystem.cpp" />
     <ClCompile Include="ExampleScene\Planet.cpp" />
     <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
+    <ClCompile Include="ExampleScene\SphereGrid.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\imgui_demo.cpp" />
     <ClCompile Include="External\imgui\imgui_draw.cpp" />
@@ -346,9 +348,11 @@
     <ClInclude Include="ExampleScene\BallLauncher.h" />
     <ClInclude Include="ExampleScene\ExampleApp.h" />
     <ClInclude Include="ExampleScene\GravityComponent.h" />
+    <ClInclude Include="ExampleScene\GravityShip.h" />
     <ClInclude Include="ExampleScene\GravitySystem.h" />
     <ClInclude Include="ExampleScene\Planet.h" />
     <ClInclude Include="ExampleScene\PlanetSystem.h" />
+    <ClInclude Include="ExampleScene\SphereGrid.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />
     <ClInclude Include="External\imgui\imgui_impl_glfw.h" />

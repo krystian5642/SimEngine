@@ -65,6 +65,9 @@ void App::Run()
         
         ImGui::Text("Object count: %zu", SceneManager::GetCurrentScene()->GetObjectCount());
         
+        const auto& cameraPosition = SceneManager::GetCurrentScene()->GetCameraPosition();
+        ImGui::Text("Camera position: (%.3f, %.3f, %.3f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        
         ImGui::Separator();
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))
         {
@@ -81,6 +84,11 @@ void App::Run()
                 SceneManager::LoadScene(scene);
             }
         }
+        
+        ImGui::Separator();
+        
+        ImGui::Text("Current scene: %s", SceneManager::GetCurrentScene()->GetName().c_str());
+        SceneManager::GetCurrentScene()->DrawImGui();
         
         ImGui::End(); 
         

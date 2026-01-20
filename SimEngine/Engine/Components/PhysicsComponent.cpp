@@ -21,45 +21,48 @@ void PhysicsComponent::Init()
     
 void PhysicsComponent::Tick(float deltaTime)
 {
-    const glm::vec3 position = GetPosition();
-    const float radius = parentEntity->GetScale().x;
+    if (physicsData.useBounds)
+    {
+        const glm::vec3 position = GetPosition();
+        const float radius = parentEntity->GetScale().x;
     
-    glm::vec3 normal(0.0f);
+        glm::vec3 normal(0.0f);
 
-    // X MIN
-    if (position.x - radius < boundingBox.minBounds.x)
-    {
-        normal = glm::vec3(1,0,0);
-    }
-    // X MAX
-    else if (position.x + radius > boundingBox.maxBounds.x)
-    {
-        normal = glm::vec3(-1,0,0);
-    }
-    // Y MIN
-    else if (position.y - radius < boundingBox.minBounds.y)
-    {
-        normal = glm::vec3(0,1,0);
-    }
-    // Y MAX
-    else if (position.y + radius > boundingBox.maxBounds.y)
-    {
-        normal = glm::vec3(0,-1,0);
-    }
-    // Z MIN
-    else if (position.z - radius < boundingBox.minBounds.z)
-    {
-        normal = glm::vec3(0,0,1);;
-    }
-    // Z MAX
-    else if (position.z + radius > boundingBox.maxBounds.z)
-    {
-        normal = glm::vec3(0,0,-1);
-    }
+        // X MIN
+        if (position.x - radius < boundingBox.minBounds.x)
+        {
+            normal = glm::vec3(1,0,0);
+        }
+        // X MAX
+        else if (position.x + radius > boundingBox.maxBounds.x)
+        {
+            normal = glm::vec3(-1,0,0);
+        }
+        // Y MIN
+        else if (position.y - radius < boundingBox.minBounds.y)
+        {
+            normal = glm::vec3(0,1,0);
+        }
+        // Y MAX
+        else if (position.y + radius > boundingBox.maxBounds.y)
+        {
+            normal = glm::vec3(0,-1,0);
+        }
+        // Z MIN
+        else if (position.z - radius < boundingBox.minBounds.z)
+        {
+            normal = glm::vec3(0,0,1);;
+        }
+        // Z MAX
+        else if (position.z + radius > boundingBox.maxBounds.z)
+        {
+            normal = glm::vec3(0,0,-1);
+        }
     
-    Move(normal * 0.01f);
+        Move(normal * 0.01f);
     
-    physicsData.velocity = glm::reflect(physicsData.velocity, normal);
+        physicsData.velocity = glm::reflect(physicsData.velocity, normal);
+    }
     
     const glm::vec2 horizontalVelPrev = glm::vec2{physicsData.velocity.x, physicsData.velocity.z};
     const float horizontalSpeedPrev = glm::length(horizontalVelPrev);
@@ -75,6 +78,10 @@ void PhysicsComponent::Tick(float deltaTime)
             const glm::vec3 frictionalForce = -physicsData.mass * ScenePhysicsConstants::gravity * coefficientOfFriction * physicsData.velocity / speed;
             ApplyForce(frictionalForce);
         }
+    }
+    else
+    {
+        physicsData.velocity *= physicsData.linearDamping;
     }
     
     glm::vec3 currentAcceleration = forceAccumulator / physicsData.mass;
