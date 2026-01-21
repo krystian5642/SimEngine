@@ -37,8 +37,8 @@ BallLauncher::BallLauncher(ObjectBase* parent, Scene* scene, const std::string& 
     inputComponent->AssignAction(GLFW_KEY_DOWN, this, &BallLauncher::MoveBackward);
 
     physicsComponent = AddComponent<PhysicsComponent>();
-    physicsComponent->physicsData.mass = 1.0f;
-    physicsComponent->physicsData.enableGravity = false;
+    /*physicsComponent->physicsData.mass = 1.0f;
+    physicsComponent->physicsData.enableGravity = false;*/
 
     lineComponent = AddComponent<LineComponent>();
     lineComponent->SetThickness(5.0f);
@@ -78,9 +78,9 @@ void BallLauncher::Fire(const InputData& inputData)
     ball->SetMaterial(MaterialManager::Get().GetAssetByName("turquoise"));
 
     auto physicsComp = ball->AddComponent<PhysicsComponent>();
-    physicsComp->physicsData.velocity = startVelocity;
+    /*physicsComp->physicsData.velocity = startVelocity;
     physicsComp->physicsData.enableGravity = true;
-    physicsComp->physicsData.applyFriction = false;
+    physicsComp->physicsData.applyFriction = false;*/
 
     ball->SetScale({0.4f, 0.4f, 2.0f});
     ball->Rotate(barrelComponent->GetRotation());
@@ -88,7 +88,7 @@ void BallLauncher::Fire(const InputData& inputData)
 
     // dummy recoil
     const auto recoilForce = -200.0f * startVelocity;
-    physicsComponent->ApplyForce({recoilForce.x, 0.0f, recoilForce.z});
+    //physicsComponent->ApplyForce({recoilForce.x, 0.0f, recoilForce.z});
 }
 
 void BallLauncher::DeleteLastBall(const InputData& inputData)
@@ -113,12 +113,12 @@ void BallLauncher::RotateRight(const InputData& inputData)
 void BallLauncher::MoveForward(const InputData& inputData)
 {
     const glm::vec3 forwardEngineForce = meshComponent->GetForwardVector() * 10.f;
-    physicsComponent->ApplyForce(forwardEngineForce);
+    //physicsComponent->ApplyForce(forwardEngineForce);
 }
 void BallLauncher::MoveBackward(const InputData& inputData)
 {
     const glm::vec3 backwardEngineForce = -meshComponent->GetForwardVector() * 10.f;
-    physicsComponent->ApplyForce(backwardEngineForce);
+    //physicsComponent->ApplyForce(backwardEngineForce);
 }
 glm::vec3 BallLauncher::GetBallSpawnPosition() const
 {

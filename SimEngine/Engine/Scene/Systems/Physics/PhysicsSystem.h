@@ -1,20 +1,18 @@
 ﻿#pragma once
 
-#include "Components/PhysicsComponent.h"
 #include "Scene/Objects/Core/SceneObject.h"
+
+class PhysicsComponent;
 
 class PhysicsSystem : public SceneObject
 {
 public:
     PhysicsSystem(ObjectBase* parent, Scene* scene, const std::string& name);
+    virtual ~PhysicsSystem() = 0 {}
     
-    void Tick(float deltaTime) override;
+    void RegisterPhysicsComponent(PhysicsComponent* physicsComponent);
+    void UnregisterPhysicsComponent(PhysicsComponent* physicsComponent);
     
-    void RegisterPhysicsComponent(PhysicsComponent* component);
-    void UnregisterPhysicsComponent(PhysicsComponent* component);
-    
-private:
+protected:
     std::vector<PhysicsComponent*> physicsComponents;
 };
-
-

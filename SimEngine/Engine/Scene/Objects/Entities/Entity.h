@@ -72,6 +72,20 @@ public:
     }
     
     template <class T>
+    void GetComponentsByClass(std::vector<T*>& outComponents, bool includeChildren = true) const
+    {
+        components.GetObjectsByClass<T>(outComponents);
+        
+        if (includeChildren)
+        {
+            childEntities.ForEach([&outComponents, includeChildren](Entity* childEntity, int index)
+            {
+                childEntity->GetComponentsByClass<T>(outComponents, includeChildren);
+            });
+        }
+    }
+    
+    template <class T>
     T* GetComponentByName() const
     {
         return components.GetObjectByName<T>(name);

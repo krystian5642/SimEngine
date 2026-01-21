@@ -1,55 +1,58 @@
 ﻿#pragma once
 
-#include "Component.h"
+#include "Components/Component.h"
 
 class PhysicsSystem;
 class Entity;
 
 struct PhysicsData
 {
-    glm::vec3 velocity{};
     float mass{1.0f};
-    float linearDamping{0.999f};
-    bool enableGravity{false};
-    bool applyFriction{true};
+    bool enableSimpleGravity{false};
     bool useBounds{true};
+    glm::bvec3 physicsLinearConstraints{false, false, false};
 };
 
-struct PhysicsBoundingBox
+struct RuntimePhysicsData
 {
-    glm::vec3 minBounds{-2.0f, -2.0f, -22.0f};
-    glm::vec3 maxBounds{26.0f, 26.0f, 6.0f};
-};
-
-struct ScenePhysicsConstants
-{
-    static constexpr float gravity{9.81f};
-    static constexpr float groundLevel{-2.0f};
+    glm::vec3 linearVelocity{};
+    glm::vec3 angularVelocity{};
+    glm::vec3 forceAccumulator{};
+    glm::vec3 torqueAccumulator{};
+    glm::vec3 centerOfMass{};
+    float momentOfInertia{};
+    float linearDamping{0.999f};
+    float angularDamping{0.999f};
 };
 
 class PhysicsComponent : public Component
 {
 public:
     PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name);
-    
+
     void Init() override;
+    void Start() override;
     void Tick(float deltaTime) override;
     void OnDestroy() override;
     
-    bool CollidesWith(const PhysicsComponent* other) const;
-
     void ApplyForce(const glm::vec3& force);
+    void ApplyTorque(const glm::vec3& force, const glm::vec3& point);
+    
+    void Move(const glm::vec3& moveDelta);
+    void Rotate(const glm::vec3& rotationDelta);
+    void RotateAngular(const glm::vec3& rotationDelta, const glm::vec3& point);
+    
+    bool CollidesWith(const PhysicsComponent* other) const;
+    float GetRadius() const;
     
     const glm::vec3& GetPosition() const;
     
-    void Move(const glm::vec3& moveDelta);
-
     PhysicsData physicsData;
-    PhysicsBoundingBox boundingBox;
-
-private:
-    glm::vec3 forceAccumulator{};
+    RuntimePhysicsData runtimePhysicsData;
+    
+protected:
+    void CalculatePhysicsData();
     
     Entity* parentEntity{};
-    PhysicsSystem* physicsSystem{};
+    std::vector<PhysicsSystem*> scenePhysicsSystems{};
 };

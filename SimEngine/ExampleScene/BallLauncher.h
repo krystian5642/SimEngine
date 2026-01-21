@@ -2,8 +2,8 @@
 
 #include "Scene/Objects/Entities/MeshEntity.h"
 
-class LineComponent;
 class PhysicsComponent;
+class LineComponent;
 struct InputData;
 class InputComponent;
 

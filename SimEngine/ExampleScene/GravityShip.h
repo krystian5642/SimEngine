@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Components/InputComponent.h"
+#include "Components/PhysicsComponent.h"
 #include "Scene/Objects/Entities/Entity.h"
 
 class MeshEntity;
@@ -19,4 +20,7 @@ private:
     MeshEntity* right;
     
     InputComponent* inputComponent;
+    
+    PhysicsComponent* physicsComponentLeft;
+    PhysicsComponent* physicsComponentRight;
 };
