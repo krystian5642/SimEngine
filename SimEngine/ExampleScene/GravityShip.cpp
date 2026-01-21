@@ -2,8 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
-#include "GravityComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/PhysicsComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Scene/Objects/Entities/MeshEntity.h"
@@ -11,25 +11,30 @@
 GravityShip::GravityShip(ObjectBase* parent, Scene* scene, const std::string& name)
     : Entity(parent, scene, name)
 {
-    float mass = 100000.0f;
+    constexpr float mass = 2.0f;
     
     left = AddChild<MeshEntity>();
-    auto grav = left->AddComponent<GravityComponent>();
-    grav->gravityConstraints = {true, false, true};
-    grav->gravityData.mass = mass;
+    
     left->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     left->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
     left->SetPosition({0.0f, 0.0f, -2.0f});
     left->SetScale({0.5f, 1.5f, 0.5f});
     
+    physicsComponentLeft = left->AddComponent<PhysicsComponent>();
+    physicsComponentLeft->physicsData.mass = mass;
+    physicsComponentLeft->physicsData.physicsLinearConstraints = {true, false, true};
+    
+    
     right = AddChild<MeshEntity>();
-    grav = right->AddComponent<GravityComponent>();
-    grav->gravityConstraints = {true, false, true};
-    grav->gravityData.mass = mass;
+    
     right->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     right->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
     right->SetPosition({4.0f, 0.0f, -2.0f});
     right->SetScale({0.5f, 1.5f, 0.5f});
+    
+    physicsComponentRight = right->AddComponent<PhysicsComponent>();
+    physicsComponentRight->physicsData.mass = mass;
+    physicsComponentRight->physicsData.physicsLinearConstraints = {true, false, true};
     
     inputComponent = AddComponent<InputComponent>();
     inputComponent->tickWhenPaused = false;
@@ -40,10 +45,14 @@ GravityShip::GravityShip(ObjectBase* parent, Scene* scene, const std::string& na
 
 void GravityShip::MoveUp(const InputData& inputData)
 {
-    Move({0.0f, inputData.deltaTime * 10.0f, 0.0f});
+    const glm::vec3 force = {0.0f, inputData.deltaTime * 100000.0f, 0.0f};
+    physicsComponentLeft->ApplyForce(force);
+    physicsComponentRight->ApplyForce(force);
 }
 
 void GravityShip::MoveDown(const InputData& inputData)
 {
-    Move({0.0f, -inputData.deltaTime * 10.0f, 0.0f});
+    const glm::vec3 force = {0.0f, -inputData.deltaTime * 100000.0f, 0.0f};
+    physicsComponentLeft->ApplyForce(force);
+    physicsComponentRight->ApplyForce(force);
 }

@@ -39,6 +39,19 @@ public:
     }
     
     template <class ObjectClass>
+    void GetObjectsByClass(std::vector<ObjectClass*>& outObjects) const
+    {
+        for (const auto& object : objects)
+        {
+            auto typedObject = dynamic_cast<ObjectClass*>(object.get());
+            if (typedObject) 
+            {
+                outObjects.push_back(typedObject);
+            }
+        }
+    }
+    
+    template <class ObjectClass>
     ObjectClass* GetObjectByName(const std::string& name)
     {
         for (const auto& object : objects)
@@ -52,7 +65,7 @@ public:
         return nullptr;
     }
     
-    void ForEach(const std::function<void(ObjectBaseClass*, int)>& func)
+    void ForEach(const std::function<void(ObjectBaseClass*, int)>& func) const
     {
         for (int i = 0; i < objects.size(); ++i)
         {

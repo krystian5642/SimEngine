@@ -80,6 +80,12 @@ public:
     {
         return objects.GetObjectByClass<T>();
     }
+    
+    template<class T>
+    void GetObjectsByClass(std::vector<T*>& outObjects)
+    {
+        return objects.GetObjectsByClass<T>(outObjects);
+    }
 
     void SetActiveCamera(CameraComponent* camera) { activeCamera = camera; }
     const CameraComponent* GetActiveCamera() const { return activeCamera; }

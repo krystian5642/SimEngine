@@ -3,7 +3,6 @@
 #include "Scene/Objects/Entities/MeshEntity.h"
 
 class GravityComponent;
-
 class LineComponent;
 
 class Planet : public MeshEntity
@@ -14,7 +13,6 @@ public:
     void Tick(float deltaTime) override;
 
 private:
-    GravityComponent* gravityComponent;
     LineComponent* lineComponent;
 
 };

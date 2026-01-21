@@ -1,6 +1,5 @@
 ﻿#include "PlanetSystem.h"
 
-#include "GravityComponent.h"
 #include "Planet.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
@@ -12,8 +11,8 @@ PlanetSystem::PlanetSystem(ObjectBase* parent, Scene* scene, const std::string& 
     planet = AddChild<MeshEntity>();
     planet->SetMesh(MeshManager::Get().GetAssetByName("planet"));
     planet->SetMaterial(MaterialManager::Get().GetAssetByName("jupiter"));
-    auto mainGravComp = planet->AddComponent<GravityComponent>();
-    mainGravComp->gravityData.mass = 0.8f;
+    /*auto mainGravComp = planet->AddComponent<GravityComponent>();*/
+    /*mainGravComp->gravityData.mass = 0.8f;*/
 
     planet->SetScale({3.0f, 3.0f, 3.0f});
     planet->Move({10.0f, 10.0f, -10.0f});
