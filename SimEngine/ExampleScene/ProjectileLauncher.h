@@ -7,10 +7,10 @@ class LineComponent;
 struct InputData;
 class InputComponent;
 
-class BallLauncher : public MeshEntity
+class ProjectileLauncher : public MeshEntity
 {
 public:
-    BallLauncher(ObjectBase* parent, Scene* scene, const std::string& name);
+    ProjectileLauncher(ObjectBase* parent, Scene* scene, const std::string& name);
 
     void Tick(float deltaTime) override;
 
@@ -30,6 +30,8 @@ protected:
     PhysicsComponent* physicsComponent;
     LineComponent* lineComponent;
 
+    float projectileLinearDamping{0.99f};
+    
     float rotationSpeed{60.0f};
     float moveSpeed{10.0f};
     double fireCooldown{0.2};

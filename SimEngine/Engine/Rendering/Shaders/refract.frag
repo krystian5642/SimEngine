@@ -10,7 +10,7 @@ uniform vec3 cameraPosition;
 
 void main() 
 {
-    float ratio = 1.00 / 2.42;
+    float ratio = 1.00 / 1.233;
     vec3 I = normalize(Position - cameraPosition);
     vec3 R = refract(I, normalize(Normal), ratio);
     color = vec4(texture(skybox, R).rgb, 1.0);

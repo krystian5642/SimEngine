@@ -1,4 +1,4 @@
-﻿#include "BallLauncher.h"
+﻿#include "ProjectileLauncher.h"
 
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
@@ -8,10 +8,11 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Projectile.h"
 #include "Components/LineComponent.h"
 #include "Core/PhysicsUtils.h"
 
-BallLauncher::BallLauncher(ObjectBase* parent, Scene* scene, const std::string& name)
+ProjectileLauncher::ProjectileLauncher(ObjectBase* parent, Scene* scene, const std::string& name)
     : MeshEntity(parent, scene, name)
 {
     SetMesh(MeshManager::Get().GetAssetByName("cube"));
@@ -26,42 +27,41 @@ BallLauncher::BallLauncher(ObjectBase* parent, Scene* scene, const std::string& 
     barrelComponent->Rotate({45.0f, 0.0f, 0.0f});
 
     inputComponent = AddComponent<InputComponent>();
-    inputComponent->AssignAction(GLFW_KEY_E, this, &BallLauncher::RotateBarrelRight);
-    inputComponent->AssignAction(GLFW_KEY_Q, this, &BallLauncher::RotateBarrelLeft);
-    inputComponent->AssignAction(GLFW_KEY_SPACE, this, &BallLauncher::Fire);
-    inputComponent->AssignAction(GLFW_KEY_M, this, &BallLauncher::DeleteLastBall);
+    inputComponent->AssignAction(GLFW_KEY_C, this, &ProjectileLauncher::RotateBarrelRight);
+    inputComponent->AssignAction(GLFW_KEY_Z, this, &ProjectileLauncher::RotateBarrelLeft);
+    inputComponent->AssignAction(GLFW_KEY_SPACE, this, &ProjectileLauncher::Fire);
+    inputComponent->AssignAction(GLFW_KEY_M, this, &ProjectileLauncher::DeleteLastBall);
 
-    inputComponent->AssignAction(GLFW_KEY_LEFT, this, &BallLauncher::RotateLeft);
-    inputComponent->AssignAction(GLFW_KEY_RIGHT, this, &BallLauncher::RotateRight);
-    inputComponent->AssignAction(GLFW_KEY_UP, this, &BallLauncher::MoveForward);
-    inputComponent->AssignAction(GLFW_KEY_DOWN, this, &BallLauncher::MoveBackward);
+    inputComponent->AssignAction(GLFW_KEY_LEFT, this, &ProjectileLauncher::RotateLeft);
+    inputComponent->AssignAction(GLFW_KEY_RIGHT, this, &ProjectileLauncher::RotateRight);
+    inputComponent->AssignAction(GLFW_KEY_UP, this, &ProjectileLauncher::MoveForward);
+    inputComponent->AssignAction(GLFW_KEY_DOWN, this, &ProjectileLauncher::MoveBackward);
 
     physicsComponent = AddComponent<PhysicsComponent>();
-    /*physicsComponent->physicsData.mass = 1.0f;
-    physicsComponent->physicsData.enableGravity = false;*/
+    physicsComponent->physicsData.linearDamping = 0.4f;
 
     lineComponent = AddComponent<LineComponent>();
     lineComponent->SetThickness(5.0f);
 }
 
-void BallLauncher::Tick(float deltaTime)
+void ProjectileLauncher::Tick(float deltaTime)
 {
     MeshEntity::Tick(deltaTime);
 
     UpdateTrajectory();
 }
 
-void BallLauncher::RotateBarrelLeft(const InputData& inputData)
+void ProjectileLauncher::RotateBarrelLeft(const InputData& inputData)
 {
     barrelComponent->Rotate({inputData.deltaTime * rotationSpeed, 0.0f, 0.0f});
 }
 
-void BallLauncher::RotateBarrelRight(const InputData& inputData)
+void ProjectileLauncher::RotateBarrelRight(const InputData& inputData)
 {
     barrelComponent->Rotate({-inputData.deltaTime * rotationSpeed, 0.0f, 0.0f});
 }
 
-void BallLauncher::Fire(const InputData& inputData)
+void ProjectileLauncher::Fire(const InputData& inputData)
 {
     const double currentTime = glfwGetTime();
     if (currentTime - lastFireTime < fireCooldown) return;
@@ -70,28 +70,22 @@ void BallLauncher::Fire(const InputData& inputData)
     const auto startVelocity = GetBallStartVelocity();
     const auto spawn = GetBallSpawnPosition();
 
-    auto ball = scene->AddObject<MeshEntity>();
+    auto projectile = scene->AddObject<Projectile>();
     
-    lastBallHandle = ball->GetHandle();
+    lastBallHandle = projectile->GetHandle();
     
-    ball->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
-    ball->SetMaterial(MaterialManager::Get().GetAssetByName("turquoise"));
-
-    auto physicsComp = ball->AddComponent<PhysicsComponent>();
-    /*physicsComp->physicsData.velocity = startVelocity;
-    physicsComp->physicsData.enableGravity = true;
-    physicsComp->physicsData.applyFriction = false;*/
-
-    ball->SetScale({0.4f, 0.4f, 2.0f});
-    ball->Rotate(barrelComponent->GetRotation());
-    ball->Move(spawn);
+    auto physicsComp = projectile->GetPhysicsComponent();
+    physicsComp->physicsData.linearVelocity = startVelocity;
+    physicsComp->physicsData.linearDamping = projectileLinearDamping;
+    projectile->Rotate(barrelComponent->GetRotation());
+    projectile->Move(spawn);
 
     // dummy recoil
     const auto recoilForce = -200.0f * startVelocity;
-    //physicsComponent->ApplyForce({recoilForce.x, 0.0f, recoilForce.z});
+    physicsComponent->ApplyForce({recoilForce.x, 0.0f, recoilForce.z});
 }
 
-void BallLauncher::DeleteLastBall(const InputData& inputData)
+void ProjectileLauncher::DeleteLastBall(const InputData& inputData)
 {
     auto las = lastBallHandle.Resolve();
     if (las == nullptr)
@@ -102,40 +96,46 @@ void BallLauncher::DeleteLastBall(const InputData& inputData)
     las->Destroy();
 }
 
-void BallLauncher::RotateLeft(const InputData& inputData)
+void ProjectileLauncher::RotateLeft(const InputData& inputData)
 {
     Rotate({0.0f, inputData.deltaTime * rotationSpeed, 0.0f});
 }
-void BallLauncher::RotateRight(const InputData& inputData)
+
+void ProjectileLauncher::RotateRight(const InputData& inputData)
 {
     Rotate({0.0f, -inputData.deltaTime * rotationSpeed, 0.0f});
 }
-void BallLauncher::MoveForward(const InputData& inputData)
+
+void ProjectileLauncher::MoveForward(const InputData& inputData)
 {
     const glm::vec3 forwardEngineForce = meshComponent->GetForwardVector() * 10.f;
-    //physicsComponent->ApplyForce(forwardEngineForce);
+    physicsComponent->ApplyForce(forwardEngineForce);
 }
-void BallLauncher::MoveBackward(const InputData& inputData)
+
+void ProjectileLauncher::MoveBackward(const InputData& inputData)
 {
     const glm::vec3 backwardEngineForce = -meshComponent->GetForwardVector() * 10.f;
-    //physicsComponent->ApplyForce(backwardEngineForce);
+    physicsComponent->ApplyForce(backwardEngineForce);
 }
-glm::vec3 BallLauncher::GetBallSpawnPosition() const
+
+glm::vec3 ProjectileLauncher::GetBallSpawnPosition() const
 {
     return barrelComponent->GetPosition() + barrelComponent->GetForwardVector() * 3.0f;
 }
 
-glm::vec3 BallLauncher::GetBallStartVelocity() const
+glm::vec3 ProjectileLauncher::GetBallStartVelocity() const
 {
-    return barrelComponent->GetForwardVector() * 40.0f;
+    return barrelComponent->GetForwardVector() * 100.0f;
 }
     
-void BallLauncher::UpdateTrajectory()
+void ProjectileLauncher::UpdateTrajectory()
 {
     ProjectileTrajectoryData trajectoryData;
     trajectoryData.startPosition = GetBallSpawnPosition();
     trajectoryData.velocity = GetBallStartVelocity();
     trajectoryData.time = 100.0f;
+    trajectoryData.timeStep = 1.0f / 60.0f;
+    trajectoryData.linearDamping = projectileLinearDamping;
 
     std::vector<glm::vec3> trajectoryPoints;
     PhysicsUtils::PredictProjectileTrajectory(trajectoryData,trajectoryPoints);

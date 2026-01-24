@@ -45,7 +45,7 @@ public:
     virtual void Start() {}
     virtual void Tick(float deltaTime);
     
-    virtual void DrawImGui() const {}
+    virtual void DrawImGui() {}
     
     void DestroyChild(ObjectBase* child) override;
     

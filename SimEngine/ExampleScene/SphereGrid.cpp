@@ -12,8 +12,9 @@ SphereGrid::SphereGrid(ObjectBase* parent, Scene* scene, const std::string& name
 {
     inputComponent = AddComponent<InputComponent>();
     physicsComponent = AddComponent<PhysicsComponent>();
+    physicsComponent->physicsData.linearDamping = 0.6f;
     
-    constexpr float spacing = 4.0f;
+    constexpr float spacing = 2.5f;
     for (int i = -1; i <= 1; i++)
     {
         const float x = static_cast<float>(i) * spacing;
@@ -23,14 +24,14 @@ SphereGrid::SphereGrid(ObjectBase* parent, Scene* scene, const std::string& name
             auto sphere = AddChild<MeshEntity>();
             sphere->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
             sphere->SetMaterial(MaterialManager::Get().GetAssetByName("ruby"));
-            sphere->SetPosition({x, y, 0.0f});
+            sphere->Move({x, y, 0.0f});
         }
     }
 }
 
 void SphereGrid::CustomForce()
 {
-    const glm::vec3 force = glm::vec3{MathUtils::randomNum(1.8f, 2.8f), MathUtils::randomNum(1.8f, 2.8f), 0.0f} * 7000.0f;
-    const glm::vec3 point{MathUtils::randomNum(-4.0f, 4.0f), MathUtils::randomNum(-4.0f, 4.0f), 0.0f};
+    const glm::vec3 force = glm::vec3{10.0f, MathUtils::randomNum(0.1f, 0.5f), 0.0f} * 3000.0f;
+    const glm::vec3 point{-4.0f, 4.0f, 0.0f};
     physicsComponent->ApplyTorque(force, point);
 }

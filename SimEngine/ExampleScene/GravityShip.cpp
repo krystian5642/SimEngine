@@ -11,13 +11,13 @@
 GravityShip::GravityShip(ObjectBase* parent, Scene* scene, const std::string& name)
     : Entity(parent, scene, name)
 {
-    constexpr float mass = 2.0f;
+    constexpr float mass = 5.0f;
     
     left = AddChild<MeshEntity>();
     
     left->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     left->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
-    left->SetPosition({0.0f, 0.0f, -2.0f});
+    left->Move({0.0f, 0.0f, -2.0f});
     left->SetScale({0.5f, 1.5f, 0.5f});
     
     physicsComponentLeft = left->AddComponent<PhysicsComponent>();
@@ -29,7 +29,7 @@ GravityShip::GravityShip(ObjectBase* parent, Scene* scene, const std::string& na
     
     right->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
     right->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
-    right->SetPosition({4.0f, 0.0f, -2.0f});
+    right->Move({4.0f, 0.0f, -2.0f});
     right->SetScale({0.5f, 1.5f, 0.5f});
     
     physicsComponentRight = right->AddComponent<PhysicsComponent>();
@@ -45,14 +45,17 @@ GravityShip::GravityShip(ObjectBase* parent, Scene* scene, const std::string& na
 
 void GravityShip::MoveUp(const InputData& inputData)
 {
-    const glm::vec3 force = {0.0f, inputData.deltaTime * 100000.0f, 0.0f};
+    Move({0.0f, inputData.deltaTime * 10.0f, 0.0f});
+    
+    /*const glm::vec3 force = {0.0f, inputData.deltaTime * 100000.0f, 0.0f};
     physicsComponentLeft->ApplyForce(force);
-    physicsComponentRight->ApplyForce(force);
+    physicsComponentRight->ApplyForce(force);*/
 }
 
 void GravityShip::MoveDown(const InputData& inputData)
 {
-    const glm::vec3 force = {0.0f, -inputData.deltaTime * 100000.0f, 0.0f};
+    Move({0.0f, -inputData.deltaTime * 10.0f, 0.0f});
+    /*const glm::vec3 force = {0.0f, -inputData.deltaTime * 100000.0f, 0.0f};
     physicsComponentLeft->ApplyForce(force);
-    physicsComponentRight->ApplyForce(force);
+    physicsComponentRight->ApplyForce(force);*/
 }
