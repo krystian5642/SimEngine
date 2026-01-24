@@ -34,11 +34,9 @@ void GLSkybox::Draw(const glm::mat4& projectionMatrix, const glm::mat4& viewMatr
 
 void GLSkybox::Create(const std::vector<std::string>& faceLocations)
 {
-    const std::string shadersFolder = "Engine/Rendering/Shaders/";
-    
     ShaderData skyboxShaderData;
-    skyboxShaderData.fragShader = shadersFolder + "skybox.frag";
-    skyboxShaderData.vertShader = shadersFolder + "skybox.vert";
+    skyboxShaderData.fragShader = ShaderData::shadersFolder + "skybox.frag";
+    skyboxShaderData.vertShader = ShaderData::shadersFolder + "skybox.vert";
     
     shader = Renderer::CreateShaderStatic(skyboxShaderData);
     mesh = MeshManager::Get().GetAssetByName("skybox");

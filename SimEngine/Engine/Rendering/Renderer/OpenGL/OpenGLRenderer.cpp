@@ -171,26 +171,24 @@ std::shared_ptr<Material> OpenGLRenderer::CreateReflectMaterial(const MaterialRe
 
 void OpenGLRenderer::InitSceneShaders()
 {
-    const std::string shadersFolder = "Engine/Rendering/Shaders/";
-    
     ShaderData meshShaderData;
-    meshShaderData.vertShader = shadersFolder + "mesh.vert";
-    meshShaderData.fragShader = shadersFolder + "mesh.frag";
+    meshShaderData.vertShader = ShaderData::shadersFolder + "mesh.vert";
+    meshShaderData.fragShader = ShaderData::shadersFolder + "mesh.frag";
     sceneShaders.meshShader = CREATE_SHADER(meshShaderData);
     
     ShaderData directionalShadowMapShaderData;
-    directionalShadowMapShaderData.vertShader = shadersFolder + "directional_shadow_map.vert";
-    directionalShadowMapShaderData.fragShader = shadersFolder + "directional_shadow_map.frag";
+    directionalShadowMapShaderData.vertShader = ShaderData::shadersFolder + "directional_shadow_map.vert";
+    directionalShadowMapShaderData.fragShader = ShaderData::shadersFolder + "directional_shadow_map.frag";
     sceneShaders.directionalShadowMapShader = CREATE_SHADER(directionalShadowMapShaderData);
     
     ShaderData omniShadowMapShaderData;
-    omniShadowMapShaderData.vertShader = shadersFolder + "omni_shadow_map.vert";
-    omniShadowMapShaderData.fragShader = shadersFolder + "omni_shadow_map.frag";
+    omniShadowMapShaderData.vertShader = ShaderData::shadersFolder + "omni_shadow_map.vert";
+    omniShadowMapShaderData.fragShader = ShaderData::shadersFolder + "omni_shadow_map.frag";
     sceneShaders.omniShadowMapShader = CREATE_SHADER(omniShadowMapShaderData);
     
     ShaderData screenShaderData;
-    screenShaderData.vertShader = shadersFolder + "screen.vert";
-    screenShaderData.fragShader = shadersFolder + "screen.frag";
+    screenShaderData.vertShader = ShaderData::shadersFolder + "screen.vert";
+    screenShaderData.fragShader = ShaderData::shadersFolder + "screen.frag";
     sceneShaders.screenShader = CREATE_SHADER(screenShaderData);
 }
 
@@ -224,7 +222,7 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glStencilMask(0x00);
 
-    const glm::mat4 projection = scene->GetProjectionMatrix();
+    const auto projection = scene->GetProjectionMatrix();
     RenderPass(projection, scene);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
