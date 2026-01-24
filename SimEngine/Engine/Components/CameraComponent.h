@@ -41,7 +41,9 @@ public:
     void GetRotation(float& outPitch, float& outYaw) const;
     
     PerspectiveProjectionData perspectiveProjectionData;
+    
     bool lockRotation{false};
+    float cameraSpeed{10.0f};
     
 private:
     glm::mat4 view;
@@ -53,6 +55,4 @@ private:
     glm::vec3 position{0.0f, 0.0f, 3.0f};
     float pitch{};
     float yaw{180.0f};
-
-    float cameraSpeed{10.0f};
 };
