@@ -44,20 +44,12 @@ void SceneComponent::Scale(const glm::vec3& scaleDelta)
 void SceneComponent::SetPosition(const glm::vec3& newPosition)
 {
     transform.position = newPosition;
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->SetPosition(newPosition);
-    }
     UpdateForwardVector();
 }
 
 void SceneComponent::SetRotation(const glm::vec3& newRotation)
 {
     transform.rotation = glm::mod(newRotation, glm::vec3(360.0f));
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->SetRotation(newRotation);
-    }
     UpdateForwardVector();
 }
 
