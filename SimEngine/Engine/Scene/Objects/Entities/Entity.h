@@ -32,6 +32,8 @@ public:
     const glm::vec3& GetRotation() const { return rootComponent->GetRotation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }
 
+    virtual bool CanMove() const { return true; }
+    
     template <class T>
     T* AddChild(const std::string& childName = "")
     {
