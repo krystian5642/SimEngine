@@ -53,7 +53,7 @@ void PhysicsBoundsSystem::Tick(float deltaTime)
     
             physicsComponent->Move(normal * 0.01f);
     
-            auto& linearVelocity = physicsComponent->runtimePhysicsData.linearVelocity;
+            auto& linearVelocity = physicsComponent->physicsData.linearVelocity;
             linearVelocity = glm::reflect(linearVelocity, normal);
         }
     }

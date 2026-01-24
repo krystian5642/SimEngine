@@ -5,15 +5,17 @@ void PhysicsUtils::PredictProjectileTrajectory(const ProjectileTrajectoryData& t
     outTrajectory.clear();
     outTrajectory.reserve(static_cast<size_t>(trajectoryData.time / trajectoryData.timeStep) + 1);
     
+    auto velocity = trajectoryData.velocity;
+    auto prevPoint = trajectoryData.startPosition;
     for (float t = 0.0f; t <= trajectoryData.time; t += trajectoryData.timeStep)
     {
-        glm::vec3 point;
-        point.x = trajectoryData.startPosition.x + trajectoryData.velocity.x * t;
-        point.y = trajectoryData.startPosition.y + trajectoryData.velocity.y * t - 0.5f * trajectoryData.gravity * t * t;
-        point.z = trajectoryData.startPosition.z + trajectoryData.velocity.z * t;
+        const auto newPoint = prevPoint + velocity * trajectoryData.timeStep;
+        outTrajectory.push_back(newPoint);
     
-        outTrajectory.push_back(point);
-    
-        if (point.y <= trajectoryData.groundLevel) break;
+        velocity *= std::pow(trajectoryData.linearDamping, trajectoryData.timeStep);
+        velocity.y -= trajectoryData.gravity * trajectoryData.timeStep;
+        prevPoint = newPoint;
+        
+        if (newPoint.y <= trajectoryData.groundLevel) break;
     }
 }

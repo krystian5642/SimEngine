@@ -7,22 +7,19 @@ class Entity;
 
 struct PhysicsData
 {
-    float mass{1.0f};
-    bool enableSimpleGravity{false};
-    bool useBounds{true};
-    glm::bvec3 physicsLinearConstraints{false, false, false};
-};
-
-struct RuntimePhysicsData
-{
     glm::vec3 linearVelocity{};
     glm::vec3 angularVelocity{};
     glm::vec3 forceAccumulator{};
     glm::vec3 torqueAccumulator{};
     glm::vec3 centerOfMass{};
-    float momentOfInertia{};
+    float mass{1.0f};
+    float momentOfInertia{1.0f};
     float linearDamping{0.999f};
-    float angularDamping{0.999f};
+    float angularDamping{0.6f};
+    bool enableSimpleGravity{false};
+    bool useBounds{true};
+    bool rotateWithCenterOfMass{true};
+    glm::bvec3 physicsLinearConstraints{false, false, false};
 };
 
 class PhysicsComponent : public Component
@@ -40,7 +37,6 @@ public:
     
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotationDelta);
-    void RotateAngular(const glm::vec3& rotationDelta, const glm::vec3& point);
     
     bool CollidesWith(const PhysicsComponent* other) const;
     float GetRadius() const;
@@ -48,7 +44,6 @@ public:
     const glm::vec3& GetPosition() const;
     
     PhysicsData physicsData;
-    RuntimePhysicsData runtimePhysicsData;
     
 protected:
     void CalculatePhysicsData();
