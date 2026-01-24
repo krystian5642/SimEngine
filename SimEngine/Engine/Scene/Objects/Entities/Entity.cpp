@@ -42,6 +42,11 @@ void Entity::DestroyChild(ObjectBase* child)
     
 void Entity::Move(const glm::vec3& moveDelta)
 {
+    if (!CanMove())
+    {
+        return;
+    }
+    
     rootComponent->Move(moveDelta);
     
     childEntities.ForEach([moveDelta](Entity* child, int index)
