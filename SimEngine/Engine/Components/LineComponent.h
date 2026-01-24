@@ -10,6 +10,7 @@ class LineComponent : public RenderComponent
 public:
     LineComponent(ObjectBase* parent, Scene* scene, const std::string& name);
     
+    void Tick(float deltaTime) override;
     void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
     
     const std::vector<glm::vec3>& GetPoints() const { return line->GetPoints(); }
@@ -28,6 +29,7 @@ public:
     
     void AddPoint(const glm::vec3& point) { line->AddPoint(point); }
     
+    bool followParent{false};
 protected:
     std::unique_ptr<Line> line;
 };
