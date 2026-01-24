@@ -5,6 +5,8 @@ struct ShaderData
     std::string vertShader;
     std::string geomShader;
     std::string fragShader;
+    
+    static inline std::string shadersFolder = "Engine/Rendering/Shaders/";
 };
 
 class Shader

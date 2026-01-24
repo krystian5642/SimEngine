@@ -8,11 +8,9 @@
 
 GLLine::GLLine()
 {
-    const std::string shadersFolder = "Engine/Rendering/Shaders/";
-    
     ShaderData shaderData;
-    shaderData.vertShader = shadersFolder + "line.vert";
-    shaderData.fragShader = shadersFolder + "line.frag";
+    shaderData.vertShader = ShaderData::shadersFolder + "line.vert";
+    shaderData.fragShader = ShaderData::shadersFolder + "line.frag";
     shader = std::make_shared<GLShader>(shaderData);
 
     glGenVertexArrays(1, &VAO);

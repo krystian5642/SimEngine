@@ -20,8 +20,6 @@ class Renderer
 public:
     virtual ~Renderer() {}
     
-    static inline const std::string shadersFolder = "Engine/Rendering/Shaders/";
-    
     static void InitStatic(std::unique_ptr<Renderer> renderer)
     {
         rendererAPI = std::move(renderer);
@@ -70,8 +68,8 @@ public:
     static std::shared_ptr<Material> CreateRefractMaterialStatic()
     {
         ShaderData shaderData;
-        shaderData.fragShader = shadersFolder + "refract.frag";
-        shaderData.vertShader = shadersFolder + "refract.vert";
+        shaderData.fragShader = ShaderData::shadersFolder + "refract.frag";
+        shaderData.vertShader = ShaderData::shadersFolder + "refract.vert";
         
         MaterialResources resources;
         resources.shader = rendererAPI->CreateShader(shaderData);
@@ -82,8 +80,8 @@ public:
     static std::shared_ptr<Material> CreateReflectMaterialStatic()
     {
         ShaderData shaderData;
-        shaderData.fragShader = shadersFolder + "reflect.frag";
-        shaderData.vertShader = shadersFolder + "reflect.vert";
+        shaderData.fragShader = ShaderData::shadersFolder + "reflect.frag";
+        shaderData.vertShader = ShaderData::shadersFolder + "reflect.vert";
         
         MaterialResources resources;
         resources.shader = rendererAPI->CreateShader(shaderData);
