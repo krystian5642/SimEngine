@@ -12,8 +12,8 @@ void GravitySystem::Start()
     
     for (const auto& physicsComponent : physicsComponents)
     {
-        physicsComponent->runtimePhysicsData.linearDamping = 1.0f;
-        physicsComponent->runtimePhysicsData.angularDamping = 1.0f;
+        physicsComponent->physicsData.linearDamping = 1.0f;
+        physicsComponent->physicsData.angularDamping = 1.0f;
     }
 }
 

@@ -15,7 +15,7 @@ void SimpleGravitySystem::Tick(float deltaTime)
     {
         if (physicsComponent->physicsData.enableSimpleGravity)
         {
-            physicsComponent->ApplyForce({0.0f, physicsComponent->physicsData.mass * gravity, 0.0f});
+            physicsComponent->ApplyForce({0.0f, -physicsComponent->physicsData.mass * gravity, 0.0f});
         }
     }
 }

@@ -23,17 +23,17 @@ void PhysicsCollisionSystem::Tick(float deltaTime)
             {
                 const auto n = glm::normalize(phys2->GetPosition() - phys1->GetPosition());
             
-                const auto V1n = glm::dot(phys1->runtimePhysicsData.linearVelocity , n) * n;
-                const auto V2n = glm::dot(phys2->runtimePhysicsData.linearVelocity, n) * n;
+                const auto V1n = glm::dot(phys1->physicsData.linearVelocity , n) * n;
+                const auto V2n = glm::dot(phys2->physicsData.linearVelocity, n) * n;
             
-                const auto V1p = phys1->runtimePhysicsData.linearVelocity - V1n;
-                const auto V2p = phys2->runtimePhysicsData.linearVelocity - V2n;
+                const auto V1p = phys1->physicsData.linearVelocity - V1n;
+                const auto V2p = phys2->physicsData.linearVelocity - V2n;
             
                 const auto V1primN = (V1n * (phys1->physicsData.mass - phys2->physicsData.mass) + 2.0f * phys2->physicsData.mass * V2n) / (phys1->physicsData.mass + phys2->physicsData.mass);
                 const auto V2primN = (V2n * (phys2->physicsData.mass - phys1->physicsData.mass) + 2.0f * phys1->physicsData.mass * V1n) / (phys1->physicsData.mass + phys2->physicsData.mass);
             
-                phys1->runtimePhysicsData.linearVelocity = V1primN + V1p;
-                phys2->runtimePhysicsData.linearVelocity = V2primN + V2p;
+                phys1->physicsData.linearVelocity = V1primN + V1p;
+                phys2->physicsData.linearVelocity = V2primN + V2p;
                 
                 phys1->Move(-n * 0.02f);
                 phys2->Move(n * 0.02f);

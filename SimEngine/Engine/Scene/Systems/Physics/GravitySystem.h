@@ -12,5 +12,5 @@ public:
     void Start() override;
     void Tick(float deltaTime) override;
     
-    float gravity{100.0f};
+    float gravity{36.0f};
 };
