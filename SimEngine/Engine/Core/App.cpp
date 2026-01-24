@@ -22,6 +22,7 @@ void App::Run()
     Renderer::InitStatic(std::make_unique<OpenGLRenderer>());
     SceneManager::Init();
     
+    IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     
@@ -75,6 +76,8 @@ void App::Run()
         }
         
         ImGui::Separator();
+        
+        ImGui::Text("Current scene: %s", SceneManager::GetCurrentScene()->GetName().c_str());
         ImGui::Text("Scenes");
         const auto scenes = SceneManager::GetSceneNames();
         for (const auto& scene : scenes)
@@ -86,8 +89,7 @@ void App::Run()
         }
         
         ImGui::Separator();
-        
-        ImGui::Text("Current scene: %s", SceneManager::GetCurrentScene()->GetName().c_str());
+        ImGui::Spacing();
         SceneManager::GetCurrentScene()->DrawImGui();
         
         ImGui::End(); 

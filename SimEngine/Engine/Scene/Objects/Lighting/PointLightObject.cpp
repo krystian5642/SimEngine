@@ -2,6 +2,7 @@
 #include "PointLightObject.h"
 
 #include "Rendering/Core/Shader.h"
+#include "Rendering/Renderer/Renderer.h"
 #include "Scene/Scene.h"
 
 PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::string& name)
@@ -9,8 +10,7 @@ PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::
 {
     lightCount++;
     
-    //shadowMap = std::make_shared<OmniShadowMap>();
-    //shadowMap->Init(2024, 2024);
+    shadowMap = Renderer::CreateOmniShadowMapStatic(2024, 2024);
 
     lightMatrices.resize(6);
     

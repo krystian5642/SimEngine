@@ -592,10 +592,11 @@
       <AdditionalOptions>/utf-8 </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="ExampleScene\BallLauncher.cpp" />
+    <ClCompile Include="ExampleScene\Projectile.cpp" />
+    <ClCompile Include="ExampleScene\ProjectileLauncher.cpp" />
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
     <ClCompile Include="ExampleScene\GravityShip.cpp" />
-    <ClCompile Include="ExampleScene\Planet.cpp" />
+    <ClCompile Include="ExampleScene\CelestialObject.cpp" />
     <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
     <ClCompile Include="ExampleScene\Scenes.cpp" />
     <ClCompile Include="ExampleScene\SphereGrid.cpp" />
@@ -664,10 +665,11 @@
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsCollisionSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\SimpleGravitySystem.h" />
-    <ClInclude Include="ExampleScene\BallLauncher.h" />
+    <ClInclude Include="ExampleScene\Projectile.h" />
+    <ClInclude Include="ExampleScene\ProjectileLauncher.h" />
     <ClInclude Include="ExampleScene\ExampleApp.h" />
     <ClInclude Include="ExampleScene\GravityShip.h" />
-    <ClInclude Include="ExampleScene\Planet.h" />
+    <ClInclude Include="ExampleScene\CelestialObject.h" />
     <ClInclude Include="ExampleScene\PlanetSystem.h" />
     <ClInclude Include="ExampleScene\Scenes.h" />
     <ClInclude Include="ExampleScene\SphereGrid.h" />
@@ -702,6 +704,8 @@
     <Content Include="Engine\Rendering\Shaders\skybox.vert" />
     <Content Include="Engine\Rendering\Shaders\refract.frag" />
     <Content Include="Engine\Rendering\Shaders\refract.vert" />
+    <Content Include="Engine\Rendering\Shaders\texture_only.frag" />
+    <Content Include="Engine\Rendering\Shaders\texture_only.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
