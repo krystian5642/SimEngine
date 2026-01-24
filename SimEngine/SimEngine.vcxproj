@@ -597,7 +597,6 @@
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
     <ClCompile Include="ExampleScene\GravityShip.cpp" />
     <ClCompile Include="ExampleScene\CelestialObject.cpp" />
-    <ClCompile Include="ExampleScene\PlanetSystem.cpp" />
     <ClCompile Include="ExampleScene\Scenes.cpp" />
     <ClCompile Include="ExampleScene\SphereGrid.cpp" />
     <ClCompile Include="External\imgui\imgui.cpp" />
@@ -670,7 +669,6 @@
     <ClInclude Include="ExampleScene\ExampleApp.h" />
     <ClInclude Include="ExampleScene\GravityShip.h" />
     <ClInclude Include="ExampleScene\CelestialObject.h" />
-    <ClInclude Include="ExampleScene\PlanetSystem.h" />
     <ClInclude Include="ExampleScene\Scenes.h" />
     <ClInclude Include="ExampleScene\SphereGrid.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
