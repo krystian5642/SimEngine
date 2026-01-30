@@ -684,11 +684,11 @@ RandomRigidBodiesScene::RandomRigidBodiesScene(const std::string& name)
     centerOfMassIndicator->SetMaterial(MaterialManager::Get().GetAssetByName("emerald"));
     centerOfMassIndicator->SetScale({1.0f, 1.0f, 20.0f});
     
-    auto plane = AddObject<MeshEntity>();
+    /*auto plane = AddObject<MeshEntity>();
     plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
     plane->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
     plane->SetScale({100.0f, 1.0f, 100.0f});
-    plane->Move({0.0f, -8.0f, 0.0f});
+    plane->Move({0.0f, -8.0f, 0.0f});*/
     
     GenerateRandomRigidBody3D();
 }
@@ -920,7 +920,9 @@ void RandomRigidBodiesScene::ApplyTorque()
 {
     phys = rigidBody->GetComponentByClass<PhysicsComponent>();
     
-    const glm::vec3 force{1000000.0f, 0.0f, 0.0f};
+    const glm::vec3 force{MathUtils::randomNum(-1000000.0f, 1000000.0f)
+        , MathUtils::randomNum(-1000000.0f / 2.0f, -1000000.0f / 2.0f)
+        , MathUtils::randomNum(-1000000.0f / 3.0f, -1000000.0f / 3.0f)};
     phys->ApplyTorque(force, {-7.0f, 7.0f, 0.0f});
 }
 

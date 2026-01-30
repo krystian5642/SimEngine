@@ -13,7 +13,7 @@ struct PhysicsData
     glm::vec3 torqueAccumulator{};
     glm::vec3 centerOfMass{};
     float mass{1.0f};
-    float momentOfInertia{1.0f};
+    glm::mat3 invertedInertiaTensor{};
     float linearDamping{0.999f};
     float angularDamping{0.6f};
     bool enableSimpleGravity{false};
@@ -36,7 +36,6 @@ public:
     void ApplyTorque(const glm::vec3& force, const glm::vec3& point);
     
     void Move(const glm::vec3& moveDelta);
-    void Rotate(const glm::vec3& rotationDelta);
     
     bool CollidesWith(const PhysicsComponent* other) const;
     float GetRadius() const;
@@ -47,6 +46,8 @@ public:
     
 protected:
     void CalculatePhysicsData();
+    
+    void ApplyAngularVelocity(float deltaTime);
     
     Entity* parentEntity{};
     std::vector<PhysicsSystem*> scenePhysicsSystems{};
