@@ -49,11 +49,12 @@ void PhysicsComponent::Tick(float deltaTime)
     
     // angular velocity
     physicsData.angularVelocity *= std::pow(physicsData.angularDamping, deltaTime);
-    const auto angularAcceleration = physicsData.momentOfInertia > 0.01f ? physicsData.torqueAccumulator / physicsData.momentOfInertia : glm::vec3{0.0f};
+    const auto angularAcceleration = physicsData.invertedInertiaTensor * physicsData.torqueAccumulator;
     physicsData.torqueAccumulator = glm::vec3{0.0f};
     
     physicsData.angularVelocity += angularAcceleration * deltaTime;
-    Rotate({0.0f, physicsData.angularVelocity.y * deltaTime, physicsData.angularVelocity.z * deltaTime}); // for now, only one axis
+    
+    ApplyAngularVelocity(deltaTime);
 }
 
 void PhysicsComponent::OnDestroy()
@@ -80,26 +81,6 @@ void PhysicsComponent::ApplyTorque(const glm::vec3& force, const glm::vec3& poin
 void PhysicsComponent::Move(const glm::vec3& moveDelta)
 {
     parentEntity->Move(moveDelta);
-}
-
-void PhysicsComponent::Rotate(const glm::vec3& rotationDelta)
-{
-    if (physicsData.rotateWithCenterOfMass)
-    {
-        std::vector<MeshComponent*> meshes;
-        parentEntity->GetComponentsByClass<MeshComponent>(meshes);
-    
-        for (const auto& mesh : meshes)
-        {
-            const glm::mat4 rotationMatrix = glm::rotate(glm::mat4{1.0f}, rotationDelta.z, glm::vec3{0.0f, 0.0f, 1.0f});
-            const glm::vec3 relativePosition = rotationMatrix * glm::vec4(mesh->GetPosition() - physicsData.centerOfMass, 1.0f);
-            mesh->SetPosition(physicsData.centerOfMass + relativePosition);
-        }
-    }
-    else
-    {
-        parentEntity->Rotate(rotationDelta);
-    }
 }
 
 bool PhysicsComponent::CollidesWith(const PhysicsComponent* other) const
@@ -135,14 +116,14 @@ const glm::vec3& PhysicsComponent::GetPosition() const
 void PhysicsComponent::CalculatePhysicsData()
 {
     physicsData.centerOfMass = glm::vec3{0.0f, 0.0f, 0.0f}; //temp!!
-    physicsData.momentOfInertia = 0.0f; // temp!!
+    physicsData.invertedInertiaTensor = glm::mat3{1.0f};
     
     std::vector<MeshComponent*> meshes;
     parentEntity->GetComponentsByClass<MeshComponent>(meshes);
     
     if (!meshes.empty())
     {
-        const float massDi = physicsData.mass / static_cast<float>(meshes.size());
+        const auto massDi = physicsData.mass / static_cast<float>(meshes.size());
     
         // center of mass
         for (const auto& mesh : meshes)
@@ -151,11 +132,62 @@ void PhysicsComponent::CalculatePhysicsData()
         }
         physicsData.centerOfMass /= physicsData.mass;
     
-        // moment of inertia
+        float Ixx = 0.0f;
+        float Iyy = 0.0f;
+        float Izz = 0.0f;
+        
+        // inverted inertia tensor
         for (const auto& mesh : meshes)
         {
-            const auto radius = mesh->GetPosition() - physicsData.centerOfMass;
-            physicsData.momentOfInertia += massDi * glm::dot(radius, radius);
+            const auto& position = mesh->GetPosition() - physicsData.centerOfMass;
+            
+            const auto x2 = position.x * position.x;
+            const auto y2 = position.y * position.y;
+            const auto z2 = position.z * position.z;
+            
+            Ixx += y2 + z2;
+            Iyy += x2 + z2;
+            Izz += x2 + y2;
         }
+        
+        physicsData.invertedInertiaTensor = glm::mat3{
+            Ixx, 0.0f, 0.0f
+            , 0.0f, Iyy, 0.0f
+            , 0.0f, 0.0f, Izz};
+        
+        const auto det = glm::determinant(physicsData.invertedInertiaTensor);
+        if (std::abs(det) > 1e-6f) 
+        {
+            physicsData.invertedInertiaTensor = glm::inverse(physicsData.invertedInertiaTensor);
+        }
+    }
+}
+
+void PhysicsComponent::ApplyAngularVelocity(float deltaTime)
+{
+    if (physicsData.rotateWithCenterOfMass)
+    {
+        std::vector<MeshComponent*> meshes;
+        parentEntity->GetComponentsByClass<MeshComponent>(meshes);
+    
+        const auto angularSpeed = glm::length(physicsData.angularVelocity);
+        if (angularSpeed > 1e-6f)
+        {
+            const auto deltaAngle = angularSpeed * deltaTime;
+            const auto axis = physicsData.angularVelocity / angularSpeed;
+        
+            const auto quatRotation = glm::angleAxis(deltaAngle, axis);
+            for (const auto& mesh : meshes)
+            {
+                const auto relativePosition = quatRotation * (mesh->GetPosition() - physicsData.centerOfMass);
+                mesh->SetPosition(physicsData.centerOfMass + relativePosition);
+            }
+        }
+    }
+    else
+    {
+        // ???
+        const auto deltaRotation = physicsData.angularVelocity * deltaTime;
+        parentEntity->Rotate(deltaRotation);
     }
 }
