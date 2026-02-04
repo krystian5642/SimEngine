@@ -13,7 +13,8 @@ It is being developed as a long-term project, with the goal of adding increasing
    - [Rendering](#rendering)  
    - [Physics](#physics)  
    - [Scene](#scene)  
-   - [Scene Manager](#scene-manager)  
+   - [Scene Manager](#scene-manager)
+   - [Example Scene Setup](#example-scene-setup)
 2. [Description of Sample Scenes](#2-description-of-sample-scenes)  
    - [Ball Launcher](#ball-launcher)  
    - [Gravity Ship](#gravity-ship)  
@@ -70,6 +71,29 @@ It includes the basic components required for scene building, such as:
 `Scene Manager` is a static class that allows new scenes to be registered and later loaded by name. The ImGui panel retrieves all available scene names and displays them as buttons.  
 Thanks to the asset managers, all assets from the previous scene are unloaded and new scene's assets are loaded.
 
+### Example Scene Setup
+
+Here is a simple example of how to set up a scene using Sim Engine:
+
+```cpp
+auto camera = AddObject<CameraEntity>("Camera");
+auto cameraComp = camera->GetCameraComponent();
+cameraComp->SetAsActiveCamera();
+cameraComp->SetPosition({32.0f, 26.0f, 69.0f});
+
+AddObject<PhysicsCollisionSystem>();
+auto boundsSystem = AddObject<PhysicsBoundsSystem>();
+
+auto light = AddObject<DirectionalLightObject>("Directional Light");
+light->SetDirection({0.1f, 0.1f, -60.0f});
+light->lightData.ambient = 1.0f;
+
+auto ball = AddObject<MeshEntity>();
+auto phys = ball->AddComponent<PhysicsComponent>();
+
+ball->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
+ball->SetMaterial(MaterialManager::Get().GetAssetByName("emerald"));
+```
 ---
 
 ## 2. Description of Sample Scenes
