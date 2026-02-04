@@ -7,14 +7,14 @@ It is being developed as a long-term project, with the goal of adding increasing
 
 ## Table of Contents
 
-1. [Engine Architecture](#engine-architecture)  
+1. [Engine Architecture](#1-engine-architecture)  
    - [Core](#core)  
    - [Managers](#managers)  
    - [Rendering](#rendering)  
    - [Physics](#physics)  
    - [Scene](#scene)  
    - [Scene Manager](#scene-manager)  
-2. [Description of Sample Scenes](#description-of-sample-scenes)  
+2. [Description of Sample Scenes](#2-description-of-sample-scenes)  
    - [Ball Launcher](#ball-launcher)  
    - [Gravity Ship](#gravity-ship)  
    - [Ball Collision 2D/3D](#ball-collision-2d3d)  
@@ -23,7 +23,7 @@ It is being developed as a long-term project, with the goal of adding increasing
    - [Sphere Grid](#sphere-grid)  
    - [Materials](#materials)  
    - [Random Rigid Bodies](#random-rigid-bodies)  
-3. [Third Party Libraries](#third-party-libraries)   
+3. [Third Party Libraries](#3-third-party-libraries)   
 
 ---
 
