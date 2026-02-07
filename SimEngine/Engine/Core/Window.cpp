@@ -110,7 +110,8 @@ void Window::OnWindowSizeChanged(GLFWwindow* window, int width, int height)
     mainWindow->width = width;
     mainWindow->height = height;
     
-    glViewport(0, 0, width, height);
+    glfwGetFramebufferSize(window, &mainWindow->bufferWidth, &mainWindow->bufferHeight);
+    mainWindow->onWindowSizeChangedEvent.Invoke(mainWindow, mainWindow->bufferWidth, mainWindow->bufferHeight);
 }
     
 void Window::OnMouseEvent(GLFWwindow* window, double xPos, double yPos)

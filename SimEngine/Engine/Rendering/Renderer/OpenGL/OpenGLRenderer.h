@@ -44,9 +44,10 @@ protected:
     std::shared_ptr<Material> CreateReflectMaterial(const MaterialResources& resources) const;
     
 private:
-    void InitSceneShaders();
+    void InitRenderBuffer(int bufferWidth, int bufferHeight);
     
     void RenderScene(const Scene* scene) const override;
+    void InitSceneShaders() override;
     
     void Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const;
     
@@ -54,6 +55,10 @@ private:
     void DirectionalShadowMapPass(const DirectionalLightObject* dirLightComp, const Scene* scene) const;
     void OmniDirectionalShadowMapPass(const PointLightObject* pointLightComp, const Scene* scene) const;
     void RenderPass(const glm::mat4& projection, const Scene* scene) const;
+    
+    void ResetRenderBuffer();
+    
+    void OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight);
     
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;

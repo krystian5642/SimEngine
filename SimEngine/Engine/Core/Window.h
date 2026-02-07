@@ -1,6 +1,11 @@
 ﻿#pragma once
+#include "EventSystem/Event.h"
 
 struct GLFWwindow;
+class Window;
+
+
+DECLARE_SIMPLE_EVENT(OnWindowSizeChanged, Window*, int, int);
 
 class Window
 {
@@ -25,6 +30,11 @@ public:
     void SetWindowTitle(const std::string& title);
 
     GLFWwindow* GetGLFWWindow() const { return window; }
+    
+    int GetBufferWidth() const { return bufferWidth; }
+    int GetBufferHeight() const { return bufferHeight; }
+    
+    OnWindowSizeChanged onWindowSizeChangedEvent;
     
 private:
     static void OnWindowSizeChanged(GLFWwindow* window, int width, int height);

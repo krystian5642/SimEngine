@@ -23,105 +23,28 @@
 
 OpenGLRenderer::OpenGLRenderer()
 {
+    auto window = App::GetCurrentWindow();
+    
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {
-        glfwDestroyWindow(App::GetCurrentWindow()->GetGLFWWindow());
+        glfwDestroyWindow(window->GetGLFWWindow());
         glfwTerminate();
         throw std::runtime_error("Failed to initialize GLEW");
     }
     
-    InitSceneShaders();
-    
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-    glGenFramebuffers(1, &screenRenderData.FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
     
-    glGenTextures(1, &screenRenderData.colorbufferTexture);
-    glBindTexture(GL_TEXTURE_2D, screenRenderData.colorbufferTexture);
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture);
-    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, 1920, 1080, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    InitSceneShaders();
     
-    glBindTexture(GL_TEXTURE_2D, 0);
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture, 0); 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.colorbufferTexture, 0);
-    
-    glGenRenderbuffers(1, &screenRenderData.RBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.RBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1920, 1080);
-    //glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, 1920, 1080);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.RBO);
-    
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-    {       
-        throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
-    }
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    
-    // screen quad
-    float quadVertices[] = {  
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };
-    
-    glGenVertexArrays(1, &screenRenderData.quadVAO);
-    glBindVertexArray(screenRenderData.quadVAO);
-    
-    glGenBuffers(1, &screenRenderData.quadVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, screenRenderData.quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), quadVertices, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
-    
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    window->onWindowSizeChangedEvent.BindRaw(this, &OpenGLRenderer::OnWindowSizeChanged);
+    InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
 }
 
 OpenGLRenderer::~OpenGLRenderer()
 {
-    if (screenRenderData.FBO != 0)
-    {
-        glDeleteFramebuffers(1, &screenRenderData.FBO);
-    }
-
-    if (screenRenderData.colorbufferTexture != 0)
-    {
-        glDeleteTextures(1, &screenRenderData.colorbufferTexture);
-    }
-
-    if (screenRenderData.RBO != 0)
-    {
-        glDeleteRenderbuffers(1, &screenRenderData.RBO);
-    }
-
-    if (screenRenderData.quadVAO != 0)
-    {
-        glDeleteVertexArrays(1, &screenRenderData.quadVAO);
-    }
-
-    if (screenRenderData.quadVBO != 0)
-    {
-        glDeleteBuffers(1, &screenRenderData.quadVBO);
-    }
+    ResetRenderBuffer();
 }
     
 std::shared_ptr<Texture> OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
@@ -169,27 +92,68 @@ std::shared_ptr<Material> OpenGLRenderer::CreateReflectMaterial(const MaterialRe
     return std::make_shared<GLReflectMaterial>(resources);
 }
 
-void OpenGLRenderer::InitSceneShaders()
+void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 {
-    ShaderData meshShaderData;
-    meshShaderData.vertShader = ShaderData::shadersFolder + "mesh.vert";
-    meshShaderData.fragShader = ShaderData::shadersFolder + "mesh.frag";
-    sceneShaders.meshShader = CREATE_SHADER(meshShaderData);
+    ResetRenderBuffer();
     
-    ShaderData directionalShadowMapShaderData;
-    directionalShadowMapShaderData.vertShader = ShaderData::shadersFolder + "directional_shadow_map.vert";
-    directionalShadowMapShaderData.fragShader = ShaderData::shadersFolder + "directional_shadow_map.frag";
-    sceneShaders.directionalShadowMapShader = CREATE_SHADER(directionalShadowMapShaderData);
+    glGenFramebuffers(1, &screenRenderData.FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
     
-    ShaderData omniShadowMapShaderData;
-    omniShadowMapShaderData.vertShader = ShaderData::shadersFolder + "omni_shadow_map.vert";
-    omniShadowMapShaderData.fragShader = ShaderData::shadersFolder + "omni_shadow_map.frag";
-    sceneShaders.omniShadowMapShader = CREATE_SHADER(omniShadowMapShaderData);
+    glGenTextures(1, &screenRenderData.colorbufferTexture);
+    glBindTexture(GL_TEXTURE_2D, screenRenderData.colorbufferTexture);
+    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture);
+    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, 1920, 1080, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
-    ShaderData screenShaderData;
-    screenShaderData.vertShader = ShaderData::shadersFolder + "screen.vert";
-    screenShaderData.fragShader = ShaderData::shadersFolder + "screen.frag";
-    sceneShaders.screenShader = CREATE_SHADER(screenShaderData);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture, 0); 
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.colorbufferTexture, 0);
+    
+    glGenRenderbuffers(1, &screenRenderData.RBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.RBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
+    //glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, 1920, 1080);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.RBO);
+    
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE)
+    {       
+        throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+    }
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    // screen quad
+    float quadVertices[] = {  
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+    
+    glGenVertexArrays(1, &screenRenderData.quadVAO);
+    glBindVertexArray(screenRenderData.quadVAO);
+    
+    glGenBuffers(1, &screenRenderData.quadVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, screenRenderData.quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), quadVertices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+    
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void OpenGLRenderer::RenderScene(const Scene* scene) const
@@ -239,6 +203,29 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     sceneShaders.screenShader->Unbind();
+}
+
+void OpenGLRenderer::InitSceneShaders()
+{
+    ShaderData meshShaderData;
+    meshShaderData.vertShader = ShaderData::shadersFolder + "mesh.vert";
+    meshShaderData.fragShader = ShaderData::shadersFolder + "mesh.frag";
+    sceneShaders.meshShader = CREATE_SHADER(meshShaderData);
+    
+    ShaderData directionalShadowMapShaderData;
+    directionalShadowMapShaderData.vertShader = ShaderData::shadersFolder + "directional_shadow_map.vert";
+    directionalShadowMapShaderData.fragShader = ShaderData::shadersFolder + "directional_shadow_map.frag";
+    sceneShaders.directionalShadowMapShader = CREATE_SHADER(directionalShadowMapShaderData);
+    
+    ShaderData omniShadowMapShaderData;
+    omniShadowMapShaderData.vertShader = ShaderData::shadersFolder + "omni_shadow_map.vert";
+    omniShadowMapShaderData.fragShader = ShaderData::shadersFolder + "omni_shadow_map.frag";
+    sceneShaders.omniShadowMapShader = CREATE_SHADER(omniShadowMapShaderData);
+    
+    ShaderData screenShaderData;
+    screenShaderData.vertShader = ShaderData::shadersFolder + "screen.vert";
+    screenShaderData.fragShader = ShaderData::shadersFolder + "screen.frag";
+    sceneShaders.screenShader = CREATE_SHADER(screenShaderData);
 }
 
 void OpenGLRenderer::Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const
@@ -294,7 +281,8 @@ void OpenGLRenderer::OmniDirectionalShadowMapPass(const PointLightObject* pointL
 
 void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene) const
 {
-    glViewport(0, 0, 1920, 1080);
+    const auto window = App::GetCurrentWindow();
+    glViewport(0, 0, window->GetBufferWidth(), window->GetBufferHeight());
 
     auto viewMatrix = scene->GetActiveCamera()->GetViewMatrix();
 
@@ -359,4 +347,42 @@ void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene)
     }
 
     sceneShaders.meshShader->Unbind();
+}
+
+void OpenGLRenderer::ResetRenderBuffer()
+{
+    if (screenRenderData.FBO != 0)
+    {
+        glDeleteFramebuffers(1, &screenRenderData.FBO);
+        screenRenderData.FBO = 0;
+    }
+
+    if (screenRenderData.colorbufferTexture != 0)
+    {
+        glDeleteTextures(1, &screenRenderData.colorbufferTexture);
+        screenRenderData.colorbufferTexture = 0;
+    }
+
+    if (screenRenderData.RBO != 0)
+    {
+        glDeleteRenderbuffers(1, &screenRenderData.RBO);
+        screenRenderData.RBO = 0;
+    }
+
+    if (screenRenderData.quadVAO != 0)
+    {
+        glDeleteVertexArrays(1, &screenRenderData.quadVAO);
+        screenRenderData.quadVAO = 0;
+    }
+
+    if (screenRenderData.quadVBO != 0)
+    {
+        glDeleteBuffers(1, &screenRenderData.quadVBO);
+        screenRenderData.quadVBO = 0;   
+    }
+}
+
+void OpenGLRenderer::OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight)
+{
+    InitRenderBuffer(bufferWidth, bufferHeight);
 }
