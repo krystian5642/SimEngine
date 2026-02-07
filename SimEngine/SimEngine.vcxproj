@@ -618,6 +618,7 @@
     <ClInclude Include="Engine\Components\SceneComponent.h" />
     <ClInclude Include="Engine\Core\App.h" />
     <ClInclude Include="Engine\Core\Concepts.h" />
+    <ClInclude Include="Engine\Core\EventSystem\Event.h" />
     <ClInclude Include="Engine\Core\Files\File.h" />
     <ClInclude Include="Engine\Core\Logging\Log.h" />
     <ClInclude Include="Engine\Core\MathUtils.h" />

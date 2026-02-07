@@ -30,6 +30,11 @@ public:
         rendererAPI->RenderScene(scene);
     }
     
+    static void InitSceneShadersStatic()
+    {
+        rendererAPI->InitSceneShaders();
+    }
+    
     static std::shared_ptr<Texture> CreateTextureStatic(const std::string& fileLocation)
     {
         return rendererAPI->CreateTexture(fileLocation);
@@ -94,6 +99,7 @@ protected:
     
 protected:
     virtual void RenderScene(const Scene* scene) const = 0;
+    virtual void InitSceneShaders() = 0;
     
     virtual std::shared_ptr<Texture> CreateTexture(const std::string& fileLocation) const = 0;
     virtual std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const = 0;

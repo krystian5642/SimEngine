@@ -7,7 +7,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::RandomRigidBodies);
+    SceneManager::SetDefaultScene(SceneNames::BallLauncher);
     
     REGISTER_SCENE(BallLauncher);
     REGISTER_SCENE(GravityShip);
