@@ -13,16 +13,6 @@ MeshManager& MeshManager::Get()
     return meshManager;
 }
 
-MeshManager::MeshManager() 
-    : AssetManager<Mesh>()
-{
-    createAssetFuncs["cube"] = &MeshManager::LoadCube;
-    createAssetFuncs["sphere"] = &MeshManager::LoadSphere;
-    createAssetFuncs["plane"] = &MeshManager::LoadPlane;
-    createAssetFuncs["skybox"] = &MeshManager::LoadSkybox;
-    createAssetFuncs["planet"] = &MeshManager::LoadPlanet;
-}
-
 std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
 {
     std::vector<float> vertices;
@@ -89,6 +79,16 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
     }
     
     return Renderer::CreateMeshStatic({vertices, indices});
+}
+
+MeshManager::MeshManager() 
+    : AssetManager<Mesh>()
+{
+    createAssetFuncs["cube"] = &MeshManager::LoadCube;
+    createAssetFuncs["sphere"] = &MeshManager::LoadSphere;
+    createAssetFuncs["plane"] = &MeshManager::LoadPlane;
+    createAssetFuncs["skybox"] = &MeshManager::LoadSkybox;
+    createAssetFuncs["planet"] = &MeshManager::LoadPlanet;
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadCube()

@@ -5,6 +5,12 @@ GLTexture::GLTexture(const std::string& fileLocation)
 {
 }
 
+GLTexture::GLTexture(unsigned char* data, int width, int height)
+    : Texture(data, width, height)
+{
+    GLTexture::LoadGPUData();
+}
+
 GLTexture::~GLTexture()
 {
     GLTexture::FreeGPUData();
@@ -31,7 +37,7 @@ void GLTexture::LoadGPUData()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureData.width
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData.width
         , textureData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData.data);
     glGenerateMipmap(GL_TEXTURE_2D);
 

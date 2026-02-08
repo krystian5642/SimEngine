@@ -40,6 +40,11 @@ public:
         return rendererAPI->CreateTexture(fileLocation);
     }
     
+    static std::shared_ptr<Texture> CreateTextureStatic(unsigned char* data, int width, int height)
+    {
+        return rendererAPI->CreateTexture(data, width, height);
+    }
+    
     static std::shared_ptr<Shader> CreateShaderStatic(const ShaderData& shaderData)
     {
         return rendererAPI->CreateShader(shaderData);
@@ -102,6 +107,7 @@ protected:
     virtual void InitSceneShaders() = 0;
     
     virtual std::shared_ptr<Texture> CreateTexture(const std::string& fileLocation) const = 0;
+    virtual std::shared_ptr<Texture> CreateTexture(unsigned char* data, int width, int height) const = 0;
     virtual std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const = 0;
     virtual std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const = 0;
     virtual std::unique_ptr<Line> CreateLine() const = 0;

@@ -592,6 +592,9 @@
       <AdditionalOptions>/utf-8 </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="ExampleScene\ProceduralPlanet\Gradient1D.cpp" />
+    <ClCompile Include="ExampleScene\ProceduralPlanet\ProceduralPlanet.cpp" />
+    <ClCompile Include="ExampleScene\ProceduralPlanet\TerrainFace.cpp" />
     <ClCompile Include="ExampleScene\Projectile.cpp" />
     <ClCompile Include="ExampleScene\ProjectileLauncher.cpp" />
     <ClCompile Include="ExampleScene\ExampleApp.cpp" />
@@ -665,6 +668,9 @@
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsCollisionSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\SimpleGravitySystem.h" />
+    <ClInclude Include="ExampleScene\ProceduralPlanet\Gradient1D.h" />
+    <ClInclude Include="ExampleScene\ProceduralPlanet\ProceduralPlanet.h" />
+    <ClInclude Include="ExampleScene\ProceduralPlanet\TerrainFace.h" />
     <ClInclude Include="ExampleScene\Projectile.h" />
     <ClInclude Include="ExampleScene\ProjectileLauncher.h" />
     <ClInclude Include="ExampleScene\ExampleApp.h" />

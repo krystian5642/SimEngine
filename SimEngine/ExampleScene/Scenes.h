@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "ProceduralPlanet/ProceduralPlanet.h"
 #include "Scene/Scene.h"
 
 #define SCENE_NAME inline const std::string
@@ -20,6 +21,7 @@ namespace SceneNames
     SCENE_NAME PlanetAndMoons = "Planet and Moons";
     SCENE_NAME Materials = "Materials";
     SCENE_NAME RandomRigidBodies = "Random Rigid Bodies";
+    SCENE_NAME ProceduralPlanet = "Procedural Planet";
 }
 
 class BallLauncherScene : public Scene
@@ -102,4 +104,15 @@ private:
     Entity* rigidBody{};
     MeshEntity* centerOfMassIndicator{};
     PhysicsComponent* phys{};
+};
+
+class ProceduralPlanetScene : public Scene
+{
+public:
+    ProceduralPlanetScene(const std::string& name = SceneNames::ProceduralPlanet);
+    
+    void DrawImGui() override;
+    
+private:
+    ProceduralPlanet* proceduralPlanet;
 };

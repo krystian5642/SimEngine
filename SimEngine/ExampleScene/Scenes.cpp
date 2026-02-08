@@ -17,6 +17,7 @@
 #include "Components/LineComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Managers/TextureManager.h"
+#include "ProceduralPlanet/ProceduralPlanet.h"
 #include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Texture.h"
 #include "Scene/Systems/Physics/SimpleGravitySystem.h"
@@ -924,5 +925,69 @@ void RandomRigidBodiesScene::ApplyTorque()
         , MathUtils::randomNum(-1000000.0f / 2.0f, -1000000.0f / 2.0f)
         , MathUtils::randomNum(-1000000.0f / 3.0f, -1000000.0f / 3.0f)};
     phys->ApplyTorque(force, {-7.0f, 7.0f, 0.0f});
+}
+
+ProceduralPlanetScene::ProceduralPlanetScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 4.0f, 35.0f});
+    cameraComp->cameraSpeed = 30.0f;
+        
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({20.1f, -30.1f, -40.0f});
+    light->lightData.ambient = 0.6f;
+    light->lightData.diffuse = 1.0f;
+    
+    proceduralPlanet = AddObject<ProceduralPlanet>();
+    proceduralPlanet->Move({0.0f, 0.0f, -1.0f});
+    proceduralPlanet->SetScale({100.0f, 100.0f, 100.0f});
+}
+
+void ProceduralPlanetScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    bool changed = false;
+    
+    auto& noiseSettingsList = proceduralPlanet->noiseSettings;
+    
+    ImGui::Text("Noise Settings");
+    
+    for (size_t i = 0; i < noiseSettingsList.size(); ++i)
+    {
+        auto& settings = noiseSettingsList[i];
+        std::string label = "Layer " + std::to_string(i);
+        
+        if (ImGui::TreeNode(label.c_str()))
+        {
+            changed |= ImGui::DragFloat("Strength", &settings.strength, 0.01f, 0.0f, 100.0f);
+            changed |= ImGui::DragFloat("Frequency", &settings.frequency, 0.01f, 0.0f, 100.0f);
+            changed |= ImGui::DragFloat("Min Value", &settings.minValue, 0.01f, -1.0f, 1.0f);
+            changed |= ImGui::DragFloat("Max Value", &settings.maxValue, 0.01f, -1.0f, 1.0f);
+            changed |= ImGui::DragFloat3("Offset", glm::value_ptr(settings.offset), 0.01f);
+            
+            ImGui::TreePop();
+        }
+    }
+    
+    if (ImGui::Button("Add Layer"))
+    {
+        noiseSettingsList.push_back(NoiseSettings{});
+        changed = true;
+    }
+    
+    if (!noiseSettingsList.empty() && ImGui::Button("Remove Last Layer"))
+    {
+        noiseSettingsList.pop_back();
+        changed = true;
+    }
+    
+    if (changed)
+    {
+        proceduralPlanet->GenerateFaces();
+    }
 }
 
