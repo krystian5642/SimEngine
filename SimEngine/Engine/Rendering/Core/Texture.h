@@ -11,6 +11,7 @@ class Texture
 {
 public:
     Texture(const std::string& fileLocation);
+    Texture(unsigned char* data, int width, int height);
     virtual ~Texture();
 
     virtual void Bind() const = 0;
@@ -27,4 +28,6 @@ protected:
     void FreeCPUData();
     
     TextureData textureData;
+    
+    bool stbiIMAGELoaded{false};
 };

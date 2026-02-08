@@ -31,6 +31,7 @@ public:
     
 protected:
     std::shared_ptr<Texture> CreateTexture(const std::string& fileLocation) const override;
+    std::shared_ptr<Texture> CreateTexture(unsigned char* data, int width, int height) const override;
     std::shared_ptr<Shader> CreateShader(const ShaderData& shaderData) const override;
     std::shared_ptr<Mesh> CreateMesh(const MeshData& meshData) const override;
     std::unique_ptr<Line> CreateLine() const override;

@@ -4,6 +4,13 @@ struct MeshData
 {
     std::vector<float> vertices{}; 
     std::vector<unsigned int> indices{};
+    
+    MeshData& operator+=(const MeshData& b)
+    {
+        vertices.insert(vertices.end(), b.vertices.begin(), b.vertices.end());
+        indices.insert(indices.end(), b.indices.begin(), b.indices.end());
+        return *this;
+    }
 };
 
 class Mesh

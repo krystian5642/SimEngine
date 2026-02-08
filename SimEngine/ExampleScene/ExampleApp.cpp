@@ -7,7 +7,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::BallLauncher);
+    SceneManager::SetDefaultScene(SceneNames::ProceduralPlanet);
     
     REGISTER_SCENE(BallLauncher);
     REGISTER_SCENE(GravityShip);
@@ -18,4 +18,6 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(PlanetAndMoons);
     REGISTER_SCENE(Materials);
     REGISTER_SCENE(RandomRigidBodies);
+    
+    REGISTER_SCENE(ProceduralPlanet);
 }

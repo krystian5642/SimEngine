@@ -51,7 +51,12 @@ std::shared_ptr<Texture> OpenGLRenderer::CreateTexture(const std::string& fileLo
 {
     return std::make_shared<GLTexture>(fileLocation);
 }
-    
+
+std::shared_ptr<Texture> OpenGLRenderer::CreateTexture(unsigned char* data, int width, int height) const
+{
+    return std::make_shared<GLTexture>(data, width, height);
+}
+
 std::shared_ptr<Shader> OpenGLRenderer::CreateShader(const ShaderData& shaderData) const
 {
     return std::make_shared<GLShader>(shaderData);

@@ -237,7 +237,7 @@ void main()
     vec4 pointLightColor = CalcPointLightColor();
     vec4 spotLightColor = CalcSpotLightColor();
     
-    color = directionalLightColor + pointLightColor + spotLightColor;
+    color = texture(material.texture, TexCoord); //directionalLightColor + pointLightColor + spotLightColor;
 }
 
 
