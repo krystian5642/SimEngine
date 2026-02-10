@@ -1,22 +1,59 @@
 ﻿#include "Entity.h"
 
-#include "Components/Component.h"
+#include <GLFW/glfw3.h>
+
 #include "Components/SceneComponent.h"
 #include "Core/App.h"
 
 Entity::Entity(ObjectBase* parent, Scene* scene, const std::string& name)
     : SceneObject(parent, scene, name)
 {
-    rootComponent = AddComponent<SceneComponent>();
+    rootComponent = AddComponent<SceneComponent>("root");
+}
+
+void Entity::Init()
+{
+    SceneObject::Init();
+    
+    components.Init();
+    childEntities.Init();
+}
+
+void Entity::Start()
+{
+    SceneObject::Start();
+    
+    components.Start();
+    childEntities.Start();
 }
 
 void Entity::Tick(float deltaTime)
 {
     SceneObject::Tick(deltaTime);
     
-    const bool isPaused = App::currentApp->GetIsPaused();
-    components.Tick(deltaTime, isPaused);
-    childEntities.Tick(deltaTime, isPaused);
+    const auto isPaused = App::currentApp->GetIsPaused();
+    
+    components.Tick();
+    childEntities.Tick();
+    
+    auto tickPhase = EngineTickPhase::PrePhysics;
+    components.TickObjects(deltaTime, isPaused, tickPhase);
+    childEntities.TickObjects(deltaTime, isPaused, tickPhase);
+    
+    static constexpr auto physicsTickInterval = 1.0f / 60.0f;
+    const auto currentTime = static_cast<float>(glfwGetTime());
+    if (currentTime - lastPhysicsTickTime >= physicsTickInterval)
+    {
+        tickPhase = EngineTickPhase::Physics;
+        components.TickObjects(physicsTickInterval, isPaused, tickPhase);
+        childEntities.TickObjects(physicsTickInterval, isPaused, tickPhase);
+        
+        lastPhysicsTickTime = currentTime;
+    }
+    
+    //tickPhase = EngineTickPhase::PostPhysics;
+    //components.TickObjects(deltaTime, isPaused, tickPhase);
+    //childEntities.TickObjects(deltaTime, isPaused, tickPhase);
 }
     
 void Entity::OnDestroy()

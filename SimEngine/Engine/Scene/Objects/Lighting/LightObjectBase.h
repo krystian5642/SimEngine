@@ -28,5 +28,5 @@ public:
 
 protected:
     glm::mat4 lightProjectionMatrix;
-    std::shared_ptr<ShadowMap> shadowMap;
+    ShadowMapPtr shadowMap;
 };

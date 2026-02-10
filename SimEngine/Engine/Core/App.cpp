@@ -19,7 +19,7 @@ App::App()
 void App::Run()
 {
     Log::Init();
-    Renderer::InitStatic(std::make_unique<OpenGLRenderer>());
+    Renderer::Init(RendererType::OpenGL);
     SceneManager::Init();
     
     IMGUI_CHECKVERSION();
@@ -78,13 +78,30 @@ void App::Run()
         ImGui::Separator();
         
         ImGui::Text("Current scene: %s", SceneManager::GetCurrentScene()->GetName().c_str());
-        ImGui::Text("Scenes");
-        const auto scenes = SceneManager::GetSceneNames();
-        for (const auto& scene : scenes)
+        // Main Scenes
+        if (ImGui::CollapsingHeader("Main Scenes", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if (ImGui::Button(scene.c_str()))
+            if (ImGui::Button("Space Explorer"))
             {
-                SceneManager::LoadScene(scene);
+                SceneManager::LoadScene("Space Explorer");
+            }
+        }
+
+        // Test Scenes
+        if (ImGui::CollapsingHeader("Test Scenes"))
+        {
+            const auto scenes = SceneManager::GetSceneNames();
+            for (const auto& scene : scenes)
+            {
+                if (scene == "Space Explorer")
+                {
+                    continue;
+                }
+                
+                if (ImGui::Button(scene.c_str()))
+                {
+                    SceneManager::LoadScene(scene);
+                }
             }
         }
         

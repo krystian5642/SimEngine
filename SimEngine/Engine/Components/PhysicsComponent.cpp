@@ -8,6 +8,7 @@
 PhysicsComponent::PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : Component(parent, scene, name)
 {
+   tickPhase = EngineTickPhase::Physics;
 }
 
 void PhysicsComponent::Init()
@@ -33,26 +34,21 @@ void PhysicsComponent::Tick(float deltaTime)
 {
     Component::Tick(deltaTime);
     
-    CalculatePhysicsData(); // temp !!!
-    
-    const auto mask = glm::vec3{1.0f} - glm::vec3(physicsData.physicsLinearConstraints);
-    
     // linear velocity
     physicsData.linearVelocity *= std::pow(physicsData.linearDamping, deltaTime);
-    const auto currentAcceleration = physicsData.mass > 0.01f ? physicsData.forceAccumulator * mask / physicsData.mass : glm::vec3{0.0f};
-    physicsData.forceAccumulator = glm::vec3{0.0f};
+    physicsData.linearVelocity += physicsData.linearAcceleration * deltaTime;
+    physicsData.linearAcceleration = glm::vec3{0.0f};
     
-    physicsData.linearVelocity += currentAcceleration * deltaTime;
     const auto deltaMove = physicsData.linearVelocity * deltaTime;
-    //physicsData.centerOfMass += deltaMove;
+    physicsData.centerOfMass += deltaMove;
+    
     Move(deltaMove);
     
     // angular velocity
     physicsData.angularVelocity *= std::pow(physicsData.angularDamping, deltaTime);
-    const auto angularAcceleration = physicsData.invertedInertiaTensor * physicsData.torqueAccumulator;
-    physicsData.torqueAccumulator = glm::vec3{0.0f};
-    
-    physicsData.angularVelocity += angularAcceleration * deltaTime;
+    physicsData.angularVelocity += physicsData.angularAcceleration * deltaTime;
+    physicsData.angularAcceleration = glm::vec3{0.0f};
+    physicsData.angularAcceleration = glm::vec3{0.0f};
     
     ApplyAngularVelocity(deltaTime);
 }
@@ -69,13 +65,26 @@ void PhysicsComponent::OnDestroy()
 
 void PhysicsComponent::ApplyForce(const glm::vec3& force)
 {
-    physicsData.forceAccumulator += force;
+    const auto mask = glm::vec3{1.0f} - glm::vec3(physicsData.physicsLinearConstraints);
+    physicsData.linearAcceleration += physicsData.mass > 0.01f ? force * mask / physicsData.mass : glm::vec3{0.0f};
 }
 
 void PhysicsComponent::ApplyTorque(const glm::vec3& force, const glm::vec3& point)
 {
-    physicsData.torqueAccumulator += glm::cross(point - physicsData.centerOfMass, force);
+    const auto torque = glm::cross(point - physicsData.centerOfMass, force);
+    physicsData.angularAcceleration += physicsData.invertedInertiaTensor * torque;
+    
     ApplyForce(force);
+}
+
+void PhysicsComponent::ApplyImpulse(const glm::vec3& impulse)
+{
+    physicsData.linearVelocity += impulse / physicsData.mass;
+}
+
+void PhysicsComponent::ApplyAngularImpulse(const glm::vec3& impulse)
+{
+    physicsData.angularVelocity += impulse * physicsData.invertedInertiaTensor;
 }
 
 void PhysicsComponent::Move(const glm::vec3& moveDelta)
@@ -83,17 +92,24 @@ void PhysicsComponent::Move(const glm::vec3& moveDelta)
     parentEntity->Move(moveDelta);
 }
 
+void PhysicsComponent::StopImediately()
+{
+    physicsData.linearVelocity = glm::vec3{0.0f};
+    physicsData.angularVelocity = glm::vec3{0.0f};
+}
+
 bool PhysicsComponent::CollidesWith(const PhysicsComponent* other) const
 {
-    if (other == this)
+    if (other == this || other == nullptr 
+        || !other->physicsData.enableCollision || !physicsData.enableCollision)
     {
         return false;
     }
     
     // only for uniformly scaled spheres
     const float distance = glm::distance(GetPosition(), other->GetPosition());
-    const float radius1 = parentEntity->GetScale().x;
-    const float radius2 = other->parentEntity->GetScale().x;
+    const float radius1 = parentEntity->GetScale().x * radiusMultiplier;
+    const float radius2 = other->parentEntity->GetScale().x * other->radiusMultiplier;
     
     if (distance <= radius1 + radius2)
     {
@@ -115,7 +131,7 @@ const glm::vec3& PhysicsComponent::GetPosition() const
 
 void PhysicsComponent::CalculatePhysicsData()
 {
-    physicsData.centerOfMass = glm::vec3{0.0f, 0.0f, 0.0f}; //temp!!
+    physicsData.centerOfMass = glm::vec3{0.0f, 0.0f, 0.0f};
     physicsData.invertedInertiaTensor = glm::mat3{1.0f};
     
     std::vector<MeshComponent*> meshes;
@@ -186,7 +202,6 @@ void PhysicsComponent::ApplyAngularVelocity(float deltaTime)
     }
     else
     {
-        // ???
         const auto deltaRotation = physicsData.angularVelocity * deltaTime;
         parentEntity->Rotate(deltaRotation);
     }

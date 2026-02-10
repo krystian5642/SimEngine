@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "ProceduralPlanet/ProceduralPlanet.h"
 #include "Scene/Scene.h"
+#include "../SpaceExplorer/ProceduralPlanet.h"
 
 #define SCENE_NAME inline const std::string
 
@@ -12,7 +12,7 @@ class Entity;
 
 namespace SceneNames 
 {
-    SCENE_NAME BallLauncher = "Ball Launcher";
+    SCENE_NAME ProjectileLauncher = "Projectile Launcher";
     SCENE_NAME BallCollision2D = "Ball Collision 2D";
     SCENE_NAME BallCollision3D = "Ball Collision 3D";
     SCENE_NAME SphereGrid = "Sphere Grid";
@@ -24,10 +24,10 @@ namespace SceneNames
     SCENE_NAME ProceduralPlanet = "Procedural Planet";
 }
 
-class BallLauncherScene : public Scene
+class ProjectileLauncherScene : public Scene
 {
 public:
-    BallLauncherScene(const std::string& name = SceneNames::BallLauncher);
+    ProjectileLauncherScene(const std::string& name = SceneNames::ProjectileLauncher);
 };
 
 class BallCollision2DScene : public Scene
@@ -116,3 +116,9 @@ public:
 private:
     ProceduralPlanet* proceduralPlanet;
 };
+
+
+
+
+
+

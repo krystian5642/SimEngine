@@ -2,7 +2,6 @@
 
 #include "Rendering/UniformNames.h"
 
-class Shader;
 class Texture;
 
 namespace UniformNames
@@ -25,7 +24,7 @@ struct MaterialData
 
 struct MaterialResources
 {
-    std::shared_ptr<Texture> texture;
+    TexturePtr texture;
     std::shared_ptr<const Shader> shader;
     MaterialData data;
 };
@@ -33,7 +32,7 @@ struct MaterialResources
 class Material
 {
 public:
-    Material(const MaterialResources& resources);
+    Material(const MaterialResources& resources) : resources(resources) {}
     virtual ~Material() {}
     
     virtual void Use(const std::shared_ptr<const Shader>& shader) const;
@@ -42,16 +41,23 @@ public:
     
 protected:
     MaterialResources resources;
+    
 };
 
 class ReflectMaterial : public Material
 {
 public:
+    ReflectMaterial(const MaterialResources& resources) : Material(resources) {}
     virtual ~ReflectMaterial() = 0 {}
+    
+    static MaterialPtr CreateReflectMaterial();
 };
 
 class RefractMaterial : public Material
 {
 public:
+    RefractMaterial(const MaterialResources& resources) : Material(resources) {}
     virtual ~RefractMaterial() = 0 {}
+    
+    static MaterialPtr CreateRefractMaterial();
 };

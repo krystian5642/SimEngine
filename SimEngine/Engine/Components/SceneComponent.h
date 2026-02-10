@@ -28,18 +28,24 @@ public:
     void DetachComponent(SceneComponent* component);
 
     const glm::vec3& GetForwardVector() const { return forward; }
+    const glm::vec3& GetUpVector() const { return up; }
+    const glm::vec3& GetRightVector() const { return right; }
+    
     const glm::vec3& GetPosition() const { return transform.position; }
     const glm::vec3& GetRotation() const { return transform.rotation; }
     const glm::vec3& GetScale() const { return transform.scale; }
     const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 
 private:
-    void UpdateForwardVector();
+    void UpdateVectors();
     void UpdateModelMatrix();
     
     Transform transform;
     glm::mat4 modelMatrix;
+    
     glm::vec3 forward;
+    glm::vec3 up;
+    glm::vec3 right;
     
 private:
     std::vector<SceneComponent*> attachedComponents;

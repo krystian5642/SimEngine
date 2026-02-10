@@ -11,8 +11,8 @@ class MeshEntity : public Entity
 public:
     MeshEntity(ObjectBase* parent, Scene* scene, const std::string& name);
     
-    void SetMesh(const std::shared_ptr<Mesh>& newMesh);
-    void SetMaterial(const std::shared_ptr<Material>& material);
+    void SetMesh(const MeshPtr& newMesh);
+    void SetMaterial(const MaterialPtr& material);
 
 protected:
     MeshComponent* meshComponent;

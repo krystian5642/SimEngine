@@ -8,12 +8,12 @@ MeshEntity::MeshEntity(ObjectBase* parent, Scene* scene, const std::string& name
     meshComponent = AddComponent<MeshComponent>();
 }
     
-void MeshEntity::SetMesh(const std::shared_ptr<Mesh>& newMesh)
+void MeshEntity::SetMesh(const MeshPtr& newMesh)
 {
     meshComponent->mesh = newMesh;
 }
     
-void MeshEntity::SetMaterial(const std::shared_ptr<Material>& material)
+void MeshEntity::SetMaterial(const MaterialPtr& material)
 {
     meshComponent->material = material;
 }

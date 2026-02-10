@@ -4,7 +4,8 @@
 #include "Rendering/UniformNames.h"
 
 #include "stb_image.h"
-#include "Rendering/Renderer/Renderer.h"
+#include "Rendering/Core/Shader.h"
+#include "Rendering/Core/Mesh.h"
 
 GLSkybox::GLSkybox(const std::vector<std::string>& faceLocations)
     : Skybox(faceLocations)
@@ -38,7 +39,7 @@ void GLSkybox::Create(const std::vector<std::string>& faceLocations)
     skyboxShaderData.fragShader = ShaderData::shadersFolder + "skybox.frag";
     skyboxShaderData.vertShader = ShaderData::shadersFolder + "skybox.vert";
     
-    shader = Renderer::CreateShaderStatic(skyboxShaderData);
+    shader = Shader::CreateShader(skyboxShaderData);
     mesh = MeshManager::Get().GetAssetByName("skybox");
     
     glGenTextures(1, &textureId);

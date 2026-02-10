@@ -1,5 +1,7 @@
 ﻿#include "Scene.h"
 
+#include <GLFW/glfw3.h>
+
 #include "Components/CameraComponent.h"
 #include "Core/App.h"
 #include "Rendering/Renderer/Renderer.h"
@@ -12,14 +14,43 @@ Scene::Scene(const std::string& name)
 {
     
 }
+
+void Scene::Init()
+{
+    isInitialized = true;
     
+    objects.Init();
+}
+
+void Scene::Start()
+{
+    objects.Start();
+}
+
 void Scene::Tick(float deltaTime)
 {
-    static constexpr float maxDeltaTime = 1.0f / 60.0f;
+    static constexpr auto maxDeltaTime = 1.0f / 60.0f;
     deltaTime = std::min(deltaTime, maxDeltaTime);
     
-    const bool isPaused = App::currentApp->GetIsPaused();
-    objects.Tick(deltaTime, isPaused);
+    const auto isPaused = App::currentApp->GetIsPaused();
+    
+    objects.Tick();
+    
+    auto tickPhase = EngineTickPhase::PrePhysics;
+    objects.TickObjects(deltaTime, isPaused, tickPhase);
+    
+    static constexpr auto physicsTickInterval = 1.0f / 60.0f;
+    const auto currentTime = static_cast<float>(glfwGetTime());
+    if (currentTime - lastPhysicsTickTime >= physicsTickInterval)
+    {
+        tickPhase = EngineTickPhase::Physics;
+        objects.TickObjects(physicsTickInterval, isPaused, tickPhase);
+        
+        lastPhysicsTickTime = currentTime;
+    }
+    
+    //tickPhase = EngineTickPhase::PostPhysics;
+    //objects.TickObjects(deltaTime, isPaused, tickPhase);
 }
     
 void Scene::DestroyChild(ObjectBase* child)
@@ -34,7 +65,7 @@ void Scene::OnDestroy()
     
 void Scene::Render() const
 {
-    Renderer::RenderSceneStatic(this);
+    Renderer::Get()->RenderScene(this);
 }
     
 void Scene::RegisterDirectionalLight(DirectionalLightObject* dirLight)

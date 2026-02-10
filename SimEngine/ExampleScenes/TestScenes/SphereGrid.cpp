@@ -31,7 +31,7 @@ SphereGrid::SphereGrid(ObjectBase* parent, Scene* scene, const std::string& name
 
 void SphereGrid::CustomForce()
 {
-    const glm::vec3 force = glm::vec3{10.0f, MathUtils::randomNum(0.1f, 0.5f), 0.0f} * 3000.0f;
+    const glm::vec3 force = glm::vec3{10.0f, MathUtils::RandomNum(0.1f, 0.5f), 0.0f} * 3000.0f;
     const glm::vec3 point{-4.0f, 4.0f, 0.0f};
     physicsComponent->ApplyTorque(force, point);
 }

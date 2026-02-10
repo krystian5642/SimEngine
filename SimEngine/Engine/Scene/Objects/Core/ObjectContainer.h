@@ -9,11 +9,18 @@ class ObjectContainer
     using ObjectBasePtr = std::unique_ptr<ObjectBaseClass>;
 public:
     template <class ObjectClass>
-    ObjectClass* AddObject(ObjectBase* parent, Scene* scene, const std::string& name)
+    ObjectClass* AddObject(ObjectBase* parent, Scene* scene, bool isInitialized, const std::string& name)
     {
         auto newObject = std::make_unique<ObjectClass>(parent, scene, name);
         auto rawPtr = newObject.get();
-        objectsToAdd.push_back(std::move(newObject));
+        if (isInitialized)
+        {
+            objectsToAdd.push_back(std::move(newObject));
+        }
+        else
+        {
+            objects.push_back(std::move(newObject));
+        }
         return rawPtr;
     }
     
@@ -52,13 +59,13 @@ public:
     }
     
     template <class ObjectClass>
-    ObjectClass* GetObjectByName(const std::string& name)
+    ObjectClass* GetObjectByName(const std::string& name) const
     {
         for (const auto& object : objects)
         {
-            if (object.object->GetName() == name)
+            if (object->GetName() == name)
             {
-                return object.object.get();
+                return dynamic_cast<ObjectClass*>(object.get());
             }
         }
         
@@ -75,8 +82,24 @@ public:
             }
         }
     }
-
-    void Tick(float deltaTime, bool isPaused)
+    
+    void Init()
+    {
+        for (const auto& object : objects)
+        {
+            object->Init();
+        }
+    }
+    
+    void Start()
+    {
+        for (const auto& object : objects)
+        {
+            object->Start();
+        }
+    }
+    
+    void Tick()
     {
         for (const auto& object : objectsToAdd)
         {
@@ -86,6 +109,7 @@ public:
         {
             object->Start();
         }
+        
         for (auto& object : objectsToAdd)
         {
             objects.push_back(std::move(object));
@@ -101,10 +125,13 @@ public:
             return std::find(objectsToRemove.begin(), objectsToRemove.end(), objectPtr.get()) != objectsToRemove.end();
         });
         objectsToRemove.clear();
-        
+    }
+    
+    void TickObjects(float deltaTime, bool isPaused, EngineTickPhase tickPhase)
+    {
         for (const auto& object : objects)
         {
-            if (!isPaused || object->tickWhenPaused)
+            if ((!isPaused || object->tickWhenPaused) && object->tickPhase == tickPhase)
             {
                 object->Tick(deltaTime);
             }

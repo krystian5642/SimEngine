@@ -1,6 +1,5 @@
 ﻿#include "Gradient1D.h"
-
-#include "Rendering/Renderer/Renderer.h"
+#include "Rendering/Core/Texture.h"
 
 void Gradient1D::AddPoint(float position, const glm::vec3& color)
 {
@@ -37,7 +36,7 @@ glm::vec3 Gradient1D::GetColor(float time) const
     return glm::vec3(1.0f);
 }
 
-std::shared_ptr<Texture> Gradient1D::GetTexture() const
+TexturePtr Gradient1D::GetTexture() const
 {
     unsigned int resolution = 256;
     std::vector<unsigned char> colors(resolution * 3);
@@ -52,5 +51,10 @@ std::shared_ptr<Texture> Gradient1D::GetTexture() const
         colors[3*i + 2] = static_cast<unsigned char>(color.z * 255.0f);
     }
     
-    return Renderer::CreateTextureStatic(colors.data(), resolution, 1);
+    TextureData data;
+    data.data = colors.data();
+    data.width = resolution;
+    data.height = 1;
+    
+    return Texture::CreateTexture(data);
 }

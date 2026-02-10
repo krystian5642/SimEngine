@@ -3,14 +3,14 @@
 
 #include "Scene/Scene.h"
 #include "Rendering/Core/Shader.h"
-#include "Rendering/Renderer/Renderer.h"
+#include "Rendering/Lighting/ShadowMap.h"
 
 DirectionalLightObject::DirectionalLightObject(ObjectBase* parent, Scene* scene, const std::string& name)
     : LightObjectBase(parent, scene, name)
 {
     lightCount++;
     
-    shadowMap = Renderer::CreateShadowMapStatic(2048, 2048);
+    shadowMap = ShadowMap::CreateShadowMap(2048, 2048);
     
     lightProjectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
     UpdateViewProjectionMatrix();

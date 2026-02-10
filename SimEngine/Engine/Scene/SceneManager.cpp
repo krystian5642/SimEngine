@@ -22,7 +22,7 @@ void SceneManager::LoadScene(const std::string& sceneName)
         
     currentScene = loadSceneFuncs[sceneName]();
         
-    Renderer::InitSceneShadersStatic();
+    Renderer::Get()->InitSceneShaders();
     
     currentScene->Init();
     currentScene->Start();
