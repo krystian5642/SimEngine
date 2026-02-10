@@ -29,3 +29,5 @@
 #if SUPPORT_OPENGL
 #include <GL/glew.h>
 #endif
+
+#include "Rendering/Core/Common.h"

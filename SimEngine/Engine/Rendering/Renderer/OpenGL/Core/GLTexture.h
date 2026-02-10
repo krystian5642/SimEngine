@@ -6,15 +6,13 @@ class GLTexture : public Texture
 {
 public:
     GLTexture(const std::string& fileLocation);
-    GLTexture(unsigned char* data, int width, int height);
+    GLTexture(const TextureData& textureData);
     ~GLTexture() override;
     
     void Bind() const override;
-
-protected:
-    void LoadGPUData() override;
-    void FreeGPUData() override;
     
 private:
+    void GenerateTexture();
+    
     GLuint textureID{};
 };

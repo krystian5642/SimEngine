@@ -76,12 +76,13 @@ void ProjectileLauncher::Fire(const InputData& inputData)
     
     auto physicsComp = projectile->GetPhysicsComponent();
     physicsComp->physicsData.linearVelocity = startVelocity;
+    physicsComp->physicsData.rotateWithCenterOfMass = false;
     physicsComp->physicsData.linearDamping = projectileLinearDamping;
     projectile->Rotate(barrelComponent->GetRotation());
     projectile->Move(spawn);
 
     // dummy recoil
-    const auto recoilForce = -200.0f * startVelocity;
+    const auto recoilForce = -2.0f * startVelocity;
     physicsComponent->ApplyForce({recoilForce.x, 0.0f, recoilForce.z});
 }
 
@@ -108,13 +109,13 @@ void ProjectileLauncher::RotateRight(const InputData& inputData)
 
 void ProjectileLauncher::MoveForward(const InputData& inputData)
 {
-    const glm::vec3 forwardEngineForce = meshComponent->GetForwardVector() * 10.f;
+    const glm::vec3 forwardEngineForce = meshComponent->GetForwardVector();
     physicsComponent->ApplyForce(forwardEngineForce);
 }
 
 void ProjectileLauncher::MoveBackward(const InputData& inputData)
 {
-    const glm::vec3 backwardEngineForce = -meshComponent->GetForwardVector() * 10.f;
+    const glm::vec3 backwardEngineForce = -meshComponent->GetForwardVector();
     physicsComponent->ApplyForce(backwardEngineForce);
 }
 

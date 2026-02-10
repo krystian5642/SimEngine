@@ -3,34 +3,6 @@
 GLMesh::GLMesh(const MeshData& meshData)
     : Mesh(meshData)
 {
-    GLMesh::LoadGPUData(meshData);
-}
-    
-GLMesh::~GLMesh()
-{
-    GLMesh::FreeGPUData();
-}
-    
-void GLMesh::Draw() const
-{
-    glBindVertexArray(VAO);
-    
-    if (IBO != 0)
-    {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-        glDrawElements(GL_TRIANGLES, drawCount, GL_UNSIGNED_INT, nullptr);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-    else
-    {
-        glDrawArrays(GL_TRIANGLES, 0, drawCount);
-    }
-    
-    glBindVertexArray(0);
-}
-    
-void GLMesh::LoadGPUData(const MeshData& meshData)
-{
     drawCount = static_cast<GLsizei>(meshData.vertices.size());
     
     glGenVertexArrays(1, &VAO);
@@ -63,23 +35,38 @@ void GLMesh::LoadGPUData(const MeshData& meshData)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
     
-void GLMesh::FreeGPUData()
+GLMesh::~GLMesh()
 {
     if (VAO != 0)
     {
         glDeleteVertexArrays(1, &VAO);
-        VAO = 0;
     }
 
     if (VBO != 0)
     {
         glDeleteBuffers(1, &VBO);
-        VBO = 0;
     }
 
     if (IBO != 0)
     {
         glDeleteBuffers(1, &IBO);
-        IBO = 0;
     }
+}
+    
+void GLMesh::Draw() const
+{
+    glBindVertexArray(VAO);
+    
+    if (IBO != 0)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+        glDrawElements(GL_TRIANGLES, drawCount, GL_UNSIGNED_INT, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, drawCount);
+    }
+    
+    glBindVertexArray(0);
 }

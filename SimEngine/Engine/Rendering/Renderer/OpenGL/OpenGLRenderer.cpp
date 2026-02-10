@@ -36,7 +36,7 @@ OpenGLRenderer::OpenGLRenderer()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
-    InitSceneShaders();
+    OpenGLRenderer::InitSceneShaders();
     
     window->onWindowSizeChangedEvent.BindRaw(this, &OpenGLRenderer::OnWindowSizeChanged);
     InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
@@ -47,52 +47,52 @@ OpenGLRenderer::~OpenGLRenderer()
     ResetRenderBuffer();
 }
     
-std::shared_ptr<Texture> OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
+TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
 {
     return std::make_shared<GLTexture>(fileLocation);
 }
 
-std::shared_ptr<Texture> OpenGLRenderer::CreateTexture(unsigned char* data, int width, int height) const
+TexturePtr OpenGLRenderer::CreateTexture(const TextureData& textureData) const
 {
-    return std::make_shared<GLTexture>(data, width, height);
+    return std::make_shared<GLTexture>(textureData);
 }
 
-std::shared_ptr<Shader> OpenGLRenderer::CreateShader(const ShaderData& shaderData) const
+ShaderPtr OpenGLRenderer::CreateShader(const ShaderData& shaderData) const
 {
     return std::make_shared<GLShader>(shaderData);
 }
         
-std::shared_ptr<Mesh> OpenGLRenderer::CreateMesh(const MeshData& meshData) const
+MeshPtr OpenGLRenderer::CreateMesh(const MeshData& meshData) const
 {
     return std::make_shared<GLMesh>(meshData);
 }
     
-std::unique_ptr<Line> OpenGLRenderer::CreateLine() const
+LinePtr OpenGLRenderer::CreateLine() const
 {
     return std::make_unique<GLLine>();
 }
     
-std::unique_ptr<Skybox> OpenGLRenderer::CreateSkybox(const std::vector<std::string>& faceLocations) const
+SkyboxPtr OpenGLRenderer::CreateSkybox(const std::vector<std::string>& faceLocations) const
 {
     return std::make_unique<GLSkybox>(faceLocations);
 }
     
-std::shared_ptr<ShadowMap> OpenGLRenderer::CreateShadowMap(int width, int height) const
+ShadowMapPtr OpenGLRenderer::CreateShadowMap(int width, int height) const
 {
     return std::make_shared<GLShadowMap>(width, height);
 }
     
-std::shared_ptr<ShadowMap> OpenGLRenderer::CreateOmniShadowMap(int width, int height) const
+ShadowMapPtr OpenGLRenderer::CreateOmniShadowMap(int width, int height) const
 {
     return std::make_shared<GLOmniShadowMap>(width, height);
 }
     
-std::shared_ptr<Material> OpenGLRenderer::CreateRefractMaterial(const MaterialResources& resources) const
+MaterialPtr OpenGLRenderer::CreateRefractMaterial(const MaterialResources& resources) const
 {
     return std::make_shared<GLRefractMaterial>(resources);
 }
     
-std::shared_ptr<Material> OpenGLRenderer::CreateReflectMaterial(const MaterialResources& resources) const
+MaterialPtr OpenGLRenderer::CreateReflectMaterial(const MaterialResources& resources) const
 {
     return std::make_shared<GLReflectMaterial>(resources);
 }

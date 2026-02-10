@@ -44,6 +44,7 @@ void Projectile::Tick(float deltaTime)
 
     Rotate({currPitch - prevPitch, 0.0f, 0.0f});
     
+    
     prevPitch = currPitch;
 }
 

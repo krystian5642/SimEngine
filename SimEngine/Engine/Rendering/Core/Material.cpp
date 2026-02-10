@@ -1,11 +1,6 @@
 ﻿#include "Material.h"
 #include "Shader.h"
 #include "Texture.h"
-
-Material::Material(const MaterialResources& resources)
-    : resources(resources)
-{
-}
     
 void Material::Use(const std::shared_ptr<const Shader>& shader) const
 {
@@ -22,4 +17,32 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     {
         resources.texture->Bind();
     }
+}
+
+MaterialPtr ReflectMaterial::CreateReflectMaterial()
+{
+    auto rendererAPI = Renderer::Get();
+        
+    ShaderData shaderData;
+    shaderData.fragShader = ShaderData::shadersFolder + "reflect.frag";
+    shaderData.vertShader = ShaderData::shadersFolder + "reflect.vert";
+        
+    MaterialResources resources;
+    resources.shader = rendererAPI->CreateShader(shaderData);
+        
+    return rendererAPI->CreateReflectMaterial(resources);
+}
+
+MaterialPtr RefractMaterial::CreateRefractMaterial()
+{
+    auto rendererAPI = Renderer::Get();
+        
+    ShaderData shaderData;
+    shaderData.fragShader = ShaderData::shadersFolder + "refract.frag";
+    shaderData.vertShader = ShaderData::shadersFolder + "refract.vert";
+        
+    MaterialResources resources;
+    resources.shader = rendererAPI->CreateShader(shaderData);
+        
+    return rendererAPI->CreateRefractMaterial(resources);
 }

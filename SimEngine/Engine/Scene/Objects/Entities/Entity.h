@@ -2,6 +2,7 @@
 
 #include "Scene/Objects/Core/SceneObject.h"
 #include "Components/SceneComponent.h"
+#include "Scene/Scene.h"
 #include "Scene/Objects/Core/ObjectContainer.h"
 
 class Scene;
@@ -15,6 +16,8 @@ class Entity : public SceneObject
 public:
     Entity(ObjectBase* parent, Scene* scene, const std::string& name);
   
+    void Init() override;
+    void Start() override;
     void Tick(float deltaTime) override;
     void OnDestroy() override;
     
@@ -37,7 +40,7 @@ public:
     template <class T>
     T* AddChild(const std::string& childName = "")
     {
-        return childEntities.AddObject<T>(this, scene, childName);
+        return childEntities.AddObject<T>(this, scene, scene->GetIsInitialized(), childName);
     }
     
     template <class T>
@@ -55,7 +58,7 @@ public:
     template <class T>
     T* AddComponent(const std::string& componentName = "")
     {
-        auto* newComponent = components.AddObject<T>(this, scene, componentName);
+        auto* newComponent = components.AddObject<T>(this, scene, scene->GetIsInitialized(), componentName);
         if (rootComponent)
         {
             auto* sceneComponent = dynamic_cast<SceneComponent*>(newComponent);
@@ -88,9 +91,9 @@ public:
     }
     
     template <class T>
-    T* GetComponentByName() const
+    T* GetComponentByName(const std::string& componentName) const
     {
-        return components.GetObjectByName<T>(name);
+        return components.GetObjectByName<T>(componentName);
     }
 
 protected:
@@ -98,4 +101,7 @@ protected:
     
     ObjectContainer<Entity> childEntities;
     ObjectContainer<Component> components;
+    
+private:
+    float lastPhysicsTickTime{0.0f};
 };

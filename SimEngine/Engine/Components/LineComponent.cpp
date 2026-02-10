@@ -6,7 +6,7 @@
 LineComponent::LineComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : RenderComponent(parent, scene, name)
 {
-    line = Renderer::CreateLineStatic();
+    line = Line::CreateLine();
 }
 
 void LineComponent::Tick(float deltaTime)

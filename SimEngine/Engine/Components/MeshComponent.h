@@ -13,6 +13,6 @@ public:
 
     void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
     
-    std::shared_ptr<Mesh> mesh;
-    std::shared_ptr<Material> material;
+    MeshPtr mesh;
+    MaterialPtr material;
 };

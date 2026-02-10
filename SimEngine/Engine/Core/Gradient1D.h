@@ -14,8 +14,9 @@ public:
     void AddPoint(float position, const glm::vec3& color);
     
     glm::vec3 GetColor(float time) const;
+    TexturePtr GetTexture() const;
     
-    std::shared_ptr<Texture> GetTexture() const;
+    void ClearPoints() { points.clear(); }
     
 private:
     std::vector<Gradient1DPoint> points;

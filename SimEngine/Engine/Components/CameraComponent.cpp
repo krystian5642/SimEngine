@@ -1,21 +1,124 @@
 ﻿#include "CameraComponent.h"
 
-#include <GLFW/glfw3.h>
-
-#include "Scene/Scene.h"
-#include "Components/InputComponent.h"
+#include "MeshComponent.h"
 #include "Core/App.h"
 
 CameraComponent::CameraComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : Component(parent, scene, name)
 {
-    Refresh();
+    UpdateView();
+    
+    auto window = App::GetCurrentWindow();
+    window->onWindowSizeChangedEvent.BindRaw(this, &CameraComponent::OnWindowSizeChanged);
+    UpdateProjection(window->GetBufferWidth(), window->GetBufferHeight());
 }
 
-void CameraComponent::Refresh()
+void CameraComponent::Tick(float deltaTime)
 {
-    const float yawRadians = glm::radians(yaw);
-    const float pitchRadians = glm::radians(pitch);
+    Component::Tick(deltaTime);
+    
+    if (followTarget)
+    {
+        const auto& targetPosition = followTarget->GetPosition();
+        Move(targetPosition - lastTargetPosition);
+        lastTargetPosition = targetPosition;
+    }
+}
+
+void CameraComponent::Move(const glm::vec3& moveDelta)
+{
+    SetPosition(position + moveDelta);
+}
+    
+void CameraComponent::Rotate(float pitchDelta, float yawDelta)
+{
+    if (lockRotation)
+    {
+        return;    
+    }
+    
+    SetRotation(pitch - pitchDelta, yaw - yawDelta);
+}
+
+void CameraComponent::RotateAroundTarget(float pitchDelta, float yawDelta)
+{
+    if (followTarget && !lockRotation)
+    {
+        /*auto rotationMatrix = glm::mat4(1.0f);
+        
+        auto basePos = glm::vec4(position - followTarget->GetPosition(), 1.0f);
+        
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(pitchDelta), glm::vec3(1.0f, 0.0f, 0.0f));
+        auto relPOs = rotationMatrix * glm::vec4(position - followTarget->GetPosition(), 1.0f);
+        
+        float cosTheta = glm::dot(glm::normalize(basePos), glm::normalize(relPOs));
+        float angleDegrees = glm::degrees(acos(cosTheta));
+        
+        if (!std::isnan(angleDegrees))
+        {
+            Rotate(angleDegrees, 0.0f);
+        }
+        
+        basePos = relPOs;
+        
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(yawDelta), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        relPOs = rotationMatrix * relPOs;
+        
+        cosTheta = glm::dot(glm::normalize(basePos), glm::normalize(relPOs));
+        angleDegrees = glm::degrees(acos(cosTheta));
+        
+        if (!std::isnan(angleDegrees))
+        {
+            Rotate(0.0f, -angleDegrees);
+        }
+        
+        SetPosition(followTarget->GetPosition() + glm::vec3(relPOs));*/
+    }
+}
+
+void CameraComponent::SetPosition(const glm::vec3& newPosition)
+{
+    position = newPosition;
+    UpdateView();
+}
+
+void CameraComponent::SetRotation(float newPitch, float newYaw)
+{
+    if (lockRotation)
+    {
+        return;    
+    }
+    
+    yaw = newYaw;
+    pitch = glm::clamp(newPitch, -89.9f, 89.9f);
+
+    UpdateView();
+}
+    
+void CameraComponent::SetAsActiveCamera()
+{
+    scene->SetActiveCamera(this);
+}
+
+void CameraComponent::SetFollowTarget(const Entity* target)
+{
+    followTarget = target;
+    lastTargetPosition = target->GetPosition();
+}
+
+void CameraComponent::UpdateProjection(int bufferWidth, int bufferHeight)
+{
+    const auto fovy = glm::radians(perspectiveProjectionData.fov);
+    const auto aspectRatio = static_cast<float>(bufferWidth) / static_cast<float>(bufferHeight);
+    
+    projection = glm::infinitePerspective(fovy, aspectRatio, perspectiveProjectionData.nearPlane);
+}
+
+void CameraComponent::UpdateView()
+{
+    const auto yawRadians = glm::radians(yaw);
+    const auto pitchRadians = glm::radians(pitch);
 
     forward.x = sin(yawRadians);
     forward.y = sin(pitchRadians);
@@ -30,94 +133,8 @@ void CameraComponent::Refresh()
 
     view = glm::lookAt(position, position + forward, up);
 }
-    
-void CameraComponent::Move(const glm::vec3& moveDelta)
-{
-    position += moveDelta;
-    Refresh();
-}
-    
-void CameraComponent::Rotate(float pitchDelta, float yawDelta)
-{
-    if (lockRotation)
-    {
-        return;    
-    }
-    
-    yaw -= yawDelta;
-    pitch = glm::clamp(pitch - pitchDelta, -89.9f, 89.9f);
 
-    Refresh();
-}
-    
-void CameraComponent::SetAsActiveCamera()
+void CameraComponent::OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight)
 {
-    scene->SetActiveCamera(this);
-}
-    
-void CameraComponent::MoveForward(const InputData& inputData)
-{
-    if (inputData.mouseYDelta < 0.0f)
-    {
-        MoveBackward(inputData);
-        return;
-    }
-    Move(forward * cameraSpeed * inputData.deltaTime);
-}
-    
-void CameraComponent::MoveBackward(const InputData& inputData)
-{
-    Move(-forward * cameraSpeed * inputData.deltaTime);
-}
-    
-void CameraComponent::MoveRight(const InputData& inputData)
-{
-    Move(right * cameraSpeed * inputData.deltaTime);
-}
-    
-void CameraComponent::MoveLeft(const InputData& inputData)
-{
-    Move(-right * cameraSpeed * inputData.deltaTime);
-}
-
-void CameraComponent::MoveUp(const InputData& inputData)
-{
-    Move(up * cameraSpeed * inputData.deltaTime);
-}
-
-void CameraComponent::MoveDown(const InputData& inputData)
-{
-    Move(-up * cameraSpeed * inputData.deltaTime);
-}
-
-void CameraComponent::OnMouseMove(const InputData& inputData)
-{
-    if (inputData.mouseXDelta != 0.0f || inputData.mouseYDelta != 0.0f)
-    {
-        if (!App::GetCurrentWindow()->IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
-        {
-            return;
-        }
-        
-        Rotate(static_cast<float>(inputData.mouseYDelta) / 10.0f
-            , static_cast<float>(inputData.mouseXDelta) / 10.0f);
-    }
-}
-
-glm::mat4 CameraComponent::GetProjectionMatrix() const
-{
-    return glm::perspective(glm::radians(perspectiveProjectionData.fov), App::GetCurrentWindow()->GetAspectRatio()
-        , perspectiveProjectionData.nearPlane, perspectiveProjectionData.farPlane);
-}
-    
-void CameraComponent::SetPosition(const glm::vec3& newPosition)
-{
-    position = newPosition;
-    Refresh();
-}
-    
-void CameraComponent::GetRotation(float& outPitch, float& outYaw) const
-{
-    outPitch = pitch;
-    outYaw = yaw;
+    UpdateProjection(bufferWidth, bufferHeight);
 }

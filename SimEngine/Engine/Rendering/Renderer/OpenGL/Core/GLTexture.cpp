@@ -3,17 +3,18 @@
 GLTexture::GLTexture(const std::string& fileLocation)
     : Texture(fileLocation)
 {
+    GenerateTexture();
 }
 
-GLTexture::GLTexture(unsigned char* data, int width, int height)
-    : Texture(data, width, height)
+GLTexture::GLTexture(const TextureData& textureData)
+    : Texture(textureData)
 {
-    GLTexture::LoadGPUData();
+    GenerateTexture();
 }
 
 GLTexture::~GLTexture()
 {
-    GLTexture::FreeGPUData();
+    glDeleteTextures(1, &textureID);
 }
 
 void GLTexture::Bind() const
@@ -27,7 +28,7 @@ void GLTexture::Bind() const
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
 
-void GLTexture::LoadGPUData()
+void GLTexture::GenerateTexture()
 {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -42,9 +43,4 @@ void GLTexture::LoadGPUData()
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void GLTexture::FreeGPUData()
-{
-    glDeleteTextures(1, &textureID);
 }

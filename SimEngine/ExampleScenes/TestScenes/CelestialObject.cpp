@@ -14,7 +14,7 @@ CelestialObject::CelestialObject(ObjectBase* parent, Scene* scene, const std::st
     physicsComponent->physicsData.rotateWithCenterOfMass = false;
     physicsComponent->physicsData.linearDamping = 1.0f;
     physicsComponent->physicsData.angularDamping = 1.0f;
-    physicsComponent->physicsData.angularVelocity = {0.0f, MathUtils::randomNum(-80.f, 80.0f), 0.0f};
+    physicsComponent->physicsData.angularVelocity = {0.0f, MathUtils::RandomNum(-80.f, 80.0f), 0.0f};
     
     lineComponent = AddComponent<LineComponent>();
     lineComponent->followParent = true;

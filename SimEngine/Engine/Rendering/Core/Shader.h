@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Rendering/Renderer/Renderer.h"
+
 struct ShaderData
 {
     std::string vertShader;
@@ -12,8 +14,13 @@ struct ShaderData
 class Shader
 {
 public:
-    Shader(const ShaderData& shaderData);
+    Shader(const ShaderData& shaderData) {}
     virtual ~Shader() {}
+    
+    static ShaderPtr CreateShader(const ShaderData& shaderData)
+    {
+        return Renderer::Get()->CreateShader(shaderData);
+    }
     
     virtual void Compile(const ShaderData& shaderData) = 0;
     

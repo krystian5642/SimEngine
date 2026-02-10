@@ -1,12 +1,13 @@
 ﻿#include "SceneComponent.h"
 
+#include "Core/MathUtils.h"
 #include "Rendering/UniformNames.h"
 #include "Rendering/Core/Shader.h"
 
 SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : RenderComponent(parent, scene, name)
 {
-    UpdateForwardVector();
+    UpdateVectors();
 }
 
 void SceneComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
@@ -16,7 +17,14 @@ void SceneComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visu
 
 void SceneComponent::Move(const glm::vec3& moveDelta)
 {
-    SetPosition(transform.position + moveDelta);
+    if (MathUtils::IsNearlyZeroVector(moveDelta))
+    {
+        return;
+    }
+    
+    transform.position += moveDelta;
+    UpdateVectors();
+
     for (const auto& attachedComponent : attachedComponents)
     {
         attachedComponent->Move(moveDelta);
@@ -25,7 +33,14 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
 
 void SceneComponent::Rotate(const glm::vec3& rotationDelta)
 {
-    SetRotation(transform.rotation + rotationDelta);
+    if (MathUtils::IsNearlyZeroVector(rotationDelta))
+    {
+        return;
+    }
+    
+    transform.rotation += rotationDelta;
+    UpdateVectors();
+    
     for (const auto& attachedComponent : attachedComponents)
     {
         attachedComponent->Rotate(rotationDelta);
@@ -34,7 +49,14 @@ void SceneComponent::Rotate(const glm::vec3& rotationDelta)
 
 void SceneComponent::Scale(const glm::vec3& scaleDelta)
 {
-    SetScale(transform.scale + scaleDelta);
+    if (MathUtils::IsNearlyZeroVector(scaleDelta))
+    {
+        return;
+    }
+    
+    transform.scale += scaleDelta;
+    UpdateVectors();
+    
     for (const auto& attachedComponent : attachedComponents)
     {
         attachedComponent->Scale(scaleDelta);
@@ -43,31 +65,29 @@ void SceneComponent::Scale(const glm::vec3& scaleDelta)
 
 void SceneComponent::SetPosition(const glm::vec3& newPosition)
 {
-    transform.position = newPosition;
-    UpdateForwardVector();
+    const auto moveDelta = newPosition - transform.position;
+    Move(moveDelta);
 }
 
 void SceneComponent::SetRotation(const glm::vec3& newRotation)
 {
-    transform.rotation = glm::mod(newRotation, glm::vec3(360.0f));
-    UpdateForwardVector();
+    const auto rotationDelta = newRotation- transform.rotation;
+    Rotate(rotationDelta);
 }
 
 void SceneComponent::SetScale(const glm::vec3& newScale)
 {
-    transform.scale = newScale;
-    UpdateForwardVector();
-    
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->SetScale(newScale);
-    }
+    const auto scaleDelta = newScale - transform.scale;
+    Scale(scaleDelta);
 }
 
-void SceneComponent::UpdateForwardVector()
+void SceneComponent::UpdateVectors()
 {
     UpdateModelMatrix();
     forward = glm::normalize(glm::mat3(modelMatrix) * glm::vec3(0.0f, 0.0f, -1.0f));
+    
+    right = glm::normalize(glm::cross(forward, {0.0f, 1.0f, 0.0f}));
+    up = glm::cross(right, forward);
 }
 
 void SceneComponent::UpdateModelMatrix()
@@ -84,7 +104,7 @@ void SceneComponent::UpdateModelMatrix()
 
 void SceneComponent::AttachComponent(SceneComponent* component)
 {
-    if (component == this)
+    if (!component || component == this)
     {
         return;
     }

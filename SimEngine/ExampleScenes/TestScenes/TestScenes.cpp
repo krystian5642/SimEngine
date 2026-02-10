@@ -1,4 +1,4 @@
-﻿#include "Scenes.h"
+﻿#include "TestScenes.h"
 
 #include "ProjectileLauncher.h"
 #include "CelestialObject.h"
@@ -17,12 +17,13 @@
 #include "Components/LineComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Managers/TextureManager.h"
-#include "ProceduralPlanet/ProceduralPlanet.h"
+#include "Components/ProceduralSphereMeshComponent.h"
 #include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Texture.h"
 #include "Scene/Systems/Physics/SimpleGravitySystem.h"
+#include "Rendering/Core/Shader.h"
 
-BallLauncherScene::BallLauncherScene(const std::string& name)
+ProjectileLauncherScene::ProjectileLauncherScene(const std::string& name)
     : Scene(name)
 {
     const std::vector<std::string> skyboxFaces = {
@@ -36,7 +37,7 @@ BallLauncherScene::BallLauncherScene(const std::string& name)
     
     AddObject<SimpleGravitySystem>();
     
-    SetSkybox(Renderer::CreateSkyboxStatic(skyboxFaces));
+    SetSkybox(Skybox::CreateSkybox(skyboxFaces));
     
     AddObject<ProjectileLauncher>();
     
@@ -79,7 +80,7 @@ BallCollision2DScene::BallCollision2DScene(const std::string& name)
             auto ball = AddObject<MeshEntity>();
             auto phys = ball->AddComponent<PhysicsComponent>();
             constexpr float velocityMagnitude = 7.0f;
-            phys->physicsData.linearVelocity = {MathUtils::randomNum(-velocityMagnitude, velocityMagnitude), MathUtils::randomNum(-velocityMagnitude, velocityMagnitude), 0.0f};
+            phys->physicsData.linearVelocity = {MathUtils::RandomNum(-velocityMagnitude, velocityMagnitude), MathUtils::RandomNum(-velocityMagnitude, velocityMagnitude), 0.0f};
     
             phys->physicsData.linearDamping = 1.0f;
             phys->physicsData.angularDamping = 1.0f;
@@ -121,14 +122,14 @@ BallCollision3DScene::BallCollision3DScene(const std::string& name)
             phys->physicsData.linearDamping = 1.0f;
             phys->physicsData.angularDamping = 1.0f;
        
-            const float mass = MathUtils::randomNum(0.5f, 1.7f);
+            const float mass = MathUtils::RandomNum(0.5f, 1.7f);
             phys->physicsData.mass = mass;
             
             constexpr float velocityMagnitude = 15.0f;
             
-            phys->physicsData.linearVelocity = {MathUtils::randomNum(-velocityMagnitude, velocityMagnitude)
-                , MathUtils::randomNum(-velocityMagnitude, velocityMagnitude)
-                , MathUtils::randomNum(-velocityMagnitude, velocityMagnitude)};
+            phys->physicsData.linearVelocity = {MathUtils::RandomNum(-velocityMagnitude, velocityMagnitude)
+                , MathUtils::RandomNum(-velocityMagnitude, velocityMagnitude)
+                , MathUtils::RandomNum(-velocityMagnitude, velocityMagnitude)};
     
             ball->SetMesh(MeshManager::Get().GetAssetByName("sphere"));
             ball->SetMaterial(MaterialManager::Get().GetAssetByName("emerald"));
@@ -177,9 +178,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // sun
     TextureManager::Get().RegisterCreateAsset("sun", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_sun.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_sun.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("sun", []
@@ -195,7 +194,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         shaderData.fragShader = ShaderData::shadersFolder + "texture_only.frag";
         shaderData.vertShader = ShaderData::shadersFolder + "texture_only.vert";
         
-        resources.shader = Renderer::CreateShaderStatic(shaderData);
+        resources.shader = Shader::CreateShader(shaderData);
     
         resources.texture = TextureManager::Get().GetAssetByName("sun");
         return std::make_shared<Material>(resources); 
@@ -204,9 +203,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // mercury
     TextureManager::Get().RegisterCreateAsset("mercury", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_mercury.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_mercury.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("mercury", []
@@ -226,9 +223,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // venus
     TextureManager::Get().RegisterCreateAsset("venus", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_venus.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_venus.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("venus", []
@@ -248,9 +243,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // earth
     TextureManager::Get().RegisterCreateAsset("earth", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_earth.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_earth.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("earth", []
@@ -270,9 +263,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // mars
     TextureManager::Get().RegisterCreateAsset("mars", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_mars.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_mars.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("mars", []
@@ -292,9 +283,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // jupiter
     TextureManager::Get().RegisterCreateAsset("jupiter", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_jupiter.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_jupiter.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("jupiter", []
@@ -314,9 +303,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // saturn
     TextureManager::Get().RegisterCreateAsset("saturn", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_saturn.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_saturn.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("saturn", []
@@ -336,9 +323,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // uranus
     TextureManager::Get().RegisterCreateAsset("uranus", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_uranus.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_uranus.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("uranus", []
@@ -358,9 +343,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     // neptune
     TextureManager::Get().RegisterCreateAsset("neptune", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_neptune.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_neptune.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("neptune", []
@@ -386,7 +369,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         "Textures/Solar System/Skybox/back.png"
     };
     
-    SetSkybox(Renderer::CreateSkyboxStatic(skyboxFaces));
+    SetSkybox(Skybox::CreateSkybox(skyboxFaces));
     
     AddObject<GravitySystem>();
     AddObject<PhysicsCollisionSystem>();
@@ -395,7 +378,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
     auto cameraComp = camera->GetCameraComponent();
     cameraComp->SetAsActiveCamera();
     cameraComp->SetPosition({3.0f, 5.0f, 20.0f});
-    cameraComp->cameraSpeed = 20.0f;
+    camera->cameraSpeed = 20.0f;
         
     auto light = AddObject<PointLightObject>("Point Light");
     light->SetPosition({0.0f, 0.0f, -2.0f});
@@ -492,9 +475,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
     // mercury
     TextureManager::Get().RegisterCreateAsset("mercury", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_mercury.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_mercury.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("mercury", []
@@ -514,9 +495,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
     // jupiter
     TextureManager::Get().RegisterCreateAsset("jupiter", []
     {
-        auto texture = Renderer::CreateTextureStatic("Textures/Solar System/2k_jupiter.jpg");
-        texture->Load();
-        return texture;
+        return Texture::CreateTexture("Textures/Solar System/2k_jupiter.jpg");
     });
 
     MaterialManager::Get().RegisterCreateAsset("jupiter", []
@@ -542,7 +521,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
         "Textures/Solar System/Skybox/back.png"
     };
     
-    SetSkybox(Renderer::CreateSkyboxStatic(skyboxFaces));
+    SetSkybox(Skybox::CreateSkybox(skyboxFaces));
     
     AddObject<GravitySystem>();
     
@@ -550,7 +529,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
     auto cameraComp = camera->GetCameraComponent();
     cameraComp->SetAsActiveCamera();
     cameraComp->SetPosition({30.0f, 60.0f, 90.0f});
-    cameraComp->cameraSpeed = 50.0f;
+    camera->cameraSpeed = 50.0f;
         
     auto light = AddObject<DirectionalLightObject>("Directional Light");
     light->SetDirection({-20.0f, 0.0f, 0.0f});
@@ -572,14 +551,14 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
     {
         auto moon = AddObject<CelestialObject>();
         moon->SetMaterial(MaterialManager::Get().GetAssetByName("mercury"));
-        moon->Move({110.0f, MathUtils::randomNum(-3.0f, 3.0f), -10.0f + 0.3f * i});
+        moon->Move({110.0f, MathUtils::RandomNum(-3.0f, 3.0f), -10.0f + 0.3f * i});
         
-        const float scale = MathUtils::randomNum(0.4f, 1.0f);
+        const float scale = MathUtils::RandomNum(0.4f, 1.0f);
         moon->SetScale({scale, scale, scale});
         
         phys = moon->GetPhysicsComponent();
         phys->physicsData.mass = 0.1f;
-        phys->physicsData.linearVelocity = {0.0f, MathUtils::randomNum(1.0f, 1.1f), MathUtils::randomNum(-25.0f, -20.0f)};
+        phys->physicsData.linearVelocity = {0.0f, MathUtils::RandomNum(1.0f, 1.1f), MathUtils::RandomNum(-25.0f, -20.0f)};
         
         moon->GetLineComponent()->followParent = false;
     }
@@ -618,12 +597,12 @@ MaterialsScene::MaterialsScene(const std::string& name)
 {
     MaterialManager::Get().RegisterCreateAsset("reflect", []
     {
-        return Renderer::CreateReflectMaterialStatic();
+        return ReflectMaterial::CreateReflectMaterial();
     });
 
     MaterialManager::Get().RegisterCreateAsset("refract", []
     {
-        return Renderer::CreateRefractMaterialStatic();
+        return RefractMaterial::CreateRefractMaterial();
     });
     
     const std::vector<std::string> skyboxFaces = {
@@ -635,7 +614,7 @@ MaterialsScene::MaterialsScene(const std::string& name)
         "Textures/Skybox/back.jpg"
     };
 
-    SetSkybox(Renderer::CreateSkyboxStatic(skyboxFaces));
+    SetSkybox(Skybox::CreateSkybox(skyboxFaces));
     
     auto camera = AddObject<CameraEntity>("Camera");
     auto cameraComp = camera->GetCameraComponent();
@@ -674,7 +653,7 @@ RandomRigidBodiesScene::RandomRigidBodiesScene(const std::string& name)
     auto cameraComp = camera->GetCameraComponent();
     cameraComp->SetAsActiveCamera();
     cameraComp->SetPosition({0.0f, 4.0f, 35.0f});
-    cameraComp->cameraSpeed = 30.0f;
+    camera->cameraSpeed = 30.0f;
         
     auto light = AddObject<DirectionalLightObject>("Directional Light");
     light->SetDirection({0.1f, 0.1f, -40.0f});
@@ -760,7 +739,7 @@ void RandomRigidBodiesScene::GenerateRandomRigidBody2D()
     {
         for (int j = -7; j <= 7; j++)
         {
-            const auto randomNumber = MathUtils::randomNum(0.0f, 1.0f);
+            const auto randomNumber = MathUtils::RandomNum(0.0f, 1.0f);
                 
             if (randomNumber > 0.5f)
             {
@@ -790,7 +769,7 @@ void RandomRigidBodiesScene::GenerateRandomRigidBody3D()
         {
             for (int k = -7; k <= 7; k++)
             {
-                const auto randomNumber = MathUtils::randomNum(0.0f, 1.0f);
+                const auto randomNumber = MathUtils::RandomNum(0.0f, 1.0f);
                 
                 if (randomNumber > 0.2f)
                 {
@@ -921,9 +900,9 @@ void RandomRigidBodiesScene::ApplyTorque()
 {
     phys = rigidBody->GetComponentByClass<PhysicsComponent>();
     
-    const glm::vec3 force{MathUtils::randomNum(-1000000.0f, 1000000.0f)
-        , MathUtils::randomNum(-1000000.0f / 2.0f, -1000000.0f / 2.0f)
-        , MathUtils::randomNum(-1000000.0f / 3.0f, -1000000.0f / 3.0f)};
+    const glm::vec3 force{MathUtils::RandomNum(-1000000.0f, 1000000.0f)
+        , MathUtils::RandomNum(-1000000.0f / 2.0f, -1000000.0f / 2.0f)
+        , MathUtils::RandomNum(-1000000.0f / 3.0f, -1000000.0f / 3.0f)};
     phys->ApplyTorque(force, {-7.0f, 7.0f, 0.0f});
 }
 
@@ -934,7 +913,7 @@ ProceduralPlanetScene::ProceduralPlanetScene(const std::string& name)
     auto cameraComp = camera->GetCameraComponent();
     cameraComp->SetAsActiveCamera();
     cameraComp->SetPosition({0.0f, 4.0f, 35.0f});
-    cameraComp->cameraSpeed = 30.0f;
+    camera->cameraSpeed = 30.0f;
         
     auto light = AddObject<DirectionalLightObject>("Directional Light");
     light->SetDirection({20.1f, -30.1f, -40.0f});
@@ -943,7 +922,7 @@ ProceduralPlanetScene::ProceduralPlanetScene(const std::string& name)
     
     proceduralPlanet = AddObject<ProceduralPlanet>();
     proceduralPlanet->Move({0.0f, 0.0f, -1.0f});
-    proceduralPlanet->SetScale({100.0f, 100.0f, 100.0f});
+    proceduralPlanet->SetScale({3.0f, 3.0f, 3.0f});
 }
 
 void ProceduralPlanetScene::DrawImGui()
@@ -952,7 +931,8 @@ void ProceduralPlanetScene::DrawImGui()
     
     bool changed = false;
     
-    auto& noiseSettingsList = proceduralPlanet->noiseSettings;
+    auto proceduralMesh = proceduralPlanet->GetMeshComponent();
+    auto noiseSettingsList = proceduralMesh->GetNoiseSettings();
     
     ImGui::Text("Noise Settings");
     
@@ -987,7 +967,6 @@ void ProceduralPlanetScene::DrawImGui()
     
     if (changed)
     {
-        proceduralPlanet->GenerateFaces();
+        proceduralMesh->SetNoiseSettings(noiseSettingsList);
     }
 }
-

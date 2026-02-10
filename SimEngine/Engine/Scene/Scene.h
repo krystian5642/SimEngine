@@ -41,8 +41,8 @@ class Scene : public ObjectBase
 public:
     Scene(const std::string& name = "DefaultScene");
 
-    virtual void Init() {}
-    virtual void Start() {}
+    virtual void Init();
+    virtual void Start();
     virtual void Tick(float deltaTime);
     
     virtual void DrawImGui() {}
@@ -72,7 +72,7 @@ public:
     template<class T>
     T* AddObject(const std::string& objectName = "")
     {
-        return objects.AddObject<T>(this, this, objectName);
+        return objects.AddObject<T>(this, this, isInitialized, objectName);
     }
     
     template<class T>
@@ -90,18 +90,19 @@ public:
     void SetActiveCamera(CameraComponent* camera) { activeCamera = camera; }
     const CameraComponent* GetActiveCamera() const { return activeCamera; }
     
-    void SetSkybox(std::unique_ptr<Skybox> newSkybox) { skybox = std::move(newSkybox); }
+    void SetSkybox(SkyboxPtr newSkybox) { skybox = std::move(newSkybox); }
     const Skybox* GetSkybox() const { return skybox.get(); }
     
     const SceneLightsData& GetLightsData() const { return lightsData; }
     const SceneRenderData& GetRenderData() const { return renderData; }
     
     size_t GetObjectCount() const { return objects.GetCount(); }
+    bool GetIsInitialized() const { return isInitialized; }
 
 protected:
     ObjectContainer<SceneObject> objects;
     
-    std::unique_ptr<Skybox> skybox;
+    SkyboxPtr skybox;
   
 private:
     SceneLightsData lightsData;
@@ -109,4 +110,7 @@ private:
     SceneObjectsData objectsData; // It is only used as a global handle when destroying objects
     
     CameraComponent* activeCamera{};
+    
+    float lastPhysicsTickTime{0.0f};
+    bool isInitialized{false};
 };

@@ -13,7 +13,7 @@ MeshManager& MeshManager::Get()
     return meshManager;
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
+MeshPtr MeshManager::LoadMesh(const std::string& path)
 {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
@@ -78,7 +78,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
         vertices[i + 2] -= center.z;
     }
     
-    return Renderer::CreateMeshStatic({vertices, indices});
+    return Mesh::CreateMesh({vertices, indices});
 }
 
 MeshManager::MeshManager() 
@@ -91,17 +91,17 @@ MeshManager::MeshManager()
     createAssetFuncs["planet"] = &MeshManager::LoadPlanet;
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadCube()
+MeshPtr MeshManager::LoadCube()
 {
     return LoadMesh("Models/cube/cube.obj");
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadSphere()
+MeshPtr MeshManager::LoadSphere()
 {
     return LoadMesh("Models/XXR_BS_T_01/XXR_B_BLOODSTONE_002.obj");
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadPlane()
+MeshPtr MeshManager::LoadPlane()
 {
     const std::vector vertices = 
     {
@@ -116,10 +116,10 @@ std::shared_ptr<Mesh> MeshManager::LoadPlane()
         1,3,2
     };
     
-    return Renderer::CreateMeshStatic({vertices, indices});
+    return Mesh::CreateMesh({vertices, indices});
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadSkybox()
+MeshPtr MeshManager::LoadSkybox()
 {
     std::vector skyboxVertices = {
         -1.0f, 1.0f, -1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
@@ -159,10 +159,10 @@ std::shared_ptr<Mesh> MeshManager::LoadSkybox()
         3, 6, 7
     };
     
-    return Renderer::CreateMeshStatic({skyboxVertices, skyboxIndices});
+    return Mesh::CreateMesh({skyboxVertices, skyboxIndices});
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadPlanet()
+MeshPtr MeshManager::LoadPlanet()
 {
     return LoadMesh("Models/Planet/planet.obj");
 }

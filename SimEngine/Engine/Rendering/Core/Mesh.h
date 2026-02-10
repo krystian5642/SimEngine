@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Rendering/Renderer/Renderer.h"
 
 struct MeshData
 {
@@ -16,12 +17,13 @@ struct MeshData
 class Mesh
 {
 public:
-    Mesh(const MeshData& meshData);
+    Mesh(const MeshData& meshData) {}
     virtual ~Mesh() {}
-
-    virtual void Draw() const = 0;
     
-protected:
-    virtual void LoadGPUData(const MeshData& meshData) = 0;
-    virtual void FreeGPUData() = 0;
+    static MeshPtr CreateMesh(const MeshData& meshData)
+    {
+        return Renderer::Get()->CreateMesh(meshData);
+    }
+    
+    virtual void Draw() const = 0;
 };
