@@ -73,26 +73,26 @@ void SpaceShip::RotateZRight(const InputData& inputData)
 
 void SpaceShip::MoveForward(const InputData& inputData)
 {
-    const glm::vec3 impulse = -meshComponent->GetForwardVector() * engineImpulse * inputData.deltaTime;
-    physicsComponent->ApplyImpulse(impulse);
+    const auto force = -meshComponent->GetForwardVector() * engineForce;
+    physicsComponent->ApplyForce(force);
 }
 
 void SpaceShip::MoveBackward(const InputData& inputData)
 {
-    const glm::vec3 impulse = meshComponent->GetForwardVector() * engineImpulse * inputData.deltaTime;
-    physicsComponent->ApplyImpulse(impulse);
+    const auto force = meshComponent->GetForwardVector() * engineForce;
+    physicsComponent->ApplyForce(force);
 }
 
 void SpaceShip::MoveUp(const InputData& inputData)
 {
-    const glm::vec3 impulse = meshComponent->GetUpVector() *engineImpulse * inputData.deltaTime;
-    physicsComponent->ApplyImpulse(impulse);
+    const auto force = meshComponent->GetUpVector() * engineForce;
+    physicsComponent->ApplyForce(force);
 }
 
 void SpaceShip::MoveDown(const InputData& inputData)
 {
-    const glm::vec3 impulse = -meshComponent->GetUpVector() * engineImpulse * inputData.deltaTime;
-    physicsComponent->ApplyImpulse(impulse);
+    const auto force = -meshComponent->GetUpVector() * engineForce;
+    physicsComponent->ApplyForce(force);
 }
 
 void SpaceShip::Stop(const InputData& inputData)

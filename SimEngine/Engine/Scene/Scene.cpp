@@ -33,24 +33,7 @@ void Scene::Tick(float deltaTime)
     deltaTime = std::min(deltaTime, maxDeltaTime);
     
     const auto isPaused = App::currentApp->GetIsPaused();
-    
-    objects.Tick();
-    
-    auto tickPhase = EngineTickPhase::PrePhysics;
-    objects.TickObjects(deltaTime, isPaused, tickPhase);
-    
-    static constexpr auto physicsTickInterval = 1.0f / 60.0f;
-    const auto currentTime = static_cast<float>(glfwGetTime());
-    if (currentTime - lastPhysicsTickTime >= physicsTickInterval)
-    {
-        tickPhase = EngineTickPhase::Physics;
-        objects.TickObjects(physicsTickInterval, isPaused, tickPhase);
-        
-        lastPhysicsTickTime = currentTime;
-    }
-    
-    //tickPhase = EngineTickPhase::PostPhysics;
-    //objects.TickObjects(deltaTime, isPaused, tickPhase);
+    objects.Tick(deltaTime, isPaused);
 }
     
 void Scene::DestroyChild(ObjectBase* child)

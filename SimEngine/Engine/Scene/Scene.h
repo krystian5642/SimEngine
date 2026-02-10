@@ -111,6 +111,5 @@ private:
     
     CameraComponent* activeCamera{};
     
-    float lastPhysicsTickTime{0.0f};
     bool isInitialized{false};
 };

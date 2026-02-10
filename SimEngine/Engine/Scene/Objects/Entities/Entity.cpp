@@ -33,27 +33,8 @@ void Entity::Tick(float deltaTime)
     
     const auto isPaused = App::currentApp->GetIsPaused();
     
-    components.Tick();
-    childEntities.Tick();
-    
-    auto tickPhase = EngineTickPhase::PrePhysics;
-    components.TickObjects(deltaTime, isPaused, tickPhase);
-    childEntities.TickObjects(deltaTime, isPaused, tickPhase);
-    
-    static constexpr auto physicsTickInterval = 1.0f / 60.0f;
-    const auto currentTime = static_cast<float>(glfwGetTime());
-    if (currentTime - lastPhysicsTickTime >= physicsTickInterval)
-    {
-        tickPhase = EngineTickPhase::Physics;
-        components.TickObjects(physicsTickInterval, isPaused, tickPhase);
-        childEntities.TickObjects(physicsTickInterval, isPaused, tickPhase);
-        
-        lastPhysicsTickTime = currentTime;
-    }
-    
-    //tickPhase = EngineTickPhase::PostPhysics;
-    //components.TickObjects(deltaTime, isPaused, tickPhase);
-    //childEntities.TickObjects(deltaTime, isPaused, tickPhase);
+    components.Tick(deltaTime, isPaused);
+    childEntities.Tick(deltaTime, isPaused);
 }
     
 void Entity::OnDestroy()

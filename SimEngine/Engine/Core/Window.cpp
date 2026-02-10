@@ -37,7 +37,7 @@ Window::Window(int width, int height, const std::string& title)
     glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
     glViewport(0, 0, bufferWidth, bufferHeight);
     
-    //glfwSwapInterval(1);
+   // glfwSwapInterval(1);
 }
 
 Window::~Window()

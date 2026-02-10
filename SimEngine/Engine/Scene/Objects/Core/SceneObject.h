@@ -13,13 +13,6 @@ struct SceneObjectHandle
     SceneObject* Resolve() const;
 };
 
-enum class EngineTickPhase
-{
-    PrePhysics,
-    Physics,
-    PostPhysics
-};
-
 class SceneObject : public ObjectBase
 {
     friend class Scene;
@@ -36,7 +29,6 @@ public:
     const SceneObjectHandle& GetHandle() const { return handle; }
     
     bool tickWhenPaused{false};
-    EngineTickPhase tickPhase{EngineTickPhase::PrePhysics};
 
 protected:
     Scene* const scene;

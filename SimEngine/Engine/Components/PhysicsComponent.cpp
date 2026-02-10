@@ -8,7 +8,6 @@
 PhysicsComponent::PhysicsComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : Component(parent, scene, name)
 {
-   tickPhase = EngineTickPhase::Physics;
 }
 
 void PhysicsComponent::Init()

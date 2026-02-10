@@ -101,7 +101,4 @@ protected:
     
     ObjectContainer<Entity> childEntities;
     ObjectContainer<Component> components;
-    
-private:
-    float lastPhysicsTickTime{0.0f};
 };
