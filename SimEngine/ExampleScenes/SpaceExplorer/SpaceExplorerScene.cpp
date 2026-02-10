@@ -112,6 +112,7 @@ SpaceExplorerScene::SpaceExplorerScene(const std::string& name)
     
     phys->physicsData.linearVelocity = {2.0f, 6.0f, 7.74f};
     auto line = moon1->AddComponent<LineComponent>();
+    line->SetThickness(2.0f);
     line->followParent = true;
     
     auto spaceShip = AddObject<SpaceShip>();

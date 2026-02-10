@@ -30,6 +30,6 @@ private:
     InputComponent* inputComponent;
     PhysicsComponent* physicsComponent;
     
-    float engineImpulse{3.0f};
+    float engineForce{100.0f};
     float rotationSpeed{100.0f};
 };

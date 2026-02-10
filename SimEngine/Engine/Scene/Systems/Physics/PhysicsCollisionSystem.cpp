@@ -32,10 +32,12 @@ void PhysicsCollisionSystem::Tick(float deltaTime)
                     const auto V1primN = (V1n * (phys1->physicsData.mass - phys2->physicsData.mass) + 2.0f * phys2->physicsData.mass * V2n) / (phys1->physicsData.mass + phys2->physicsData.mass);
                     
                     phys1->physicsData.linearVelocity = V1primN + V1p;
+                    phys1->Move(-n * 0.02f);
                 }
-                else if (phys2->physicsData.stopAtCollision)
+                else if (phys1->physicsData.stopAtCollision)
                 {
-                    phys2->StopImediately();
+                    phys1->StopImediately();
+                    phys1->Move(-n * 0.02f);
                 }
                 
                 if (phys2->physicsData.canBounce)
@@ -44,14 +46,13 @@ void PhysicsCollisionSystem::Tick(float deltaTime)
                     const auto V2primN = (V2n * (phys2->physicsData.mass - phys1->physicsData.mass) + 2.0f * phys1->physicsData.mass * V1n) / (phys1->physicsData.mass + phys2->physicsData.mass);
                     
                     phys2->physicsData.linearVelocity = V2primN + V2p;
+                    phys2->Move(n * 0.02f);
                 }
-                else if (phys1->physicsData.stopAtCollision)
+                else if (phys2->physicsData.stopAtCollision)
                 {
-                    phys1->StopImediately();
+                    phys2->StopImediately();
+                    phys2->Move(n * 0.02f);
                 }
-                
-                phys1->Move(-n * 0.02f);
-                phys2->Move(n * 0.02f);
             }
         }
     }

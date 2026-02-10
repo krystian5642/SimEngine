@@ -99,7 +99,7 @@ public:
         }
     }
     
-    void Tick()
+    void Tick(float deltaTime, bool isPaused)
     {
         for (const auto& object : objectsToAdd)
         {
@@ -125,13 +125,10 @@ public:
             return std::find(objectsToRemove.begin(), objectsToRemove.end(), objectPtr.get()) != objectsToRemove.end();
         });
         objectsToRemove.clear();
-    }
-    
-    void TickObjects(float deltaTime, bool isPaused, EngineTickPhase tickPhase)
-    {
+        
         for (const auto& object : objects)
         {
-            if ((!isPaused || object->tickWhenPaused) && object->tickPhase == tickPhase)
+            if (!isPaused || object->tickWhenPaused)
             {
                 object->Tick(deltaTime);
             }
