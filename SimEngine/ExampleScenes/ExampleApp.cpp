@@ -1,8 +1,8 @@
 ﻿#include "ExampleApp.h"
 
-#include "TestScenes.h"
 #include "Scene/SceneManager.h"
 #include "SpaceExplorer/SpaceExplorerScene.h"
+#include "TestScenes/TestScenes.h"
 
 #define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, [] -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })
 
@@ -21,6 +21,7 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(Materials);
     REGISTER_SCENE(RandomRigidBodies);
     REGISTER_SCENE(ProceduralPlanet);
+    REGISTER_SCENE(Instancing);
     
     // main scenes
     REGISTER_SCENE(SpaceExplorer);

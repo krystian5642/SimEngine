@@ -10,9 +10,10 @@ GLMesh::GLMesh(const MeshData& meshData)
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, meshData.vertices.size() * sizeof(float), meshData.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, drawCount * sizeof(float), meshData.vertices.data(), GL_STATIC_DRAW);
 
-    const size_t indicesSize = meshData.indices.size() * sizeof(unsigned int);
+    indicesCount = static_cast<GLsizei>(meshData.indices.size());
+    indicesSize = static_cast<GLsizei>(indicesCount * sizeof(unsigned int));
     if (indicesSize > 0)
     {
         glGenBuffers(1, &IBO);
@@ -22,13 +23,14 @@ GLMesh::GLMesh(const MeshData& meshData)
         drawCount = static_cast<GLsizei>(indicesSize / sizeof(unsigned int));
     }
     
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);
+    constexpr auto stride = 8 * sizeof(GLfloat);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(sizeof(float) * 5));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 5));
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);

@@ -2,13 +2,6 @@
 
 #include "RenderComponent.h"
 
-struct Transform
-{
-    glm::vec3 position{};
-    glm::vec3 rotation{};
-    glm::vec3 scale{1.0f};
-};
-
 class SceneComponent : public RenderComponent
 {
 public:

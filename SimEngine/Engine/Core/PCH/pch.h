@@ -31,3 +31,4 @@
 #endif
 
 #include "Rendering/Core/Common.h"
+#include "Core/MathUtils.h"

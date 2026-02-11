@@ -39,10 +39,10 @@ void ProceduralSphereMeshComponent::GenerateMesh()
     
     MeshData meshData;
     auto& vertices = meshData.vertices;
-    vertices.reserve(resolution * resolution * 48);
+    vertices.reserve((resolution + 1) * (resolution + 1) * 48);
         
     auto& indices = meshData.indices;
-    indices.reserve(36 * (resolution - 1) * (resolution - 1)); 
+    indices.reserve(36 * resolution * resolution); 
     
     for (int i = 0; i < MathUtils::directions.size(); i++)
     {

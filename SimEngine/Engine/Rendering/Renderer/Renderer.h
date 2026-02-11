@@ -33,6 +33,7 @@ public:
     
     virtual ShaderPtr CreateShader(const ShaderData& shaderData) const = 0;
     virtual MeshPtr CreateMesh(const MeshData& meshData) const = 0;
+    virtual InstancedMeshPtr CreateInstancedMesh(MeshPtr mesh, const std::vector<Transform>& transforms) const = 0;
     virtual LinePtr CreateLine() const = 0;
     
     virtual SkyboxPtr CreateSkybox(const std::vector<std::string>& faceLocations) const { return nullptr; }
