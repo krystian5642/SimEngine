@@ -36,6 +36,7 @@ protected:
     TexturePtr CreateTexture(const TextureData& textureData) const override;
     ShaderPtr CreateShader(const ShaderData& shaderData) const override;
     MeshPtr CreateMesh(const MeshData& meshData) const override;
+    InstancedMeshPtr CreateInstancedMesh(MeshPtr mesh, const std::vector<Transform>& transforms) const override;
     LinePtr CreateLine() const override;
     
     SkyboxPtr CreateSkybox(const std::vector<std::string>& faceLocations) const override;

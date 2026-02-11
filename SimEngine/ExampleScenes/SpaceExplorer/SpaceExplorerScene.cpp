@@ -1,5 +1,6 @@
 ﻿#include "SpaceExplorerScene.h"
 
+#include "AsteroidField.h"
 #include "SpaceShip.h"
 #include "Managers/MeshManager.h"
 #include "Scene/Objects/Entities/CameraEntity.h"
@@ -118,4 +119,6 @@ SpaceExplorerScene::SpaceExplorerScene(const std::string& name)
     auto spaceShip = AddObject<SpaceShip>();
     spaceShip->SetPosition({0.0f, 120.0f, 0.0f});
     cameraComp->SetFollowTarget(spaceShip);
+    
+    AddObject<AsteroidField>();
 }

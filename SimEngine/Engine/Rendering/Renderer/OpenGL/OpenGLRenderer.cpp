@@ -16,6 +16,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Core/GLInstancedMesh.h"
 #include "Core/GLLine.h"
 #include "Core/GLMaterial.h"
 
@@ -66,7 +67,12 @@ MeshPtr OpenGLRenderer::CreateMesh(const MeshData& meshData) const
 {
     return std::make_shared<GLMesh>(meshData);
 }
-    
+
+InstancedMeshPtr OpenGLRenderer::CreateInstancedMesh(MeshPtr mesh, const std::vector<Transform>& transforms) const
+{
+    return std::make_shared<GLInstancedMesh>(mesh, transforms);
+}
+
 LinePtr OpenGLRenderer::CreateLine() const
 {
     return std::make_unique<GLLine>();

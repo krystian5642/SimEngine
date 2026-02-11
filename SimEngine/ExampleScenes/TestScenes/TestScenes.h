@@ -22,6 +22,7 @@ namespace SceneNames
     SCENE_NAME Materials = "Materials";
     SCENE_NAME RandomRigidBodies = "Random Rigid Bodies";
     SCENE_NAME ProceduralPlanet = "Procedural Planet";
+    SCENE_NAME Instancing = "Instancing";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -115,6 +116,12 @@ public:
     
 private:
     ProceduralPlanet* proceduralPlanet;
+};
+
+class InstancingScene : public Scene
+{
+public:
+    InstancingScene(const std::string& name = SceneNames::Instancing);
 };
 
 

@@ -144,6 +144,7 @@
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\InputComponent.cpp" />
+    <ClCompile Include="Engine\Components\InstancedMeshComponent.cpp" />
     <ClCompile Include="Engine\Components\LineComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Components\PhysicsComponent.cpp">
@@ -484,9 +485,11 @@
     <ClCompile Include="Engine\Managers\MaterialManager.cpp" />
     <ClCompile Include="Engine\Managers\MeshManager.cpp" />
     <ClCompile Include="Engine\Managers\TextureManager.cpp" />
+    <ClCompile Include="Engine\Rendering\Core\InstancedMesh.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Line.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Material.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Texture.cpp" />
+    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLInstancedMesh.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.cpp" />
@@ -826,6 +829,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="ExampleScenes\ExampleApp.cpp" />
+    <ClCompile Include="ExampleScenes\SpaceExplorer\AsteroidField.cpp" />
     <ClCompile Include="ExampleScenes\SpaceExplorer\ProceduralPlanet.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -1393,6 +1397,7 @@
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\InputComponent.h" />
+    <ClInclude Include="Engine\Components\InstancedMeshComponent.h" />
     <ClInclude Include="Engine\Components\LineComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\PhysicsComponent.h" />
@@ -1414,6 +1419,7 @@
     <ClInclude Include="Engine\Managers\MeshManager.h" />
     <ClInclude Include="Engine\Managers\TextureManager.h" />
     <ClInclude Include="Engine\Rendering\Core\Common.h" />
+    <ClInclude Include="Engine\Rendering\Core\InstancedMesh.h" />
     <ClInclude Include="Engine\Rendering\Core\Line.h" />
     <ClInclude Include="Engine\Rendering\Core\Material.h" />
     <ClInclude Include="Engine\Rendering\Core\Mesh.h" />
@@ -1421,6 +1427,7 @@
     <ClInclude Include="Engine\Rendering\Core\Skybox.h" />
     <ClInclude Include="Engine\Rendering\Core\Texture.h" />
     <ClInclude Include="Engine\Rendering\Lighting\ShadowMap.h" />
+    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLInstancedMesh.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.h" />
     <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.h" />
@@ -1451,6 +1458,7 @@
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\SimpleGravitySystem.h" />
     <ClInclude Include="ExampleScenes\ExampleApp.h" />
+    <ClInclude Include="ExampleScenes\SpaceExplorer\AsteroidField.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\ProceduralPlanet.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\SpaceExplorerScene.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\SpaceShip.h" />

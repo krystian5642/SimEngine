@@ -92,14 +92,7 @@ void SceneComponent::UpdateVectors()
 
 void SceneComponent::UpdateModelMatrix()
 {
-    modelMatrix = glm::mat4(1.0f);
-
-    modelMatrix = glm::translate(modelMatrix, transform.position);
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-    modelMatrix = glm::scale(modelMatrix, transform.scale);
+    modelMatrix = transform.CalculateModelMatrix();
 }
 
 void SceneComponent::AttachComponent(SceneComponent* component)

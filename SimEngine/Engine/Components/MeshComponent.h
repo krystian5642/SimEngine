@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "RenderComponent.h"
 #include "SceneComponent.h"
 
 class Mesh;

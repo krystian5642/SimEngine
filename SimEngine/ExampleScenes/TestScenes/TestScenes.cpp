@@ -14,14 +14,17 @@
 #include "Scene/Systems/Physics/PhysicsBoundsSystem.h"
 #include "Scene/Systems/Physics/PhysicsCollisionSystem.h"
 #include "SphereGrid.h"
+#include "Components/InstancedMeshComponent.h"
 #include "Components/LineComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Managers/TextureManager.h"
 #include "Components/ProceduralSphereMeshComponent.h"
+#include "Rendering/Core/InstancedMesh.h"
 #include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Texture.h"
 #include "Scene/Systems/Physics/SimpleGravitySystem.h"
 #include "Rendering/Core/Shader.h"
+#include "Rendering/Core/Mesh.h"
 
 ProjectileLauncherScene::ProjectileLauncherScene(const std::string& name)
     : Scene(name)
@@ -969,4 +972,88 @@ void ProceduralPlanetScene::DrawImGui()
     {
         proceduralMesh->SetNoiseSettings(noiseSettingsList);
     }
+}
+
+InstancingScene::InstancingScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 4.0f, 35.0f});
+    camera->cameraSpeed = 30.0f;
+        
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, 0.1f, -40.0f});
+    light->lightData.ambient = 1.0f;
+    light->lightData.diffuse = 0.4f;
+    
+    
+    
+    // instance rendering
+    auto obj = AddObject<Entity>();
+    auto ins = obj->AddComponent<InstancedMeshComponent>();
+    
+    int X = 10;
+    float spacing = 4.0f; 
+
+    std::vector<Transform> transforms;
+    transforms.reserve(X * X * X);
+
+    for (int x = 0; x < X; ++x)
+    {
+        for (int y = 0; y < X; ++y)
+        {
+            for (int z = 0; z < X; ++z)
+            {
+                Transform t;
+
+                t.position = {
+                    x * spacing,
+                    y * spacing,
+                    z * spacing
+                };
+
+                transforms.push_back(t);
+            }
+        }
+    }
+    
+    auto planet = MeshManager::Get().GetAssetByName("cube");
+    
+    ins->instancedMesh = InstancedMesh::CreateInstancedMesh(planet, transforms);
+    ins->material = MaterialManager::Get().GetAssetByName("gold");
+    
+    /*auto obj = AddObject<Entity>();
+    
+    int X = 140;
+    float spacing = 4.0f; 
+
+    std::vector<Transform> transforms;
+    transforms.reserve(X * X * X);
+
+    for (int x = 0; x < X; ++x)
+    {
+        for (int y = 0; y < X; ++y)
+        {
+            for (int z = 0; z < X; ++z)
+            {
+                auto planet = MeshManager::Get().GetAssetByName("cube");
+                
+                auto ins = obj->AddComponent<MeshComponent>();
+                ins->mesh = planet;
+                ins->material = MaterialManager::Get().GetAssetByName("gold");
+                
+                Transform t;
+
+                t.position = {
+                    x * spacing,
+                    y * spacing,
+                    z * spacing
+                };
+                
+                ins->SetPosition(t.position);
+            }
+        }
+    }*/
 }
