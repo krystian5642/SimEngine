@@ -13,6 +13,7 @@ class Texture;
 class Material;
 class Mesh;
 class ShadowMap;
+struct Transform;
 
 enum class RendererType
 {

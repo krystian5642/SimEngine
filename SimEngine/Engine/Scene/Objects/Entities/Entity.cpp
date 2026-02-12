@@ -82,7 +82,17 @@ void Entity::Rotate(const glm::vec3& rotationDelta)
         child->Rotate(rotationDelta);
     });
 }
+
+void Entity::Rotate(const glm::quat& rotationDelta)
+{
+    rootComponent->Rotate(rotationDelta);
     
+    childEntities.ForEach([rotationDelta](Entity* child, int index)
+    {
+        child->Rotate(rotationDelta);
+    });
+}
+
 void Entity::Scale(const glm::vec3& scaleDelta)
 {
     rootComponent->Scale(scaleDelta);
@@ -121,4 +131,14 @@ void Entity::SetScale(const glm::vec3& newScale)
     {
         child->SetScale(newScale);
     });
+}
+
+void Entity::SetUseQuaternionsForRotation(bool use)
+{
+    rootComponent->SetUseQuaternionsForRotation(use);
+}
+
+bool Entity::GetUseQuaternionsForRotation() const
+{
+    return rootComponent->GetUseQuaternionsForRotation();
 }

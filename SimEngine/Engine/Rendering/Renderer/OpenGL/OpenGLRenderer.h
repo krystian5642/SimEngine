@@ -23,6 +23,9 @@ struct GLScreenRenderData
     GLuint colorbufferTexture{};
     GLuint quadVAO{};
     GLuint quadVBO{};
+    
+    GLuint postProcessingFBO{};
+    GLuint postProcessingTexture{};
 };
 
 class OpenGLRenderer : public Renderer
@@ -66,4 +69,5 @@ private:
     
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;
+    GLsizei antialiasingSamples{8};
 };

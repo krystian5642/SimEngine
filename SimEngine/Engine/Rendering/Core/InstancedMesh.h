@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Rendering/Renderer/Renderer.h"
+#include "Core/MathUtils.h"
 
 struct MeshData;
 
