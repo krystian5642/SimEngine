@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "RenderComponent.h"
+#include "Core/MathUtils.h"
 
 class SceneComponent : public RenderComponent
 {
@@ -11,11 +12,15 @@ public:
 
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotationDelta);
+    void Rotate(const glm::quat& rotationDelta);
     void Scale(const glm::vec3& scaleDelta);
     
     void SetPosition(const glm::vec3& newPosition);
     void SetRotation(const glm::vec3& newRotation);
     void SetScale(const glm::vec3& newScale);
+    
+    void SetUseQuaternionsForRotation(bool use);
+    bool GetUseQuaternionsForRotation() const;
 
     void AttachComponent(SceneComponent* component);
     void DetachComponent(SceneComponent* component);

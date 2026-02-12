@@ -8,7 +8,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::SpaceExplorer);
+    SceneManager::SetDefaultScene(SceneNames::GravityShip);
     
     // test scenes
     REGISTER_SCENE(ProjectileLauncher);
@@ -22,6 +22,7 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(RandomRigidBodies);
     REGISTER_SCENE(ProceduralPlanet);
     REGISTER_SCENE(Instancing);
+    REGISTER_SCENE(RotationTest);
     
     // main scenes
     REGISTER_SCENE(SpaceExplorer);

@@ -25,11 +25,15 @@ public:
     
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotationDelta);
+    void Rotate(const glm::quat& rotationDelta);
     void Scale(const glm::vec3& scaleDelta);
     
     void SetPosition(const glm::vec3& newPosition);
     void SetRotation(const glm::vec3& newRotation);
     void SetScale(const glm::vec3& newScale);
+    
+    void SetUseQuaternionsForRotation(bool use);
+    bool GetUseQuaternionsForRotation() const;
     
     const glm::vec3& GetPosition() const { return rootComponent->GetPosition(); }
     const glm::vec3& GetRotation() const { return rootComponent->GetRotation(); }

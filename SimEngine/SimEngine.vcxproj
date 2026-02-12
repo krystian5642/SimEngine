@@ -306,6 +306,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Engine\Components\RenderComponent.cpp" />
+    <ClCompile Include="Engine\Components\RotatingComponent.cpp" />
     <ClCompile Include="Engine\Components\SceneComponent.cpp" />
     <ClCompile Include="Engine\Core\App.cpp" />
     <ClCompile Include="Engine\Core\Files\File.cpp" />
@@ -829,6 +830,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="ExampleScenes\ExampleApp.cpp" />
+    <ClCompile Include="ExampleScenes\SpaceExplorer\Asteroid.cpp" />
     <ClCompile Include="ExampleScenes\SpaceExplorer\AsteroidField.cpp" />
     <ClCompile Include="ExampleScenes\SpaceExplorer\ProceduralPlanet.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1403,6 +1405,7 @@
     <ClInclude Include="Engine\Components\PhysicsComponent.h" />
     <ClInclude Include="Engine\Components\ProceduralSphereMeshComponent.h" />
     <ClInclude Include="Engine\Components\RenderComponent.h" />
+    <ClInclude Include="Engine\Components\RotatingComponent.h" />
     <ClInclude Include="Engine\Components\SceneComponent.h" />
     <ClInclude Include="Engine\Core\App.h" />
     <ClInclude Include="Engine\Core\Concepts.h" />
@@ -1458,6 +1461,7 @@
     <ClInclude Include="Engine\Scene\Systems\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Scene\Systems\Physics\SimpleGravitySystem.h" />
     <ClInclude Include="ExampleScenes\ExampleApp.h" />
+    <ClInclude Include="ExampleScenes\SpaceExplorer\Asteroid.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\AsteroidField.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\ProceduralPlanet.h" />
     <ClInclude Include="ExampleScenes\SpaceExplorer\SpaceExplorerScene.h" />

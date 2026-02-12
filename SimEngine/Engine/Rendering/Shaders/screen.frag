@@ -16,10 +16,9 @@ const float offset = 1.0 / 100.0;
 
 void main() 
 {
-    FragColor = vec4(0.0, 0.0, 0.0, 1.0);
     FragColor = texture(screenTexture, TexCoords);
     
-    /*int kernelIndex = 0;
+/*    int kernelIndex = 0;
     for(int x = -1; x <= 1; x++)
     {
         for(int y = -1; y <= 1; y++)

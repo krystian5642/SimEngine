@@ -19,6 +19,7 @@
 #include "Components/PhysicsComponent.h"
 #include "Managers/TextureManager.h"
 #include "Components/ProceduralSphereMeshComponent.h"
+#include "Components/RotatingComponent.h"
 #include "Rendering/Core/InstancedMesh.h"
 #include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Texture.h"
@@ -988,13 +989,11 @@ InstancingScene::InstancingScene(const std::string& name)
     light->lightData.ambient = 1.0f;
     light->lightData.diffuse = 0.4f;
     
-    
-    
     // instance rendering
     auto obj = AddObject<Entity>();
     auto ins = obj->AddComponent<InstancedMeshComponent>();
     
-    int X = 10;
+    int X = 120;
     float spacing = 4.0f; 
 
     std::vector<Transform> transforms;
@@ -1056,4 +1055,63 @@ InstancingScene::InstancingScene(const std::string& name)
             }
         }
     }*/
+}
+
+RotationTestScene::RotationTestScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 0.0f, 80.0f});
+    camera->cameraSpeed = 30.0f;
+        
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, 0.1f, -50.0f});
+    light->lightData.ambient = 1.0f;
+    light->lightData.diffuse = 0.4f;
+    
+    
+    /*constexpr auto offset = 20.0f;
+    for (int i = -15; i < 15; ++i)
+    {
+        for (int j = -2; j < 2; ++j)
+        {
+            for (int k = -2; k < 2; ++k)
+            {
+                auto cube = AddObject<MeshEntity>();
+                cube->SetMesh(MeshManager::Get().GetAssetByName("cube"));
+                cube->SetMaterial(MaterialManager::Get().GetAssetByName("gold"));
+                cube->Move({i + offset, j + offset, k + offset});
+                cube->SetScale({0.5f, 0.5f, 0.5f});
+                
+                cube->SetUseQuaternionsForRotation(true);
+                
+                auto line = cube->AddComponent<LineComponent>();
+                line->SetThickness(2.0f);
+                line->SetMaxLenght(250.0f);
+                line->followParent = true;
+                
+                auto rot = cube->AddComponent<RotatingComponent>();
+                rot->rotatingData.orbitAngularVelocity = {200.0f, 100.0f, 10.0f};
+                rot->rotatingData.orbitCenter = {offset, offset, offset};
+            }
+        }
+    }*/
+    
+    auto sphere = AddObject<MeshEntity>();
+    sphere->SetUseQuaternionsForRotation(true);
+    
+    auto rot = sphere->AddComponent<RotatingComponent>();
+    
+    rot->rotatingData.localAngularVelocity = {50.0f, 50.0f, 50.0f};
+    rot->rotatingData.orbitAngularVelocity = {50.0f, 50.0f, 50.0f};
+    auto line = sphere->AddComponent<LineComponent>();
+    line->followParent = true;
+    line->SetThickness(2.0f);
+    
+    sphere->SetMesh(MeshManager::Get().GetAssetByName("cube"));
+    sphere->SetMaterial(MaterialManager::Get().GetAssetByName("gold"));
+    sphere->Move({0.0f, 0.0f, 7.0f});
+    sphere->SetScale({7.5f, 0.5f, 0.5f});
 }

@@ -111,26 +111,51 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
     glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
     
     glGenTextures(1, &screenRenderData.colorbufferTexture);
-    glBindTexture(GL_TEXTURE_2D, screenRenderData.colorbufferTexture);
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture);
-    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, 1920, 1080, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, screenRenderData.colorbufferTexture);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, antialiasingSamples, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, screenRenderData.colorbufferTexture, 0);
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture);
+    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, bufferWidth, bufferHeight, GL_LINEAR);
+    
+   // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    //glBindTexture(GL_TEXTURE_2D, 0);
     //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture, 0); 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.colorbufferTexture, 0);
     
     glGenRenderbuffers(1, &screenRenderData.RBO);
     glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.RBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, antialiasingSamples, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
     //glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, 1920, 1080);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.RBO);
     
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE)
+    {       
+        throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+    }
+    
+    glGenFramebuffers(1, &screenRenderData.postProcessingFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.postProcessingFBO);
+    
+    glGenTextures(1, &screenRenderData.postProcessingTexture);
+    glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
+    
+    status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {       
         throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
@@ -199,18 +224,23 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
 
     const auto projection = scene->GetProjectionMatrix();
     RenderPass(projection, scene);
+    
+    const auto window = App::GetCurrentWindow();
+    const auto bufferWidth = window->GetBufferWidth();
+    const auto bufferHeight = window->GetBufferHeight();
+    
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, screenRenderData.FBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screenRenderData.postProcessingFBO);
+    glBlitFramebuffer(0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     sceneShaders.screenShader->Bind();
 
     glBindVertexArray(screenRenderData.quadVAO);
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, screenRenderData.colorbufferTexture);
+    glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     sceneShaders.screenShader->Unbind();
@@ -390,6 +420,18 @@ void OpenGLRenderer::ResetRenderBuffer()
     {
         glDeleteBuffers(1, &screenRenderData.quadVBO);
         screenRenderData.quadVBO = 0;   
+    }
+    
+    if (screenRenderData.postProcessingFBO != 0)
+    {
+        glDeleteFramebuffers(1, &screenRenderData.postProcessingFBO);
+        screenRenderData.postProcessingFBO = 0;
+    }
+    
+    if (screenRenderData.postProcessingTexture != 0)
+    {
+        glDeleteTextures(1, &screenRenderData.postProcessingTexture);
+        screenRenderData.postProcessingTexture = 0;
     }
 }
 

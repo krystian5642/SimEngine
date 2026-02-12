@@ -47,6 +47,17 @@ void SceneComponent::Rotate(const glm::vec3& rotationDelta)
     }
 }
 
+void SceneComponent::Rotate(const glm::quat& rotationDelta)
+{
+    transform.rotationQuaternion = glm::normalize(rotationDelta * transform.rotationQuaternion);
+    UpdateVectors();
+
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->Rotate(rotationDelta);
+    }
+}
+
 void SceneComponent::Scale(const glm::vec3& scaleDelta)
 {
     if (MathUtils::IsNearlyZeroVector(scaleDelta))
@@ -81,9 +92,25 @@ void SceneComponent::SetScale(const glm::vec3& newScale)
     Scale(scaleDelta);
 }
 
+void SceneComponent::SetUseQuaternionsForRotation(bool use)
+{
+    transform.useQuaternion = use;
+    
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->SetUseQuaternionsForRotation(use);
+    }
+}
+
+bool SceneComponent::GetUseQuaternionsForRotation() const
+{
+    return transform.useQuaternion;
+}
+
 void SceneComponent::UpdateVectors()
 {
     UpdateModelMatrix();
+    
     forward = glm::normalize(glm::mat3(modelMatrix) * glm::vec3(0.0f, 0.0f, -1.0f));
     
     right = glm::normalize(glm::cross(forward, {0.0f, 1.0f, 0.0f}));

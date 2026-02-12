@@ -23,6 +23,7 @@ namespace SceneNames
     SCENE_NAME RandomRigidBodies = "Random Rigid Bodies";
     SCENE_NAME ProceduralPlanet = "Procedural Planet";
     SCENE_NAME Instancing = "Instancing";
+    SCENE_NAME RotationTest = "Rotation Test";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -122,6 +123,12 @@ class InstancingScene : public Scene
 {
 public:
     InstancingScene(const std::string& name = SceneNames::Instancing);
+};
+
+class RotationTestScene : public Scene
+{
+public:
+    RotationTestScene(const std::string& name = SceneNames::RotationTest);
 };
 
 
