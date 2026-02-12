@@ -1072,7 +1072,7 @@ RotationTestScene::RotationTestScene(const std::string& name)
     light->lightData.diffuse = 0.4f;
     
     
-    /*constexpr auto offset = 20.0f;
+    constexpr auto offset = 20.0f;
     for (int i = -15; i < 15; ++i)
     {
         for (int j = -2; j < 2; ++j)
@@ -1097,7 +1097,7 @@ RotationTestScene::RotationTestScene(const std::string& name)
                 rot->rotatingData.orbitCenter = {offset, offset, offset};
             }
         }
-    }*/
+    }
     
     auto sphere = AddObject<MeshEntity>();
     sphere->SetUseQuaternionsForRotation(true);
