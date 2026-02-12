@@ -47,7 +47,23 @@ OpenGLRenderer::~OpenGLRenderer()
 {
     ResetRenderBuffer();
 }
+
+void OpenGLRenderer::SetAntiAliasingEnabled(bool enabled)
+{
+    if (enabled != antialiasingData.enabled)
+    {
+        antialiasingData.enabled = enabled;
     
+        const auto window = App::GetCurrentWindow();
+        InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
+    }
+}
+
+bool OpenGLRenderer::GetAntiAliasingEnabled() const
+{
+    return antialiasingData.enabled;
+}
+
 TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
 {
     return std::make_shared<GLTexture>(fileLocation);
@@ -107,58 +123,73 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 {
     ResetRenderBuffer();
     
-    glGenFramebuffers(1, &screenRenderData.FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
+    if (antialiasingData.enabled)
+    {
+        glGenFramebuffers(1, &antialiasingData.FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, antialiasingData.FBO);
     
-    glGenTextures(1, &screenRenderData.colorbufferTexture);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, screenRenderData.colorbufferTexture);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, antialiasingSamples, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, screenRenderData.colorbufferTexture, 0);
+        glGenTextures(1, &antialiasingData.colorbufferTexture);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.colorbufferTexture);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.samples, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.colorbufferTexture, 0);
+        
+        glGenRenderbuffers(1, &antialiasingData.RBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, antialiasingData.RBO);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, antialiasingData.samples, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, antialiasingData.RBO);
+        
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {       
+            throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+        }
     
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture);
-    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, bufferWidth, bufferHeight, GL_LINEAR);
+        glGenFramebuffers(1, &screenRenderData.postProcessingFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.postProcessingFBO);
     
-   // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glGenTextures(1, &screenRenderData.postProcessingTexture);
+        glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
     
-    //glBindTexture(GL_TEXTURE_2D, 0);
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, renderData.colorbufferTexture, 0); 
-    
-    glGenRenderbuffers(1, &screenRenderData.RBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.RBO);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, antialiasingSamples, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
-    //glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, 1920, 1080);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.RBO);
-    
-    auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-    {       
-        throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+        status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {       
+            throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+        }
     }
-    
-    glGenFramebuffers(1, &screenRenderData.postProcessingFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.postProcessingFBO);
-    
-    glGenTextures(1, &screenRenderData.postProcessingTexture);
-    glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
-    
-    status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-    {       
-        throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+    else
+    {
+        glGenFramebuffers(1, &screenRenderData.postProcessingFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.postProcessingFBO);
+
+        glGenTextures(1, &screenRenderData.postProcessingTexture);
+        glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
+
+        glGenRenderbuffers(1, &screenRenderData.postProcessingRBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.postProcessingRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.postProcessingRBO);
+
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {       
+            throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
+        }
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -213,8 +244,16 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
             OmniDirectionalShadowMapPass(pointLight, scene);
         }
     }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.FBO);
+    
+    if (antialiasingData.enabled)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, antialiasingData.FBO);
+    }
+    else
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, screenRenderData.postProcessingFBO);
+    }
+ 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     // temporally enable stencil mask to clear it
@@ -225,14 +264,17 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     const auto projection = scene->GetProjectionMatrix();
     RenderPass(projection, scene);
     
-    const auto window = App::GetCurrentWindow();
-    const auto bufferWidth = window->GetBufferWidth();
-    const auto bufferHeight = window->GetBufferHeight();
+    if (antialiasingData.enabled)
+    {
+        const auto window = App::GetCurrentWindow();
+        const auto bufferWidth = window->GetBufferWidth();
+        const auto bufferHeight = window->GetBufferHeight();
     
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, screenRenderData.FBO);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screenRenderData.postProcessingFBO);
-    glBlitFramebuffer(0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, antialiasingData.FBO);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screenRenderData.postProcessingFBO);
+        glBlitFramebuffer(0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     sceneShaders.screenShader->Bind();
@@ -392,22 +434,22 @@ void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene)
 
 void OpenGLRenderer::ResetRenderBuffer()
 {
-    if (screenRenderData.FBO != 0)
+    if (antialiasingData.FBO != 0)
     {
-        glDeleteFramebuffers(1, &screenRenderData.FBO);
-        screenRenderData.FBO = 0;
+        glDeleteFramebuffers(1, &antialiasingData.FBO);
+        antialiasingData.FBO = 0;
     }
 
-    if (screenRenderData.colorbufferTexture != 0)
+    if (antialiasingData.colorbufferTexture != 0)
     {
-        glDeleteTextures(1, &screenRenderData.colorbufferTexture);
-        screenRenderData.colorbufferTexture = 0;
+        glDeleteTextures(1, &antialiasingData.colorbufferTexture);
+        antialiasingData.colorbufferTexture = 0;
     }
 
-    if (screenRenderData.RBO != 0)
+    if (antialiasingData.RBO != 0)
     {
-        glDeleteRenderbuffers(1, &screenRenderData.RBO);
-        screenRenderData.RBO = 0;
+        glDeleteRenderbuffers(1, &antialiasingData.RBO);
+        antialiasingData.RBO = 0;
     }
 
     if (screenRenderData.quadVAO != 0)
@@ -426,6 +468,12 @@ void OpenGLRenderer::ResetRenderBuffer()
     {
         glDeleteFramebuffers(1, &screenRenderData.postProcessingFBO);
         screenRenderData.postProcessingFBO = 0;
+    }
+    
+    if (screenRenderData.postProcessingRBO != 0)
+    {
+        glDeleteRenderbuffers(1, &screenRenderData.postProcessingRBO);
+        screenRenderData.postProcessingRBO = 0;
     }
     
     if (screenRenderData.postProcessingTexture != 0)

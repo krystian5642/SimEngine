@@ -1115,3 +1115,46 @@ RotationTestScene::RotationTestScene(const std::string& name)
     sphere->Move({0.0f, 0.0f, 7.0f});
     sphere->SetScale({7.5f, 0.5f, 0.5f});
 }
+
+AntiAliasingScene::AntiAliasingScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 0.0f, 80.0f});
+    camera->cameraSpeed = 30.0f;
+        
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, 0.1f, -50.0f});
+    light->lightData.ambient = 1.0f;
+    light->lightData.diffuse = 0.4f;
+    
+    for (int i = -5; i < 5; ++i)
+    {
+        for (int j = -5; j < 5; ++j)
+        {
+            auto cube = AddObject<MeshEntity>();
+            cube->SetMesh(MeshManager::Get().GetAssetByName("cube"));
+            cube->SetMaterial(MaterialManager::Get().GetAssetByName("gold"));
+            cube->Move({4*i, 4*j, 0.0f});
+            cube->SetRotation({0.0f, 0.0f, 45.0f});
+            
+            auto rot = cube->AddComponent<RotatingComponent>();
+            rot->rotatingData.localAngularVelocity = {0.0f, 0.0f, 30.0f};
+            
+            cube->SetUseQuaternionsForRotation(true);
+        }
+    }
+}
+
+void AntiAliasingScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    auto antiAliasingEnabled = Renderer::Get()->GetAntiAliasingEnabled();
+    
+    ImGui::Checkbox("Anti Aliasing Enabled (MSAA)", &antiAliasingEnabled);
+    
+    Renderer::Get()->SetAntiAliasingEnabled(antiAliasingEnabled);
+}
