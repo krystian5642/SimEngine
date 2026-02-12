@@ -24,6 +24,7 @@ namespace SceneNames
     SCENE_NAME ProceduralPlanet = "Procedural Planet";
     SCENE_NAME Instancing = "Instancing";
     SCENE_NAME RotationTest = "Rotation Test";
+    SCENE_NAME AntiAliasing = "Anti-Aliasing";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -129,6 +130,14 @@ class RotationTestScene : public Scene
 {
 public:
     RotationTestScene(const std::string& name = SceneNames::RotationTest);
+};
+
+class AntiAliasingScene : public Scene
+{
+public:
+    AntiAliasingScene(const std::string& name = SceneNames::AntiAliasing);
+    
+    void DrawImGui() override;
 };
 
 

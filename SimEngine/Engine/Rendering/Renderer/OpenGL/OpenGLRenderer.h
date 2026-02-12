@@ -18,14 +18,22 @@ struct GLSceneShaders
 
 struct GLScreenRenderData
 {
-    GLuint FBO{};
-    GLuint RBO{};
-    GLuint colorbufferTexture{};
     GLuint quadVAO{};
     GLuint quadVBO{};
     
     GLuint postProcessingFBO{};
+    GLuint postProcessingRBO{};
     GLuint postProcessingTexture{};
+};
+
+struct GLAntialiasingData
+{
+    GLuint FBO{};
+    GLuint RBO{};
+    GLuint colorbufferTexture{};
+    
+    GLsizei samples{4};
+    GLboolean enabled{true};
 };
 
 class OpenGLRenderer : public Renderer
@@ -34,7 +42,9 @@ public:
     OpenGLRenderer();
     ~OpenGLRenderer() override;
     
-protected:
+    void SetAntiAliasingEnabled(bool enabled) override;
+    bool GetAntiAliasingEnabled() const override;
+    
     TexturePtr CreateTexture(const std::string& fileLocation) const override;
     TexturePtr CreateTexture(const TextureData& textureData) const override;
     ShaderPtr CreateShader(const ShaderData& shaderData) const override;
@@ -69,5 +79,5 @@ private:
     
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;
-    GLsizei antialiasingSamples{8};
+    GLAntialiasingData antialiasingData;
 };

@@ -29,6 +29,9 @@ public:
     
     static void Init(RendererType type);
     
+    virtual void SetAntiAliasingEnabled(bool enabled) {}
+    virtual bool GetAntiAliasingEnabled() const { return false; }
+    
     virtual TexturePtr CreateTexture(const std::string& fileLocation) const = 0;
     virtual TexturePtr CreateTexture(const TextureData& textureData) const = 0;
     

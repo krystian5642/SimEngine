@@ -33,11 +33,11 @@ void RotatingComponent::Rotate(const glm::quat& rotationDelta)
 
 void RotatingComponent::ApplyLocalAngularVelocity(float deltaTime)
 {
-    if (parentEntity->GetUseQuaternionsForRotation())
+    const auto angularVelocityRad = glm::radians(rotatingData.localAngularVelocity);
+    auto angularSpeed = glm::length(angularVelocityRad);
+    if (angularSpeed > 1e-6f)
     {
-        const auto angularVelocityRad = glm::radians(rotatingData.localAngularVelocity);
-        auto angularSpeed = glm::length(angularVelocityRad);
-        if (angularSpeed > 1e-6f)
+        if (parentEntity->GetUseQuaternionsForRotation())
         {
             const auto deltaAngle = angularSpeed * deltaTime;
             const auto axis = angularVelocityRad / angularSpeed;
@@ -45,10 +45,10 @@ void RotatingComponent::ApplyLocalAngularVelocity(float deltaTime)
             const auto quatRotation = glm::angleAxis(deltaAngle, axis);
             Rotate(quatRotation);
         }
-    }
-    else
-    {
-        std::cout << "RotatingComponent::Tick: Rotation is not using quaternions!" << std::endl;
+        else
+        {
+            std::cout << "RotatingComponent::Tick: Rotation is not using quaternions!" << std::endl;
+        }
     }
 }
 
