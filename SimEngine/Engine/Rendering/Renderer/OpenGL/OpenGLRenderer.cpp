@@ -106,10 +106,14 @@ void OpenGLRenderer::SetAntialiasingMethod(AntialiasingMethod antialiasingMethod
 {
     if (antialiasingMethod != antialiasingData.method)
     {
+        const auto prev = antialiasingData.method;
         antialiasingData.method = antialiasingMethod;
-    
-        const auto window = App::GetCurrentWindow();
-        InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
+        
+        if (prev == AntialiasingMethod::MSAA || antialiasingMethod == AntialiasingMethod::MSAA)
+        {
+            const auto window = App::GetCurrentWindow();
+            InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
+        }
     }
 }
 
