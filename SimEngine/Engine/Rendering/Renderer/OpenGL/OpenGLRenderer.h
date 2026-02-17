@@ -14,6 +14,7 @@ struct GLSceneShaders
     ConstGLShaderPtr directionalShadowMapShader;
     ConstGLShaderPtr omniShadowMapShader;
     ConstGLShaderPtr screenShader;
+    ConstGLShaderPtr FXAAshader;
 };
 
 struct GLScreenRenderData
@@ -24,6 +25,8 @@ struct GLScreenRenderData
     GLuint postProcessingFBO{};
     GLuint postProcessingRBO{};
     GLuint postProcessingTexture{};
+    
+    void Reset();
 };
 
 struct GLAntialiasingData
@@ -33,7 +36,9 @@ struct GLAntialiasingData
     GLuint colorbufferTexture{};
     
     GLsizei samples{4};
-    GLboolean enabled{true};
+    AntialiasingMethod method{AntialiasingMethod::MSAA};
+    
+    void Reset();
 };
 
 class OpenGLRenderer : public Renderer
@@ -42,8 +47,11 @@ public:
     OpenGLRenderer();
     ~OpenGLRenderer() override;
     
-    void SetAntiAliasingEnabled(bool enabled) override;
-    bool GetAntiAliasingEnabled() const override;
+    void SetAntialiasingMethod(AntialiasingMethod antialiasingMethod) override;
+    AntialiasingMethod GetAntialiasingMethod() const override;
+    
+    void SetFXAASettings(const FXAASettings& settings) override;
+    FXAASettings GetFXAASettings() const override;
     
     TexturePtr CreateTexture(const std::string& fileLocation) const override;
     TexturePtr CreateTexture(const TextureData& textureData) const override;
@@ -80,4 +88,6 @@ private:
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;
     GLAntialiasingData antialiasingData;
+    
+    FXAASettings fxaaSettings;
 };

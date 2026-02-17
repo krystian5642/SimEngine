@@ -20,6 +20,28 @@ enum class RendererType
     OpenGL
 };
 
+enum class AntialiasingMethod
+{
+    None,
+    FXAA,
+    MSAA
+};
+
+struct FXAASettings
+{
+    float FXAASpanMax{8.0f};
+    float FXAAReduceMin{1.0f / 128.0f};
+    float FXAAReduceMul{1.0f / 8.0f};
+};
+
+namespace UniformNames
+{
+    UNIFORM_NAME texelSize = "texelSize";
+    UNIFORM_NAME fXAASpanMax = "fxaaSettings.FXAASpanMax";
+    UNIFORM_NAME fXAAReduceMin = "fxaaSettings.FXAAReduceMin";
+    UNIFORM_NAME fXAAReduceMul = "fxaaSettings.FXAAReduceMul";
+}
+
 class Renderer
 {
 public:
@@ -29,8 +51,11 @@ public:
     
     static void Init(RendererType type);
     
-    virtual void SetAntiAliasingEnabled(bool enabled) {}
-    virtual bool GetAntiAliasingEnabled() const { return false; }
+    virtual void SetAntialiasingMethod(AntialiasingMethod antialiasingMethod) {}
+    virtual AntialiasingMethod GetAntialiasingMethod() const { return AntialiasingMethod::None; }
+    
+    virtual void SetFXAASettings(const FXAASettings& settings) {}
+    virtual FXAASettings GetFXAASettings() const { return {}; }
     
     virtual TexturePtr CreateTexture(const std::string& fileLocation) const = 0;
     virtual TexturePtr CreateTexture(const TextureData& textureData) const = 0;

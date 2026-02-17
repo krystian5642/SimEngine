@@ -1484,6 +1484,8 @@
   <ItemGroup>
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.frag" />
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.vert" />
+    <Content Include="Engine\Rendering\Shaders\FXAA.frag" />
+    <Content Include="Engine\Rendering\Shaders\FXAA.vert" />
     <Content Include="Engine\Rendering\Shaders\instanced_mesh.frag" />
     <Content Include="Engine\Rendering\Shaders\instanced_mesh.vert" />
     <Content Include="Engine\Rendering\Shaders\line.frag" />
