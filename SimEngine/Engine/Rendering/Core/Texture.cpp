@@ -15,7 +15,7 @@ Texture::Texture(const TextureData& textureData)
 
 Texture::~Texture()
 {
-    if (loadedFromFile)
+    if (loadedFromFile && textureData.data)
     {
         stbi_image_free(textureData.data);
     }
