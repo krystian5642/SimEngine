@@ -22,6 +22,60 @@
 
 #define CREATE_SHADER(shaderData) std::dynamic_pointer_cast<const GLShader>(CreateShader(shaderData))
 
+void GLScreenRenderData::Reset()
+{
+    if (quadVAO != 0)
+    {
+        glDeleteVertexArrays(1, &quadVAO);
+        quadVAO = 0;
+    }
+
+    if (quadVBO != 0)
+    {
+        glDeleteBuffers(1, &quadVBO);
+        quadVBO = 0;   
+    }
+    
+    if (postProcessingFBO != 0)
+    {
+        glDeleteFramebuffers(1, &postProcessingFBO);
+        postProcessingFBO = 0;
+    }
+    
+    if (postProcessingRBO != 0)
+    {
+        glDeleteRenderbuffers(1, &postProcessingRBO);
+        postProcessingRBO = 0;
+    }
+    
+    if (postProcessingTexture != 0)
+    {
+        glDeleteTextures(1, &postProcessingTexture);
+        postProcessingTexture = 0;
+    }
+}
+
+void GLAntialiasingData::Reset()
+{
+    if (FBO != 0)
+    {
+        glDeleteFramebuffers(1, &FBO);
+        FBO = 0;
+    }
+
+    if (colorbufferTexture != 0)
+    {
+        glDeleteTextures(1, &colorbufferTexture);
+        colorbufferTexture = 0;
+    }
+
+    if (RBO != 0)
+    {
+        glDeleteRenderbuffers(1, &RBO);
+        RBO = 0;
+    }
+}
+
 OpenGLRenderer::OpenGLRenderer()
 {
     auto window = App::GetCurrentWindow();
@@ -48,20 +102,30 @@ OpenGLRenderer::~OpenGLRenderer()
     ResetRenderBuffer();
 }
 
-void OpenGLRenderer::SetAntiAliasingEnabled(bool enabled)
+void OpenGLRenderer::SetAntialiasingMethod(AntialiasingMethod antialiasingMethod)
 {
-    if (enabled != antialiasingData.enabled)
+    if (antialiasingMethod != antialiasingData.method)
     {
-        antialiasingData.enabled = enabled;
+        antialiasingData.method = antialiasingMethod;
     
         const auto window = App::GetCurrentWindow();
         InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
     }
 }
 
-bool OpenGLRenderer::GetAntiAliasingEnabled() const
+AntialiasingMethod OpenGLRenderer::GetAntialiasingMethod() const
 {
-    return antialiasingData.enabled;
+    return antialiasingData.method;
+}
+
+void OpenGLRenderer::SetFXAASettings(const FXAASettings& settings)
+{
+    fxaaSettings = settings;
+}
+
+FXAASettings OpenGLRenderer::GetFXAASettings() const
+{
+    return fxaaSettings;
 }
 
 TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
@@ -123,7 +187,7 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 {
     ResetRenderBuffer();
     
-    if (antialiasingData.enabled)
+    if (antialiasingData.method == AntialiasingMethod::MSAA)
     {
         glGenFramebuffers(1, &antialiasingData.FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, antialiasingData.FBO);
@@ -245,7 +309,7 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
         }
     }
     
-    if (antialiasingData.enabled)
+    if (antialiasingData.method == AntialiasingMethod::MSAA)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, antialiasingData.FBO);
     }
@@ -264,12 +328,12 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     const auto projection = scene->GetProjectionMatrix();
     RenderPass(projection, scene);
     
-    if (antialiasingData.enabled)
-    {
-        const auto window = App::GetCurrentWindow();
-        const auto bufferWidth = window->GetBufferWidth();
-        const auto bufferHeight = window->GetBufferHeight();
+    const auto window = App::GetCurrentWindow();
+    const auto bufferWidth = window->GetBufferWidth();
+    const auto bufferHeight = window->GetBufferHeight();
     
+    if (antialiasingData.method == AntialiasingMethod::MSAA)
+    {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, antialiasingData.FBO);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screenRenderData.postProcessingFBO);
         glBlitFramebuffer(0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
@@ -277,15 +341,26 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    sceneShaders.screenShader->Bind();
-
+    auto shader = antialiasingData.method == AntialiasingMethod::FXAA ? sceneShaders.FXAAshader : sceneShaders.screenShader;
+    
+    shader->Bind();
+    
+    if (antialiasingData.method == AntialiasingMethod::FXAA)
+    {
+        shader->SetVec2f(UniformNames::texelSize, glm::vec2(1.0f / static_cast<float>(bufferWidth), 1.0f / static_cast<float>(bufferHeight)));
+    
+        shader->SetFloat(UniformNames::fXAASpanMax, fxaaSettings.FXAASpanMax);
+        shader->SetFloat(UniformNames::fXAAReduceMin, fxaaSettings.FXAAReduceMin);
+        shader->SetFloat(UniformNames::fXAAReduceMul, fxaaSettings.FXAAReduceMul);
+    }
+    
     glBindVertexArray(screenRenderData.quadVAO);
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    sceneShaders.screenShader->Unbind();
+    shader->Unbind();
 }
 
 void OpenGLRenderer::InitSceneShaders()
@@ -309,6 +384,11 @@ void OpenGLRenderer::InitSceneShaders()
     screenShaderData.vertShader = ShaderData::shadersFolder + "screen.vert";
     screenShaderData.fragShader = ShaderData::shadersFolder + "screen.frag";
     sceneShaders.screenShader = CREATE_SHADER(screenShaderData);
+    
+    ShaderData FXAAshaderData;
+    FXAAshaderData.vertShader = ShaderData::shadersFolder + "FXAA.vert";
+    FXAAshaderData.fragShader = ShaderData::shadersFolder + "FXAA.frag";
+    sceneShaders.FXAAshader = CREATE_SHADER(FXAAshaderData);
 }
 
 void OpenGLRenderer::Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const
@@ -434,53 +514,8 @@ void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene)
 
 void OpenGLRenderer::ResetRenderBuffer()
 {
-    if (antialiasingData.FBO != 0)
-    {
-        glDeleteFramebuffers(1, &antialiasingData.FBO);
-        antialiasingData.FBO = 0;
-    }
-
-    if (antialiasingData.colorbufferTexture != 0)
-    {
-        glDeleteTextures(1, &antialiasingData.colorbufferTexture);
-        antialiasingData.colorbufferTexture = 0;
-    }
-
-    if (antialiasingData.RBO != 0)
-    {
-        glDeleteRenderbuffers(1, &antialiasingData.RBO);
-        antialiasingData.RBO = 0;
-    }
-
-    if (screenRenderData.quadVAO != 0)
-    {
-        glDeleteVertexArrays(1, &screenRenderData.quadVAO);
-        screenRenderData.quadVAO = 0;
-    }
-
-    if (screenRenderData.quadVBO != 0)
-    {
-        glDeleteBuffers(1, &screenRenderData.quadVBO);
-        screenRenderData.quadVBO = 0;   
-    }
-    
-    if (screenRenderData.postProcessingFBO != 0)
-    {
-        glDeleteFramebuffers(1, &screenRenderData.postProcessingFBO);
-        screenRenderData.postProcessingFBO = 0;
-    }
-    
-    if (screenRenderData.postProcessingRBO != 0)
-    {
-        glDeleteRenderbuffers(1, &screenRenderData.postProcessingRBO);
-        screenRenderData.postProcessingRBO = 0;
-    }
-    
-    if (screenRenderData.postProcessingTexture != 0)
-    {
-        glDeleteTextures(1, &screenRenderData.postProcessingTexture);
-        screenRenderData.postProcessingTexture = 0;
-    }
+    screenRenderData.Reset();
+    antialiasingData.Reset();
 }
 
 void OpenGLRenderer::OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight)

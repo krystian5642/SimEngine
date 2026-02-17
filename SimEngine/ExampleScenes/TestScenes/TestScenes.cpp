@@ -1116,7 +1116,7 @@ RotationTestScene::RotationTestScene(const std::string& name)
     sphere->SetScale({7.5f, 0.5f, 0.5f});
 }
 
-AntiAliasingScene::AntiAliasingScene(const std::string& name)
+AntialiasingScene::AntialiasingScene(const std::string& name)
     : Scene(name)
 {
     auto camera = AddObject<CameraEntity>("Camera");
@@ -1148,13 +1148,55 @@ AntiAliasingScene::AntiAliasingScene(const std::string& name)
     }
 }
 
-void AntiAliasingScene::DrawImGui()
+void AntialiasingScene::DrawImGui()
 {
     Scene::DrawImGui();
     
-    auto antiAliasingEnabled = Renderer::Get()->GetAntiAliasingEnabled();
+    auto method = static_cast<int>(Renderer::Get()->GetAntialiasingMethod());
+    const char* items[] = { "None", "FXAA", "MSAA" };
     
-    ImGui::Checkbox("Anti Aliasing Enabled (MSAA)", &antiAliasingEnabled);
+    ImGui::PushItemWidth(70);
+    if (ImGui::Combo("AA Method ", &method, items, IM_ARRAYSIZE(items)))
+    {
+        Renderer::Get()->SetAntialiasingMethod(static_cast<AntialiasingMethod>(method));
+    }
+    ImGui::PopItemWidth();
+}
+
+MipMappingScene::MipMappingScene(const std::string& name)
+    : Scene(name)
+{
+    TextureManager::Get().RegisterCreateAsset("moon8k", []
+    {
+        return Texture::CreateTexture("Textures/8k_moon.jpg");
+    });
+
+    MaterialManager::Get().RegisterCreateAsset("moon8k", []
+    {
+        MaterialResources resources;
+        MaterialData& data = resources.data;
+        
+        data.ambient = {0.05f, 0.05f, 0.05f};
+        data.specular = {0.1f, 0.1f, 0.1f};
+        data.shininess = 8.0f;  
+        
+        resources.texture = TextureManager::Get().GetAssetByName("moon8k");
+        return std::make_shared<Material>(resources); 
+    });
     
-    Renderer::Get()->SetAntiAliasingEnabled(antiAliasingEnabled);
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 2.0f, 0.0f});
+    camera->cameraSpeed = 1.0f;
+        
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, 0.1f, -50.0f});
+    light->lightData.ambient = 1.0f;
+    light->lightData.diffuse = 0.4f;
+    
+    auto plane = AddObject<MeshEntity>();
+    plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
+    plane->SetMaterial(MaterialManager::Get().GetAssetByName("moon8k"));
+    plane->SetScale({2.0f, 0.0f, 2.0f});
 }
