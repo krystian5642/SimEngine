@@ -31,6 +31,5 @@ protected:
     
     TextureData textureData;
     
-private:
     bool loadedFromFile{false};
 };
