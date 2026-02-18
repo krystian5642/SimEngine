@@ -26,7 +26,7 @@ void main()
     float lumaM  = dot(luma, texture(screenTexture, TexCoords).xyz);
     
     vec2 blurDir;
-    blurDir.x = -((lumaTL + lumaTR) - (lumaBL + lumaBR));
+    blurDir.x = ((lumaTL + lumaTR) - (lumaBL + lumaBR));
     blurDir.y = ((lumaTL + lumaBL) - (lumaTR + lumaBR));
     
     float dirReduce = max((lumaTL + lumaTR + lumaBL + lumaBR) * (fxaaSettings.FXAAReduceMul * 0.25), fxaaSettings.FXAAReduceMin);
@@ -34,13 +34,13 @@ void main()
     blurDir = clamp(blurDir * inverseDirAdjustment, vec2(-fxaaSettings.FXAASpanMax), vec2(fxaaSettings.FXAASpanMax)) * texelSize;
     
     vec3 rgbA = (1.0 / 2.0) * (
-            texture(screenTexture, TexCoords + blurDir * vec2(1.0 / 3.0 - 0.5)).xyz
-            +  texture(screenTexture, TexCoords + blurDir * vec2(2.0 / 3.0 - 0.5)).xyz
+            texture(screenTexture, TexCoords + blurDir * (1.0 / 3.0 - 0.5)).xyz
+            +  texture(screenTexture, TexCoords + blurDir * (2.0 / 3.0 - 0.5)).xyz
         );
     
     vec3 rgbB = rgbA * (1.0 / 2.0) + (1.0 / 4.0) * (
-        texture(screenTexture, TexCoords + blurDir * vec2(0.0 / 3.0 - 0.5)).xyz
-        +  texture(screenTexture, TexCoords + blurDir * vec2(3.0 / 3.0 - 0.5)).xyz
+        texture(screenTexture, TexCoords + blurDir * (0.0 / 3.0 - 0.5)).xyz
+        +  texture(screenTexture, TexCoords + blurDir * (3.0 / 3.0 - 0.5)).xyz
     );
     
     float lumaMin = min(lumaM, min(min(lumaTL, lumaTR), min(lumaBL, lumaBR)));

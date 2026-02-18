@@ -127,9 +127,27 @@ void OpenGLRenderer::SetFXAASettings(const FXAASettings& settings)
     fxaaSettings = settings;
 }
 
-FXAASettings OpenGLRenderer::GetFXAASettings() const
+const FXAASettings& OpenGLRenderer::GetFXAASettings() const
 {
     return fxaaSettings;
+}
+
+void OpenGLRenderer::SetMSAASettings(const MSAASettings& settings)
+{
+    msaaSettings.samples = glm::clamp(msaaSettings.samples, 1u, GetMaxSamples());
+    msaaSettings = settings;
+}
+
+const MSAASettings& OpenGLRenderer::GetMSAASettings() const
+{
+    return msaaSettings;
+}
+
+unsigned int OpenGLRenderer::GetMaxSamples() const
+{
+    GLint maxSamples;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    return maxSamples;
 }
 
 TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
@@ -198,7 +216,7 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
     
         glGenTextures(1, &antialiasingData.colorbufferTexture);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.colorbufferTexture);
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.samples, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(msaaSettings.samples), GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -207,7 +225,7 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
         
         glGenRenderbuffers(1, &antialiasingData.RBO);
         glBindRenderbuffer(GL_RENDERBUFFER, antialiasingData.RBO);
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, antialiasingData.samples, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, static_cast<GLsizei>(msaaSettings.samples), GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, antialiasingData.RBO);
         
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

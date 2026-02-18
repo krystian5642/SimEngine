@@ -35,7 +35,6 @@ struct GLAntialiasingData
     GLuint RBO{};
     GLuint colorbufferTexture{};
     
-    GLsizei samples{4};
     AntialiasingMethod method{AntialiasingMethod::MSAA};
     
     void Reset();
@@ -51,7 +50,12 @@ public:
     AntialiasingMethod GetAntialiasingMethod() const override;
     
     void SetFXAASettings(const FXAASettings& settings) override;
-    FXAASettings GetFXAASettings() const override;
+    const FXAASettings& GetFXAASettings() const override;
+    
+    void SetMSAASettings(const MSAASettings& settings) override;
+    const MSAASettings& GetMSAASettings() const override;
+    
+    unsigned int GetMaxSamples() const override;
     
     TexturePtr CreateTexture(const std::string& fileLocation) const override;
     TexturePtr CreateTexture(const TextureData& textureData) const override;
@@ -90,4 +94,5 @@ private:
     GLAntialiasingData antialiasingData;
     
     FXAASettings fxaaSettings;
+    MSAASettings msaaSettings;
 };
