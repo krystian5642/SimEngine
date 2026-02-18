@@ -26,6 +26,7 @@ namespace SceneNames
     SCENE_NAME RotationTest = "Rotation Test";
     SCENE_NAME Antialiasing = "Anti-Aliasing";
     SCENE_NAME MipMapping = "Mip Mapping";
+    SCENE_NAME SpecularLightTest = "Specular Light Test";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -145,6 +146,12 @@ class MipMappingScene : public Scene
 {
 public:
     MipMappingScene(const std::string& name = SceneNames::MipMapping);
+};
+
+class SpecularLightTestScene : public Scene
+{
+public:
+    SpecularLightTestScene(const std::string& name = SceneNames::SpecularLightTest);
 };
 
 

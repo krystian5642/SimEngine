@@ -140,15 +140,15 @@ vec4 CalcLightColorByDirection(LightData lightData, vec3 direction, float shadow
     
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(direction);
-    vec3 reflectLight = reflect(lightDir, normal);
-
+    
     vec4 materialDiffuse = material.useTexture ? texture(material.texture, TexCoord) : vec4(material.diffuse, 1.0);
-    float diffuseFactor = max(dot(reflectLight, normal), 0.0) * lightData.diffuse;
+    float diffuseFactor = max(dot(lightDir, normal), 0.0) * lightData.diffuse;
     vec4 diffuseColor = vec4(diffuseFactor * lightData.color, 1.0) * materialDiffuse;
-
+    
     vec4 specularColor = {0.0, 0.0, 0.0, 0.0};
     if (diffuseFactor > 0.0)
     {
+        vec3 reflectLight = reflect(-lightDir, normal);
         vec3 view = normalize(cameraPosition - FragPos);
         float shininessFactor = dot(reflectLight, view);
         if(shininessFactor > 0.0)
@@ -169,7 +169,7 @@ vec4 CalcDirectionalLightColor()
         DirectionalLight dirLight = dirLights[i];
         
         float shadowFactor = CalcShadowFactor(i, dirShadowMaps[i]);
-        color += CalcLightColorByDirection(dirLight.lightData, dirLight.direction, shadowFactor);
+        color += CalcLightColorByDirection(dirLight.lightData, -dirLight.direction, shadowFactor);
     }
     
     return color;
@@ -184,17 +184,17 @@ vec4 CalcPointLightColor()
         PointLight pointLight = pointLights[i];
         
         float distanceSqrt = dot(FragPos - pointLight.position, FragPos - pointLight.position);
-        vec3 direction = normalize(FragPos - pointLight.position);
+        vec3 direction = normalize(pointLight.position - FragPos);
         
         LightData lightData;
         lightData.color = pointLight.lightData.color;
         lightData.ambient = pointLight.lightData.ambient / distanceSqrt;
         lightData.diffuse = pointLight.lightData.diffuse / distanceSqrt;
-
+        
         float shadowFactor = CalcOmniShadowFactor(omniShadowMaps[i], pointLight.position);
         color += CalcLightColorByDirection(lightData, direction, shadowFactor);
     }
-
+    
     return color;
 }
 
