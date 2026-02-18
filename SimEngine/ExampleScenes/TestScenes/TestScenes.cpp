@@ -1151,16 +1151,52 @@ AntialiasingScene::AntialiasingScene(const std::string& name)
 void AntialiasingScene::DrawImGui()
 {
     Scene::DrawImGui();
-    
+
     auto method = static_cast<int>(Renderer::Get()->GetAntialiasingMethod());
-    const char* items[] = { "None", "FXAA", "MSAA" };
-    
+    static const char* items[] = { "None", "FXAA", "MSAA" };
+
     ImGui::PushItemWidth(70);
-    if (ImGui::Combo("AA Method ", &method, items, IM_ARRAYSIZE(items)))
+    if (ImGui::Combo("AA Method", &method, items, IM_ARRAYSIZE(items)))
     {
         Renderer::Get()->SetAntialiasingMethod(static_cast<AntialiasingMethod>(method));
     }
     ImGui::PopItemWidth();
+
+    if (method == static_cast<int>(AntialiasingMethod::FXAA))
+    {
+        bool changed = false;
+        
+        auto FXAA = Renderer::Get()->GetFXAASettings();
+    
+        changed |= ImGui::SliderFloat("Span Max",    &FXAA.FXAASpanMax,    1.0f, 100.0f);
+        changed |= ImGui::SliderFloat("Reduce Min",  &FXAA.FXAAReduceMin,  0.0f, 100.0f);
+        changed |= ImGui::SliderFloat("Reduce Mul",  &FXAA.FXAAReduceMul,  0.0f, 100.0f);
+        
+        if (changed)
+        {
+            Renderer::Get()->SetFXAASettings(FXAA);
+        }   
+    }
+    else if (method == static_cast<int>(AntialiasingMethod::MSAA))
+    {
+        static const char* sampleItems[] = { "2", "4", "8", "16" };
+        static int sampleValues[] = {  2,   4,   8,  16  };
+
+        auto MSAA = Renderer::Get()->GetMSAASettings();
+        
+        int currentSamples = static_cast<int>(std::log2(MSAA.samples)) - 1;
+
+        const auto maxSamples = static_cast<int>(Renderer::Get()->GetMaxSamples());
+        auto availableCount = static_cast<int>(std::ranges::upper_bound(sampleValues, maxSamples) - std::begin(sampleValues));
+
+        ImGui::PushItemWidth(70);
+        if (ImGui::Combo("Samples", &currentSamples, sampleItems, availableCount))
+        {
+            MSAA.samples = sampleValues[currentSamples];
+            Renderer::Get()->SetMSAASettings(MSAA);
+        }
+        ImGui::PopItemWidth();
+    }
 }
 
 MipMappingScene::MipMappingScene(const std::string& name)

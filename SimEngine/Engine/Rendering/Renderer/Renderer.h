@@ -34,6 +34,11 @@ struct FXAASettings
     float FXAAReduceMul{1.0f / 8.0f};
 };
 
+struct MSAASettings
+{
+    unsigned int samples{4};
+};
+
 namespace UniformNames
 {
     UNIFORM_NAME texelSize = "texelSize";
@@ -55,7 +60,12 @@ public:
     virtual AntialiasingMethod GetAntialiasingMethod() const { return AntialiasingMethod::None; }
     
     virtual void SetFXAASettings(const FXAASettings& settings) {}
-    virtual FXAASettings GetFXAASettings() const { return {}; }
+    virtual const FXAASettings& GetFXAASettings() const { return {}; }
+    
+    virtual void SetMSAASettings(const MSAASettings& settings) {}
+    virtual const MSAASettings& GetMSAASettings() const { return {}; }
+    
+    virtual unsigned int GetMaxSamples() const { return 0; }
     
     virtual TexturePtr CreateTexture(const std::string& fileLocation) const = 0;
     virtual TexturePtr CreateTexture(const TextureData& textureData) const = 0;
