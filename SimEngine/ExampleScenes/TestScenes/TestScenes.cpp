@@ -1236,3 +1236,42 @@ MipMappingScene::MipMappingScene(const std::string& name)
     plane->SetMaterial(MaterialManager::Get().GetAssetByName("moon8k"));
     plane->SetScale({2.0f, 0.0f, 2.0f});
 }
+
+SpecularLightTestScene::SpecularLightTestScene(const std::string& name)
+    : Scene(name)
+{
+    TextureManager::Get().RegisterCreateAsset("floor", []
+    {
+        return Texture::CreateTexture("Textures/floor.jpg");
+    });
+
+    MaterialManager::Get().RegisterCreateAsset("floor", []
+    {
+        MaterialResources resources;
+        MaterialData& data = resources.data;
+        
+        data.ambient = {0.05f, 0.05f, 0.05f};
+        data.specular = {0.2f, 0.2f, 0.2f};
+        data.shininess = 1.0f;  
+        
+        resources.texture = TextureManager::Get().GetAssetByName("floor");
+        return std::make_shared<Material>(resources); 
+    });
+    
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({3.16f, 3.6f, 7.0f});
+    cameraComp->SetRotation(-30.0f, 193.0f);
+    camera->cameraSpeed = 1.0f;
+    
+    auto light = AddObject<PointLightObject>("Point Light Light");
+    light->SetPosition({0.1f, 1.1f, 0.1f});
+    light->lightData.ambient = 0.1f;
+    light->lightData.diffuse = 2.4f;
+    
+    auto plane = AddObject<MeshEntity>();
+    plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
+    plane->SetMaterial(MaterialManager::Get().GetAssetByName("floor"));
+    plane->SetScale({4.0f, 1.0f, 4.0f});
+}

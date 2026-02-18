@@ -399,6 +399,7 @@ void OpenGLRenderer::InitSceneShaders()
     
     ShaderData omniShadowMapShaderData;
     omniShadowMapShaderData.vertShader = ShaderData::shadersFolder + "omni_shadow_map.vert";
+    omniShadowMapShaderData.geomShader = ShaderData::shadersFolder + "omni_shadow_map.geom";
     omniShadowMapShaderData.fragShader = ShaderData::shadersFolder + "omni_shadow_map.frag";
     sceneShaders.omniShadowMapShader = CREATE_SHADER(omniShadowMapShaderData);
     

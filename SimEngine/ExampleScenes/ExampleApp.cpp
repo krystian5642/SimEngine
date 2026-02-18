@@ -8,7 +8,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::Antialiasing);
+    SceneManager::SetDefaultScene(SceneNames::SpecularLightTest);
     
     // test scenes
     REGISTER_SCENE(ProjectileLauncher);
@@ -25,6 +25,7 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(RotationTest);
     REGISTER_SCENE(Antialiasing);
     REGISTER_SCENE(MipMapping);
+    REGISTER_SCENE(SpecularLightTest);
     
     // main scenes
     REGISTER_SCENE(SpaceExplorer);
