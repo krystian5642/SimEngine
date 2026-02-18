@@ -64,10 +64,18 @@ void App::Run()
         ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
         ImGui::Separator();
         
-        ImGui::Text("Object count: %zu", SceneManager::GetCurrentScene()->GetObjectCount());
         
-        const auto& cameraPosition = SceneManager::GetCurrentScene()->GetCameraPosition();
+        const auto currentScene = SceneManager::GetCurrentScene();
+        
+        ImGui::Text("Object count: %zu", currentScene->GetObjectCount());
+        
+        const auto& cameraPosition = currentScene->GetCameraPosition();
+        
+        float pitch, yaw;
+        currentScene->GetCameraRotation(pitch, yaw);
+        
         ImGui::Text("Camera position: (%.3f, %.3f, %.3f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        ImGui::Text("Camera rotation: (pitch %.3f, yaw %.3f)", pitch, yaw);
         
         ImGui::Separator();
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))
@@ -77,7 +85,7 @@ void App::Run()
         
         ImGui::Separator();
         
-        ImGui::Text("Current scene: %s", SceneManager::GetCurrentScene()->GetName().c_str());
+        ImGui::Text("Current scene: %s", currentScene->GetName().c_str());
         // Main Scenes
         if (ImGui::CollapsingHeader("Main Scenes", ImGuiTreeNodeFlags_DefaultOpen))
         {
