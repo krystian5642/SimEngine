@@ -32,5 +32,7 @@ void Texture::LoadFromFile(const std::string& fileLocation)
         throw std::runtime_error("Failed to load texture " + fileLocation);
     }
     
+    loadedFromFile = true;
+    
     stbi_set_flip_vertically_on_load(false);
 }
