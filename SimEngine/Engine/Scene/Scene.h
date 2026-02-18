@@ -68,6 +68,7 @@ public:
     glm::mat4 GetProjectionMatrix() const;
     const glm::mat4& GetViewMatrix() const;
     const glm::vec3& GetCameraPosition() const;
+    void GetCameraRotation(float& pitch, float& yaw) const;
     
     template<class T>
     T* AddObject(const std::string& objectName = "")

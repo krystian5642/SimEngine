@@ -150,3 +150,9 @@ const glm::vec3& Scene::GetCameraPosition() const
 {
     return activeCamera->GetPosition();
 }
+
+void Scene::GetCameraRotation(float& pitch, float& yaw) const
+{
+    pitch = activeCamera->GetPitch();
+    yaw = activeCamera->GetYaw();
+}
