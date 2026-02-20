@@ -2,6 +2,7 @@
 
 #include "Rendering/Core/Material.h"
 
+enum class TextureFormat;
 struct TextureData;
 class Window;
 class Scene;
@@ -67,8 +68,8 @@ public:
     
     virtual unsigned int GetMaxSamples() const { return 0; }
     
-    virtual TexturePtr CreateTexture(const std::string& fileLocation) const = 0;
-    virtual TexturePtr CreateTexture(const TextureData& textureData) const = 0;
+    virtual TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format) const = 0;
+    virtual TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format) const = 0;
     
     virtual ShaderPtr CreateShader(const ShaderData& shaderData) const = 0;
     virtual MeshPtr CreateMesh(const MeshData& meshData) const = 0;

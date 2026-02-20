@@ -150,14 +150,14 @@ unsigned int OpenGLRenderer::GetMaxSamples() const
     return maxSamples;
 }
 
-TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation) const
+TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation, TextureFormat format) const
 {
-    return std::make_shared<GLTexture>(fileLocation);
+    return std::make_shared<GLTexture>(fileLocation, format);
 }
 
-TexturePtr OpenGLRenderer::CreateTexture(const TextureData& textureData) const
+TexturePtr OpenGLRenderer::CreateTexture(const TextureData& textureData, TextureFormat format) const
 {
-    return std::make_shared<GLTexture>(textureData);
+    return std::make_shared<GLTexture>(textureData, format);
 }
 
 ShaderPtr OpenGLRenderer::CreateShader(const ShaderData& shaderData) const

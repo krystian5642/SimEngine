@@ -1242,7 +1242,7 @@ SpecularLightTestScene::SpecularLightTestScene(const std::string& name)
 {
     TextureManager::Get().RegisterCreateAsset("floor", []
     {
-        return Texture::CreateTexture("Textures/floor.jpg");
+        return Texture::CreateTexture("Textures/floor.jpg", TextureFormat::sRGB);
     });
 
     MaterialManager::Get().RegisterCreateAsset("floor", []

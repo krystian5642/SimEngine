@@ -238,6 +238,9 @@ void main()
     vec4 spotLightColor = CalcSpotLightColor();
     
     color = directionalLightColor + pointLightColor + spotLightColor;
+
+    float gamma = 2.2;
+    color = vec4(pow(color.rgb, vec3(1.0 / gamma)), color.a);
 }
 
 

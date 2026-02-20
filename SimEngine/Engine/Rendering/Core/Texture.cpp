@@ -3,13 +3,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Texture::Texture(const std::string& fileLocation)
+Texture::Texture(const std::string& fileLocation, TextureFormat format)
+    : textureFormat(format)
 {
     LoadFromFile(fileLocation);
 }
 
-Texture::Texture(const TextureData& textureData)
+Texture::Texture(const TextureData& textureData, TextureFormat format)
     : textureData(textureData)
+    , textureFormat(format)
 {
 }
 
