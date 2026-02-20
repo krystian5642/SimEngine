@@ -5,14 +5,15 @@
 class GLTexture : public Texture
 {
 public:
-    GLTexture(const std::string& fileLocation);
-    GLTexture(const TextureData& textureData);
+    GLTexture(const std::string& fileLocation, TextureFormat format);
+    GLTexture(const TextureData& textureData, TextureFormat format);
     ~GLTexture() override;
     
     void Bind() const override;
     
 private:
     void GenerateTexture();
+    GLint GetGLTextureFormat() const;
     
     GLuint textureID{};
 };

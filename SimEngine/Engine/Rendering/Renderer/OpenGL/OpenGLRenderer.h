@@ -57,8 +57,8 @@ public:
     
     unsigned int GetMaxSamples() const override;
     
-    TexturePtr CreateTexture(const std::string& fileLocation) const override;
-    TexturePtr CreateTexture(const TextureData& textureData) const override;
+    TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format) const override;
+    TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format) const override;
     ShaderPtr CreateShader(const ShaderData& shaderData) const override;
     MeshPtr CreateMesh(const MeshData& meshData) const override;
     InstancedMeshPtr CreateInstancedMesh(MeshPtr mesh, const std::vector<Transform>& transforms) const override;

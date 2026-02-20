@@ -2,14 +2,14 @@
 
 #include <stb_image.h>
 
-GLTexture::GLTexture(const std::string& fileLocation)
-    : Texture(fileLocation)
+GLTexture::GLTexture(const std::string& fileLocation, TextureFormat format)
+    : Texture(fileLocation, format)
 {
     GenerateTexture();
 }
 
-GLTexture::GLTexture(const TextureData& textureData)
-    : Texture(textureData)
+GLTexture::GLTexture(const TextureData& textureData, TextureFormat format)
+    : Texture(textureData, format)
 {
     GenerateTexture();
 }
@@ -40,7 +40,7 @@ void GLTexture::GenerateTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData.width
+    glTexImage2D(GL_TEXTURE_2D, 0, GetGLTextureFormat(), textureData.width
         , textureData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData.data);
     
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -56,4 +56,15 @@ void GLTexture::GenerateTexture()
         stbi_image_free(textureData.data);
         textureData.data = nullptr;
     }
+}
+
+GLint GLTexture::GetGLTextureFormat() const
+{
+    switch (textureFormat)
+    {
+        case TextureFormat::RGB: return GL_RGB;
+        case TextureFormat::RGBA: return GL_RGBA;
+        case TextureFormat::sRGB: return GL_SRGB;
+    }
+    return GL_RGB;
 }
