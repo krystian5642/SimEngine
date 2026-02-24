@@ -19,14 +19,14 @@ GLTexture::~GLTexture()
     glDeleteTextures(1, &textureID);
 }
 
-void GLTexture::Bind() const
+void GLTexture::Bind(unsigned int offset) const
 {
     if (textureID == 0)
     {
         throw std::runtime_error("Can't use texture, texture not loaded");
     }
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + offset);
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
 

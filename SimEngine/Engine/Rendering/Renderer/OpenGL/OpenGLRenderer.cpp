@@ -500,12 +500,12 @@ void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene)
     for (size_t i = 0; i < SceneLightsData::maxLights; i++)
     {
         const std::string shadowMapName = "dirShadowMaps[" + std::to_string(i) + "]";
-        sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+1));
+        sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+2));
         
         if (i < DirectionalLightObject::lightCount)
         {
             const auto* dirLight = lightData.dirLights[i];
-            dirLight->GetShadowMap()->Read(GL_TEXTURE1 + static_cast<int>(i));
+            dirLight->GetShadowMap()->Read(GL_TEXTURE2 + static_cast<int>(i));
     
             sceneShaders.meshShader->SetMat4f(UniformNames::directionalLightProjection, dirLight->GetViewProjectionMatrix());
         }
@@ -514,12 +514,12 @@ void OpenGLRenderer::RenderPass(const glm::mat4& projection, const Scene* scene)
     for (size_t i = SceneLightsData::maxLights; i < 2 * SceneLightsData::maxLights; i++)
     {
         const std::string shadowMapName = "omniShadowMaps[" + std::to_string(i - 10) + "].shadowMap";
-        sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+1));
+        sceneShaders.meshShader->SetInt(shadowMapName, static_cast<int>(i+2));
     
         if (i < PointLightObject::lightCount + SceneLightsData::maxLights)
         {
             const auto* pointLight = lightData.pointLights[i - SceneLightsData::maxLights];
-            pointLight->GetShadowMap()->Read(GL_TEXTURE1 + static_cast<int>(i));
+            pointLight->GetShadowMap()->Read(GL_TEXTURE2 + static_cast<int>(i));
         }
     }
 

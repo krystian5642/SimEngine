@@ -1,6 +1,7 @@
 #version 460 core
 
 in vec2 TexCoord;
+in mat3 TBN;
 in vec3 Normal;
 in vec3 FragPos;
 in vec4 DirectionaLightPos;
@@ -47,8 +48,10 @@ struct OmniShadowMap
 
 struct Material
 {
-    sampler2D texture;
-    bool useTexture;
+    sampler2D diffuseTexture;
+    sampler2D normalTexture;
+    bool useDiffuseTexture;
+    bool useNormalTexture;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -70,6 +73,23 @@ uniform SpotLight spotLights[spotLightMaxCount];
 
 uniform vec3 cameraPosition;
 
+vec3 CalcNormal()
+{
+    vec3 normal;
+    if (material.useNormalTexture)
+    {
+        normal = texture(material.normalTexture, TexCoord).xyz;
+        normal = normal * 2.0 - 1.0;
+        normal = normalize(TBN * normal);
+    }
+    else
+    {
+        normal = normalize(Normal);
+    }
+    
+    return normal;
+}
+
 float CalcShadowFactor(int lightIndex, sampler2D dirShadowMap)
 {
     DirectionalLight dirLight = dirLights[lightIndex];
@@ -81,8 +101,10 @@ float CalcShadowFactor(int lightIndex, sampler2D dirShadowMap)
     {
         return 0.0;
     }
+
+    vec3 normal = CalcNormal();
     
-    float bias = max(0.01 * (1.0 - dot(normalize(-dirLight.direction), normalize(Normal))), 0.001);
+    float bias = max(0.01 * (1.0 - dot(normalize(-dirLight.direction), normal)), 0.001);
     
     vec2 texelSize = 1.0 / textureSize(dirShadowMap, 0);
     float shadowFactor = 0.0;
@@ -109,8 +131,10 @@ float CalcOmniShadowFactor(OmniShadowMap omniShadowMap, vec3 position)
     {
         return 0.0;
     }
+
+    vec3 normal = CalcNormal();
     
-    float bias = max(0.01 * (1.0 - dot(normalize(fragToLight), normalize(Normal))), 0.001);
+    float bias = max(0.01 * (1.0 - dot(normalize(fragToLight), normal)), 0.001);
     
     float shadowFactor = 0.0;
     float samples = 4.0;
@@ -135,13 +159,14 @@ float CalcOmniShadowFactor(OmniShadowMap omniShadowMap, vec3 position)
 
 vec4 CalcLightColorByDirection(LightData lightData, vec3 direction, float shadowFactor)
 {
-    vec4 materialAmbient = material.useTexture ? texture(material.texture, TexCoord) : vec4(material.ambient, 1.0);
+    vec4 materialAmbient = material.useDiffuseTexture ? texture(material.diffuseTexture, TexCoord) : vec4(material.ambient, 1.0);
     vec4 ambientColor = vec4(lightData.color * lightData.ambient, 1.0) * materialAmbient;
+
+    vec3 normal = CalcNormal();
     
-    vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(direction);
     
-    vec4 materialDiffuse = material.useTexture ? texture(material.texture, TexCoord) : vec4(material.diffuse, 1.0);
+    vec4 materialDiffuse = material.useDiffuseTexture ? texture(material.diffuseTexture, TexCoord) : vec4(material.diffuse, 1.0);
     float diffuseFactor = max(dot(lightDir, normal), 0.0) * lightData.diffuse;
     vec4 diffuseColor = vec4(diffuseFactor * lightData.color, 1.0) * materialDiffuse;
     
@@ -202,7 +227,7 @@ vec4 CalcSpotLightColor()
 {
     vec4 color = {0.0, 0.0, 0.0, 0.0};
 
-    vec3 normal = normalize(Normal);
+/*    vec3 normal = normalize(Normal);
     
     for(int i = 0; i < spotLightCount; i++)
     {
@@ -221,12 +246,12 @@ vec4 CalcSpotLightColor()
         float inner = cos(spotLight.innerConeAngle);
         float outer = cos(spotLight.outerConeAngle);
 
-        vec4 materialDiffuse = material.useTexture ? texture(material.texture, TexCoord) : vec4(material.diffuse, 1.0);
+        vec4 materialDiffuse = material.useDiffuseTexture ? texture(material.diffuseTexture, TexCoord) : vec4(material.diffuse, 1.0);
         float falloff = clamp((angle - outer) / (inner - outer), 0.0, 1.0);
         
         float shadowFactor = CalcOmniShadowFactor(omniShadowMaps[i + pointLightCount], spotLight.position);
         color += vec4(spotLight.lightData.color, 0.0) * ((1.0 - shadowFactor) * diffuse * diffuseFactor * falloff * materialDiffuse + ambient * vec4(material.ambient, 1.0));
-    }
+    }*/
 
     return color;
 }
@@ -242,13 +267,3 @@ void main()
     float gamma = 2.2;
     color = vec4(pow(color.rgb, vec3(1.0 / gamma)), color.a);
 }
-
-
-
-
-
-
-
-
-
-

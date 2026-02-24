@@ -10,7 +10,7 @@ GLMesh::GLMesh(const MeshData& meshData)
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, drawCount * sizeof(float), meshData.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, drawCount * sizeof(VertexData), meshData.vertices.data(), GL_STATIC_DRAW);
 
     indicesCount = static_cast<GLsizei>(meshData.indices.size());
     indicesSize = static_cast<GLsizei>(indicesCount * sizeof(unsigned int));
@@ -23,15 +23,18 @@ GLMesh::GLMesh(const MeshData& meshData)
         drawCount = static_cast<GLsizei>(indicesSize / sizeof(unsigned int));
     }
     
-    constexpr auto stride = 8 * sizeof(GLfloat);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+    constexpr auto stride = sizeof(VertexData);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(VertexData, position));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(VertexData, uv));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 5));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(VertexData, normal));
     glEnableVertexAttribArray(2);
+    
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)offsetof(VertexData, tangent));
+    glEnableVertexAttribArray(3);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

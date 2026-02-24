@@ -4,14 +4,18 @@
 
 class Texture;
 
+using ConstShaderPtr = std::shared_ptr<const Shader>;
+
 namespace UniformNames
 {
     UNIFORM_NAME materialAmbient = "material.ambient";
     UNIFORM_NAME materialDiffuse = "material.diffuse";
     UNIFORM_NAME materialSpecular = "material.specular";
     UNIFORM_NAME materialShininess = "material.shininess";
-    UNIFORM_NAME materialTexture = "material.texture";
-    UNIFORM_NAME materialUseTexture = "material.useTexture";
+    UNIFORM_NAME materialDiffuseTexture = "material.diffuseTexture";
+    UNIFORM_NAME materialNormalTexture = "material.normalTexture";
+    UNIFORM_NAME materialUseDiffuseTexture = "material.useDiffuseTexture";
+    UNIFORM_NAME materialUseNormalTexture = "material.useNormalTexture";
 }
 
 struct MaterialData
@@ -24,8 +28,9 @@ struct MaterialData
 
 struct MaterialResources
 {
-    TexturePtr texture;
-    std::shared_ptr<const Shader> shader;
+    TexturePtr diffuseTexture;
+    TexturePtr normalTexture;
+    ConstShaderPtr shader;
     MaterialData data;
 };
 
@@ -35,7 +40,7 @@ public:
     Material(const MaterialResources& resources) : resources(resources) {}
     virtual ~Material() {}
     
-    virtual void Use(const std::shared_ptr<const Shader>& shader) const;
+    virtual void Use(const ConstShaderPtr& shader) const;
     
     const MaterialResources& GetResources() const { return resources; }
     
