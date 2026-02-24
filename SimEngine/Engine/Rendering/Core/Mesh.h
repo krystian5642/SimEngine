@@ -1,10 +1,18 @@
 ﻿#pragma once
 #include "Rendering/Renderer/Renderer.h"
 
+struct VertexData
+{
+    glm::vec3 position;
+    glm::vec2 uv;
+    glm::vec3 normal;
+    glm::vec3 tangent;
+};
+
 struct MeshData
 {
-    std::vector<float> vertices{}; 
-    std::vector<unsigned int> indices{};
+    std::vector<VertexData> vertices; 
+    std::vector<unsigned int> indices;
     
     MeshData& operator+=(const MeshData& b)
     {

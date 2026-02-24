@@ -200,7 +200,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         
         resources.shader = Shader::CreateShader(shaderData);
     
-        resources.texture = TextureManager::Get().GetAssetByName("sun");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("sun");
         return std::make_shared<Material>(resources); 
     });
     
@@ -220,7 +220,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular ={0.1f, 0.1f, 0.1f};
         data.shininess = 8.0f;  
         
-        resources.texture = TextureManager::Get().GetAssetByName("mercury");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("mercury");
         return std::make_shared<Material>(resources); 
     });
     
@@ -240,7 +240,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.05f, 0.05f, 0.05f};
         data.shininess = 4.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("venus");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("venus");
         return std::make_shared<Material>(resources);
     });
 
@@ -260,7 +260,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.2f, 0.2f, 0.2f};
         data.shininess = 16.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("earth");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("earth");
         return std::make_shared<Material>(resources);
     });
 
@@ -280,7 +280,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.1f, 0.05f, 0.05f};
         data.shininess = 8.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("mars");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("mars");
         return std::make_shared<Material>(resources);
     });
 
@@ -300,7 +300,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.05f, 0.05f, 0.05f};
         data.shininess = 2.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("jupiter");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("jupiter");
         return std::make_shared<Material>(resources);
     });
 
@@ -320,7 +320,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.05f, 0.05f, 0.05f};
         data.shininess = 2.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("saturn");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("saturn");
         return std::make_shared<Material>(resources);
     });
 
@@ -340,7 +340,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.05f, 0.05f, 0.05f};
         data.shininess = 4.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("uranus");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("uranus");
         return std::make_shared<Material>(resources);
     });
 
@@ -360,7 +360,7 @@ SolarSystemScene::SolarSystemScene(const std::string& name)
         data.specular = {0.1f, 0.1f, 0.15f};
         data.shininess = 6.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("neptune");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("neptune");
         return std::make_shared<Material>(resources);
     });
     
@@ -492,7 +492,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
         data.specular ={0.1f, 0.1f, 0.1f};
         data.shininess = 8.0f;  
         
-        resources.texture = TextureManager::Get().GetAssetByName("mercury");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("mercury");
         return std::make_shared<Material>(resources); 
     });
     
@@ -512,7 +512,7 @@ PlanetAndMoonsScene::PlanetAndMoonsScene(const std::string& name)
         data.specular = {0.05f, 0.05f, 0.05f};
         data.shininess = 2.0f;
 
-        resources.texture = TextureManager::Get().GetAssetByName("jupiter");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("jupiter");
         return std::make_shared<Material>(resources);
     });
     
@@ -1216,7 +1216,7 @@ MipMappingScene::MipMappingScene(const std::string& name)
         data.specular = {0.1f, 0.1f, 0.1f};
         data.shininess = 8.0f;  
         
-        resources.texture = TextureManager::Get().GetAssetByName("moon8k");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("moon8k");
         return std::make_shared<Material>(resources); 
     });
     
@@ -1237,24 +1237,30 @@ MipMappingScene::MipMappingScene(const std::string& name)
     plane->SetScale({2.0f, 0.0f, 2.0f});
 }
 
-SpecularLightTestScene::SpecularLightTestScene(const std::string& name)
+NormalMapTestScene::NormalMapTestScene(const std::string& name)
     : Scene(name)
 {
-    TextureManager::Get().RegisterCreateAsset("floor", []
+    TextureManager::Get().RegisterCreateAsset("bricks", []
     {
-        return Texture::CreateTexture("Textures/floor.jpg", TextureFormat::sRGB);
+        return Texture::CreateTexture("Textures/Bricks/bricks.jpg", TextureFormat::sRGB);
     });
 
-    MaterialManager::Get().RegisterCreateAsset("floor", []
+    TextureManager::Get().RegisterCreateAsset("bricks_normal", []
+    {
+        return Texture::CreateTexture("Textures/Bricks/bricks_normal.jpg", TextureFormat::RGB);
+    });
+    
+    MaterialManager::Get().RegisterCreateAsset("bricks", []
     {
         MaterialResources resources;
         MaterialData& data = resources.data;
         
         data.ambient = {0.05f, 0.05f, 0.05f};
-        data.specular = {0.2f, 0.2f, 0.2f};
-        data.shininess = 1.0f;  
+        data.specular = {0.01f, 0.01f, 0.01f};
+        data.shininess = 100.0f;  
         
-        resources.texture = TextureManager::Get().GetAssetByName("floor");
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("bricks");
+        resources.normalTexture = TextureManager::Get().GetAssetByName("bricks_normal");
         return std::make_shared<Material>(resources); 
     });
     
@@ -1263,15 +1269,15 @@ SpecularLightTestScene::SpecularLightTestScene(const std::string& name)
     cameraComp->SetAsActiveCamera();
     cameraComp->SetPosition({3.16f, 3.6f, 7.0f});
     cameraComp->SetRotation(-30.0f, 193.0f);
-    camera->cameraSpeed = 1.0f;
+    camera->cameraSpeed = 5.0f;
     
-    auto light = AddObject<PointLightObject>("Point Light Light");
-    light->SetPosition({0.1f, 1.1f, 0.1f});
-    light->lightData.ambient = 0.1f;
-    light->lightData.diffuse = 2.4f;
+    auto light = AddObject<PointLightObject>("Point Light");
+    light->SetPosition({1.1f, 2.1f, 2.1f});
+    light->lightData.ambient = 0.0f;
+    light->lightData.diffuse = 8.2f;
     
     auto plane = AddObject<MeshEntity>();
     plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
-    plane->SetMaterial(MaterialManager::Get().GetAssetByName("floor"));
+    plane->SetMaterial(MaterialManager::Get().GetAssetByName("bricks"));
     plane->SetScale({4.0f, 1.0f, 4.0f});
 }

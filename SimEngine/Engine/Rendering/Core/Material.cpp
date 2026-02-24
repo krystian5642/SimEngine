@@ -11,11 +11,19 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     shaderToUse->SetVec3f(UniformNames::materialDiffuse, data.diffuse);
     shaderToUse->SetVec3f(UniformNames::materialSpecular, data.specular);
     shaderToUse->SetFloat(UniformNames::materialShininess, data.shininess);
-    shaderToUse->SetBool(UniformNames::materialUseTexture, resources.texture != nullptr);
+    shaderToUse->SetBool(UniformNames::materialUseDiffuseTexture, resources.diffuseTexture != nullptr);
+    shaderToUse->SetBool(UniformNames::materialUseNormalTexture, resources.normalTexture != nullptr);
 
-    if (resources.texture)
+    if (resources.diffuseTexture)
     {
-        resources.texture->Bind();
+        resources.diffuseTexture->Bind();
+        shaderToUse->SetInt(UniformNames::materialDiffuseTexture, 0);
+    }
+    
+    if (resources.normalTexture)
+    {
+        resources.normalTexture->Bind(1);
+        shaderToUse->SetInt(UniformNames::materialNormalTexture, 1);
     }
 }
 

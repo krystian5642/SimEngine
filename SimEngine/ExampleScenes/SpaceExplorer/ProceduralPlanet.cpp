@@ -33,7 +33,7 @@ void ProceduralPlanet::SetPlanetColourGradient(const Gradient1D& newGradient)
         data.specular ={1.0f, 1.0f, 1.0f};
         data.shininess = 8.0f;  
         
-        resources.texture = planetColourGradient.GetTexture();
+        resources.diffuseTexture = planetColourGradient.GetTexture();
         return std::make_shared<Material>(resources); 
     });
     

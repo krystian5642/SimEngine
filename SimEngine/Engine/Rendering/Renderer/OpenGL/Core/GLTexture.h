@@ -9,7 +9,7 @@ public:
     GLTexture(const TextureData& textureData, TextureFormat format);
     ~GLTexture() override;
     
-    void Bind() const override;
+    void Bind(unsigned int offset = 0) const override;
     
 private:
     void GenerateTexture();

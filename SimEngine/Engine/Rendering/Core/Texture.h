@@ -21,7 +21,7 @@ public:
     Texture(const TextureData& textureData, TextureFormat format = TextureFormat::RGB);
     virtual ~Texture();
     
-    virtual void Bind() const = 0;
+    virtual void Bind(unsigned int offset = 0) const = 0;
     
     static TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format = TextureFormat::RGB)
     {
