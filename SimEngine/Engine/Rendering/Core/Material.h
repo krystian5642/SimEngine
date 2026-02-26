@@ -32,6 +32,7 @@ struct MaterialResources
     TexturePtr normalTexture;
     ConstShaderPtr shader;
     MaterialData data;
+    bool canUseNormalMap{true};
 };
 
 class Material
@@ -42,7 +43,7 @@ public:
     
     virtual void Use(const ConstShaderPtr& shader) const;
     
-    const MaterialResources& GetResources() const { return resources; }
+    MaterialResources& GetResources() { return resources; }
     
 protected:
     MaterialResources resources;

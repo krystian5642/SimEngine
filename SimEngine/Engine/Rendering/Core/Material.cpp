@@ -12,7 +12,7 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     shaderToUse->SetVec3f(UniformNames::materialSpecular, data.specular);
     shaderToUse->SetFloat(UniformNames::materialShininess, data.shininess);
     shaderToUse->SetBool(UniformNames::materialUseDiffuseTexture, resources.diffuseTexture != nullptr);
-    shaderToUse->SetBool(UniformNames::materialUseNormalTexture, resources.normalTexture != nullptr);
+    shaderToUse->SetBool(UniformNames::materialUseNormalTexture, resources.normalTexture != nullptr && resources.canUseNormalMap);
 
     if (resources.diffuseTexture)
     {
