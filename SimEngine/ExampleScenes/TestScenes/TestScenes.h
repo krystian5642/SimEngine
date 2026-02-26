@@ -27,6 +27,7 @@ namespace SceneNames
     SCENE_NAME Antialiasing = "Anti-Aliasing";
     SCENE_NAME MipMapping = "Mip Mapping";
     SCENE_NAME NormalMapTest = "Normal Map Test";
+    SCENE_NAME Earth = "Earth";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -152,6 +153,14 @@ class NormalMapTestScene : public Scene
 {
 public:
     NormalMapTestScene(const std::string& name = SceneNames::NormalMapTest);
+};
+
+class EarthScene : public Scene
+{
+public:
+    EarthScene(const std::string& name = SceneNames::Earth);
+    
+    void DrawImGui() override;
 };
 
 

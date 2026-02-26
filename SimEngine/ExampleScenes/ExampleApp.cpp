@@ -8,7 +8,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::NormalMapTest);
+    SceneManager::SetDefaultScene(SceneNames::Earth);
     
     // test scenes
     REGISTER_SCENE(ProjectileLauncher);
@@ -26,6 +26,7 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(Antialiasing);
     REGISTER_SCENE(MipMapping);
     REGISTER_SCENE(NormalMapTest);
+    REGISTER_SCENE(Earth);
     
     // main scenes
     REGISTER_SCENE(SpaceExplorer);

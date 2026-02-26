@@ -1281,3 +1281,60 @@ NormalMapTestScene::NormalMapTestScene(const std::string& name)
     plane->SetMaterial(MaterialManager::Get().GetAssetByName("bricks"));
     plane->SetScale({4.0f, 1.0f, 4.0f});
 }
+
+EarthScene::EarthScene(const std::string& name)
+    : Scene(name)
+{
+    TextureManager::Get().RegisterCreateAsset("earth", []
+    {
+        return Texture::CreateTexture("Textures/Earth/8k_earth.jpg", TextureFormat::sRGB);
+    });
+
+    TextureManager::Get().RegisterCreateAsset("earth_normal", []
+    {
+        return Texture::CreateTexture("Textures/Earth/8k_earth_normal_map.jpg", TextureFormat::RGB);
+    });
+    
+    MaterialManager::Get().RegisterCreateAsset("earth", []
+    {
+        MaterialResources resources;
+        MaterialData& data = resources.data;
+        
+        data.ambient = {0.05f, 0.05f, 0.05f};
+        data.specular = {0.01f, 0.01f, 0.01f};
+        data.shininess = 100.0f;  
+        
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("earth");
+        resources.normalTexture = TextureManager::Get().GetAssetByName("earth_normal");
+        
+        return std::make_shared<Material>(resources); 
+    });
+    
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({3.16f, 3.6f, 7.0f});
+    cameraComp->SetRotation(-30.0f, 193.0f);
+    camera->cameraSpeed = 5.0f;
+    
+    auto light = AddObject<PointLightObject>("Point Light");
+    light->SetPosition({0.1f, 0.1f, 60.1f});
+    light->lightData.ambient = 80.1f;
+    light->lightData.diffuse = 9000.2f;
+    
+    auto earth = AddObject<MeshEntity>();
+    earth->SetMesh(MeshManager::Get().GetAssetByName("planet"));
+    earth->SetMaterial(MaterialManager::Get().GetAssetByName("earth"));
+    earth->SetRotation({0.0f, 210.0f, 0.0f});
+    //auto rot = earth->AddComponent<RotatingComponent>();
+    //rot->rotatingData.localAngularVelocity = {60.0f, 80.0f, 0.0f};
+    //earth->SetUseQuaternionsForRotation(true);
+}
+
+void EarthScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    auto material = MaterialManager::Get().GetAssetByName("earth");
+    ImGui::Checkbox("Use Normal Map", &material->GetResources().canUseNormalMap);
+}
