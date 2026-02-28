@@ -1338,3 +1338,77 @@ void EarthScene::DrawImGui()
     auto material = MaterialManager::Get().GetAssetByName("earth");
     ImGui::Checkbox("Use Normal Map", &material->GetResources().canUseNormalMap);
 }
+
+ParallaxMappingScene::ParallaxMappingScene(const std::string& name)
+    : Scene(name)
+{
+    TextureManager::Get().RegisterCreateAsset("bricks", []
+    {
+        return Texture::CreateTexture("Textures/Bricks/bricks2.jpg", TextureFormat::sRGB);
+    });
+
+    TextureManager::Get().RegisterCreateAsset("bricks_normal", []
+    {
+        return Texture::CreateTexture("Textures/Bricks/bricks2_normal.jpg", TextureFormat::RGB);
+    });
+    
+    TextureManager::Get().RegisterCreateAsset("bricks_disp", []
+    {
+        return Texture::CreateTexture("Textures/Bricks/bricks2_disp.jpg", TextureFormat::RGB);
+    });
+    
+    MaterialManager::Get().RegisterCreateAsset("bricks", []
+    {
+        MaterialResources resources;
+        MaterialData& data = resources.data;
+        
+        data.ambient = {0.05f, 0.05f, 0.05f};
+        data.specular = {0.01f, 0.01f, 0.01f};
+        data.shininess = 100.0f;  
+        
+        resources.diffuseTexture = TextureManager::Get().GetAssetByName("bricks");
+        resources.normalTexture = TextureManager::Get().GetAssetByName("bricks_normal");
+        resources.displacementTexture = TextureManager::Get().GetAssetByName("bricks_disp");
+        
+        return std::make_shared<Material>(resources); 
+    });
+    
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 0.0f, 4.0f});
+    camera->cameraSpeed = 1.0f;
+    
+    auto light = AddObject<PointLightObject>();
+    light->SetPosition({3.1f, 5.7f, 3.1f});
+    light->lightData.ambient = 0.9f;
+    light->lightData.diffuse = 40.3f;
+    
+    auto plane = AddObject<MeshEntity>();
+    plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
+    plane->SetMaterial(MaterialManager::Get().GetAssetByName("bricks"));
+   // plane->SetScale({4.0f, 1.0f, 4.0f});
+    plane->SetRotation({90.0f, 0.0f, 0.0f});
+}
+
+void ParallaxMappingScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    auto& materialRes = MaterialManager::Get().GetAssetByName("bricks")->GetResources();
+    ImGui::Checkbox("Use Normal Map", &materialRes.canUseNormalMap);
+    
+    ImGui::Text("Parallax Mapping");
+    ImGui::Spacing();
+    
+    auto& parallaxMapping = materialRes.parallaxMappingData;
+    ImGui::Checkbox("Enabled", &materialRes.parallaxMappingData.enabled);
+
+    if (materialRes.parallaxMappingData.enabled)
+    {
+        ImGui::SliderFloat("Height Scale", &parallaxMapping.heightScale, 0.0f, 1.0f);
+        ImGui::SliderInt("Min Layers", &parallaxMapping.minLayers, 1, 64);
+        ImGui::SliderInt("Max Layers", &parallaxMapping.maxLayers, parallaxMapping.minLayers, 128);
+        ImGui::Checkbox("Discard Fragments", &parallaxMapping.discardFragments);
+    }
+}

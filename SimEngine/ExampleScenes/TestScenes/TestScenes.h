@@ -28,6 +28,7 @@ namespace SceneNames
     SCENE_NAME MipMapping = "Mip Mapping";
     SCENE_NAME NormalMapTest = "Normal Map Test";
     SCENE_NAME Earth = "Earth";
+    SCENE_NAME ParallaxMapping = "Parallax Mapping";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -159,6 +160,14 @@ class EarthScene : public Scene
 {
 public:
     EarthScene(const std::string& name = SceneNames::Earth);
+    
+    void DrawImGui() override;
+};
+
+class ParallaxMappingScene : public Scene
+{
+public:
+    ParallaxMappingScene(const std::string& name = SceneNames::ParallaxMapping);
     
     void DrawImGui() override;
 };

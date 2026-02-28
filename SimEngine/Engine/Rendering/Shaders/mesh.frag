@@ -46,12 +46,25 @@ struct OmniShadowMap
     float farPlane;
 };
 
+struct ParallaxMappingData
+{
+    float heightScale;
+    int minLayers;
+    int maxLayers;
+    bool enabled;
+    bool discardFragments;
+};
+
 struct Material
 {
+    ParallaxMappingData parallaxMapping;
+    
     sampler2D diffuseTexture;
     sampler2D normalTexture;
+    sampler2D displacementTexture;
     bool useDiffuseTexture;
     bool useNormalTexture;
+    
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -73,21 +86,72 @@ uniform SpotLight spotLights[spotLightMaxCount];
 
 uniform vec3 cameraPosition;
 
+vec2 finalTexCoord = TexCoord;
+
+void CalcParallaxUV()
+{
+    vec3 viewDir = normalize(transpose(TBN) * (cameraPosition - FragPos));
+    
+    float numLayers = mix(material.parallaxMapping.maxLayers, material.parallaxMapping.minLayers, max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0));
+    float layerDepth = 1.0 / numLayers;
+
+    vec2 deltaTexCoord = viewDir.xy * material.parallaxMapping.heightScale / (numLayers * max(viewDir.z, 0.001));
+    
+    float currentDepth = texture(material.displacementTexture, finalTexCoord).r;
+    float currentLayerDepth = 0.0;
+
+    while(currentLayerDepth < currentDepth)
+    {
+        finalTexCoord -= deltaTexCoord;
+
+        currentDepth = texture(material.displacementTexture, finalTexCoord).r;
+
+        currentLayerDepth += layerDepth;
+    }
+
+    if (material.parallaxMapping.discardFragments)
+    {
+        if(finalTexCoord.x > 1.0 || finalTexCoord.y > 1.0 || finalTexCoord.x < 0.0 || finalTexCoord.y < 0.0)
+        {
+            discard;
+        }
+    }
+
+    vec2 prevTexCoord = finalTexCoord + deltaTexCoord;
+    
+    float afterDepth = currentDepth - currentLayerDepth;
+    float beforeDepth = texture(material.displacementTexture, prevTexCoord).r - currentLayerDepth + layerDepth;
+    
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    finalTexCoord = prevTexCoord * weight + finalTexCoord * (1.0 - weight);
+
+    if (material.parallaxMapping.discardFragments)
+    {
+        if(finalTexCoord.x > 1.0 || finalTexCoord.y > 1.0 || finalTexCoord.x < 0.0 || finalTexCoord.y < 0.0)
+        {
+            discard;
+        }
+    }
+}
+
 vec3 CalcNormal()
 {
-    vec3 normal;
     if (material.useNormalTexture)
     {
-        normal = texture(material.normalTexture, TexCoord).xyz;
+        vec3 normal = texture(material.normalTexture, finalTexCoord).xyz;
         normal = normal * 2.0 - 1.0;
-        normal = normalize(TBN * normal);
+        return normalize(TBN * normal);
     }
-    else
+    return normalize(Normal);
+}
+
+vec4 CalcDiffuseColor()
+{
+    if (material.useDiffuseTexture)
     {
-        normal = normalize(Normal);
+        return texture(material.diffuseTexture, finalTexCoord);
     }
-    
-    return normal;
+    return vec4(material.diffuse, 1.0);
 }
 
 float CalcShadowFactor(int lightIndex, sampler2D dirShadowMap)
@@ -159,14 +223,15 @@ float CalcOmniShadowFactor(OmniShadowMap omniShadowMap, vec3 position)
 
 vec4 CalcLightColorByDirection(LightData lightData, vec3 direction, float shadowFactor)
 {
-    vec4 materialAmbient = material.useDiffuseTexture ? texture(material.diffuseTexture, TexCoord) : vec4(material.ambient, 1.0);
+    vec4 materialAmbient = material.useDiffuseTexture ? CalcDiffuseColor() : vec4(material.ambient, 1.0);
     vec4 ambientColor = vec4(lightData.color * lightData.ambient, 1.0) * materialAmbient;
 
     vec3 normal = CalcNormal();
     
     vec3 lightDir = normalize(direction);
     
-    vec4 materialDiffuse = material.useDiffuseTexture ? texture(material.diffuseTexture, TexCoord) : vec4(material.diffuse, 1.0);
+    vec4 materialDiffuse = CalcDiffuseColor();
+    
     float diffuseFactor = max(dot(lightDir, normal), 0.0) * lightData.diffuse;
     vec4 diffuseColor = vec4(diffuseFactor * lightData.color, 1.0) * materialDiffuse;
     
@@ -258,6 +323,11 @@ vec4 CalcSpotLightColor()
 
 void main()
 {
+    if (material.useDiffuseTexture && material.parallaxMapping.enabled)
+    {
+        CalcParallaxUV();
+    }
+    
     vec4 directionalLightColor = CalcDirectionalLightColor();
     vec4 pointLightColor = CalcPointLightColor();
     vec4 spotLightColor = CalcSpotLightColor();
