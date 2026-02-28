@@ -8,7 +8,7 @@
 
 ExampleApp::ExampleApp()
 {
-    SceneManager::SetDefaultScene(SceneNames::ParallaxMapping);
+    SceneManager::SetDefaultScene(SceneNames::PolygonRenderModesAndTesselation);
     
     // test scenes
     REGISTER_SCENE(ProjectileLauncher);
@@ -28,6 +28,7 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(NormalMapTest);
     REGISTER_SCENE(Earth);
     REGISTER_SCENE(ParallaxMapping);
+    REGISTER_SCENE(PolygonRenderModesAndTesselation);
     
     // main scenes
     REGISTER_SCENE(SpaceExplorer);

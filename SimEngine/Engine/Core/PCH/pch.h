@@ -1,6 +1,7 @@
 #pragma once
 
 #define SUPPORT_OPENGL 1
+#define ENABLE_TESSELLATION 0
 
 #include <iostream>
 #include <ostream>

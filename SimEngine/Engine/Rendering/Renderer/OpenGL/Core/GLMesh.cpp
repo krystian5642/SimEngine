@@ -62,15 +62,27 @@ void GLMesh::Draw() const
 {
     glBindVertexArray(VAO);
     
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+    
     if (IBO != 0)
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-        glDrawElements(GL_TRIANGLES, drawCount, GL_UNSIGNED_INT, nullptr);
+        
+#if ENABLE_TESSELLATION
+        glDrawElements(GL_PATCHES, drawCount, GL_UNSIGNED_INT, nullptr);
+#else
+        glDrawElements(GL_TRIANGLES, drawCount, GL_UNSIGNED_INT, nullptr);  
+#endif
+        
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     else
     {
-        glDrawArrays(GL_TRIANGLES, 0, drawCount);
+#if ENABLE_TESSELLATION
+        glDrawArrays(GL_PATCHES, 0, drawCount);
+#else
+        glDrawArrays(GL_TRIANGLES, 0, drawCount); 
+#endif
     }
     
     glBindVertexArray(0);

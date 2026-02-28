@@ -150,6 +150,47 @@ unsigned int OpenGLRenderer::GetMaxSamples() const
     return maxSamples;
 }
 
+void OpenGLRenderer::SetRenderPolygonMode(RenderPolygonMode mode)
+{
+    glPolygonMode(GL_FRONT_AND_BACK, GetGLRenderPolygonMode(mode));
+}
+
+RenderPolygonMode OpenGLRenderer::GetRenderPolygonMode() const
+{
+    GLint mode;
+    glGetIntegerv(GL_POLYGON_MODE, &mode);
+    
+    if (mode == GL_FILL) return RenderPolygonMode::Fill;
+    if (mode == GL_LINE) return RenderPolygonMode::Line;
+    if (mode == GL_POINT) return RenderPolygonMode::Point;
+    
+    return RenderPolygonMode::None;
+}
+
+void OpenGLRenderer::SetLineWidth(float width)
+{
+    glLineWidth(width);   
+}
+
+float OpenGLRenderer::GetLineWidth() const
+{
+    GLfloat width;
+    glGetFloatv(GL_LINE_WIDTH, &width);
+    return width;
+}
+
+void OpenGLRenderer::SetPointSize(float size)
+{
+    glPointSize(size);  
+}
+
+float OpenGLRenderer::GetPointSize() const
+{
+    GLfloat size;
+    glGetFloatv(GL_POINT_SIZE, &size);
+    return size;
+}
+
 TexturePtr OpenGLRenderer::CreateTexture(const std::string& fileLocation, TextureFormat format) const
 {
     return std::make_shared<GLTexture>(fileLocation, format);
@@ -394,6 +435,12 @@ void OpenGLRenderer::InitSceneShaders()
 {
     ShaderData meshShaderData;
     meshShaderData.vertShader = ShaderData::shadersFolder + "mesh.vert";
+    
+#if ENABLE_TESSELLATION
+    meshShaderData.tescShader = ShaderData::shadersFolder + "plane.tesc";
+    meshShaderData.teseShader = ShaderData::shadersFolder + "plane.tese";
+#endif
+    
     meshShaderData.fragShader = ShaderData::shadersFolder + "mesh.frag";
     sceneShaders.meshShader = CREATE_SHADER(meshShaderData);
     
@@ -549,4 +596,16 @@ void OpenGLRenderer::ResetRenderBuffer()
 void OpenGLRenderer::OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight)
 {
     InitRenderBuffer(bufferWidth, bufferHeight);
+}
+
+GLenum OpenGLRenderer::GetGLRenderPolygonMode(RenderPolygonMode mode) const
+{
+    switch (mode)
+    {
+        case RenderPolygonMode::None: return GL_NONE;
+        case RenderPolygonMode::Fill: return GL_FILL;
+        case RenderPolygonMode::Line: return GL_LINE;
+        case RenderPolygonMode::Point: return GL_POINT;
+    }
+    return GL_NONE;
 }

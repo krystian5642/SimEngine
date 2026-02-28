@@ -5,6 +5,8 @@
 struct ShaderData
 {
     std::string vertShader;
+    std::string tescShader;
+    std::string teseShader;
     std::string geomShader;
     std::string fragShader;
     

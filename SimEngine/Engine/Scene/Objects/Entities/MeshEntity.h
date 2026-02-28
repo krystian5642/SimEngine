@@ -13,6 +13,8 @@ public:
     
     void SetMesh(const MeshPtr& newMesh);
     void SetMaterial(const MaterialPtr& material);
+    
+    MeshComponent* GetMeshComponent() { return meshComponent; }
 
 protected:
     MeshComponent* meshComponent;
