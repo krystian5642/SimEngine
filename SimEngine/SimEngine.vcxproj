@@ -1492,6 +1492,8 @@
     <Content Include="Engine\Rendering\Shaders\line.vert" />
     <Content Include="Engine\Rendering\Shaders\mesh.frag" />
     <Content Include="Engine\Rendering\Shaders\mesh.vert" />
+    <Content Include="Engine\Rendering\Shaders\plane.tesc" />
+    <Content Include="Engine\Rendering\Shaders\plane.tese" />
     <Content Include="Engine\Rendering\Shaders\reflect.frag" />
     <Content Include="Engine\Rendering\Shaders\reflect.vert" />
     <Content Include="Engine\Rendering\Shaders\omni_shadow_map.frag" />

@@ -27,20 +27,20 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     if (resources.diffuseTexture)
     {
         resources.diffuseTexture->Bind();
-        shaderToUse->SetInt(UniformNames::materialDiffuseTexture, 0);
     }
+    shaderToUse->SetInt(UniformNames::materialDiffuseTexture, 0);
     
     if (resources.normalTexture)
     {
         resources.normalTexture->Bind(1);
-        shaderToUse->SetInt(UniformNames::materialNormalTexture, 1);
     }
+    shaderToUse->SetInt(UniformNames::materialNormalTexture, 1);
     
     if (resources.displacementTexture)
     {
         resources.displacementTexture->Bind(2);
-        shaderToUse->SetInt(UniformNames::materialDisplacementTexture, 2);   
     }
+    shaderToUse->SetInt(UniformNames::materialDisplacementTexture, 2);   
 }
 
 MaterialPtr ReflectMaterial::CreateReflectMaterial()

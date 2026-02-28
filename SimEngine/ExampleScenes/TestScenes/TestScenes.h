@@ -5,6 +5,7 @@
 
 #define SCENE_NAME inline const std::string
 
+class MeshComponent;
 class MeshEntity;
 class SphereGrid;
 class PhysicsComponent;
@@ -29,6 +30,7 @@ namespace SceneNames
     SCENE_NAME NormalMapTest = "Normal Map Test";
     SCENE_NAME Earth = "Earth";
     SCENE_NAME ParallaxMapping = "Parallax Mapping";
+    SCENE_NAME PolygonRenderModesAndTesselation = "Polygon Render Modes And Tesselation";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -170,6 +172,17 @@ public:
     ParallaxMappingScene(const std::string& name = SceneNames::ParallaxMapping);
     
     void DrawImGui() override;
+};
+
+class PolygonRenderModesAndTesselationScene : public Scene
+{
+public:
+    PolygonRenderModesAndTesselationScene(const std::string& name = SceneNames::PolygonRenderModesAndTesselation);
+    
+    void DrawImGui() override;
+ 
+private:
+    MeshComponent* planeMesh;
 };
 
 

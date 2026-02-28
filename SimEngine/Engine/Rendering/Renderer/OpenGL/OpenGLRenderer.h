@@ -57,6 +57,15 @@ public:
     
     unsigned int GetMaxSamples() const override;
     
+    void SetRenderPolygonMode(RenderPolygonMode mode) override;
+    RenderPolygonMode GetRenderPolygonMode() const override;
+    
+    void SetLineWidth(float width) override;
+    float GetLineWidth() const override;
+    
+    void SetPointSize(float size) override;
+    float GetPointSize() const override;
+    
     TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format) const override;
     TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format) const override;
     ShaderPtr CreateShader(const ShaderData& shaderData) const override;
@@ -88,6 +97,8 @@ private:
     void ResetRenderBuffer();
     
     void OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight);
+    
+    GLenum GetGLRenderPolygonMode(RenderPolygonMode mode) const;
     
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;

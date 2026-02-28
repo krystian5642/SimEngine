@@ -18,6 +18,18 @@ void GLShader::Compile(const ShaderData& shaderData)
 
     auto vertCode = File::ReadFile(shaderData.vertShader);
     AddShader(programID, vertCode.c_str(), GL_VERTEX_SHADER);
+    
+    if (!shaderData.tescShader.empty())
+    {
+        auto tescCode = File::ReadFile(shaderData.tescShader);
+        AddShader(programID, tescCode.c_str(), GL_TESS_CONTROL_SHADER);
+    }
+    
+    if (!shaderData.teseShader.empty())
+    {
+        auto teseCode = File::ReadFile(shaderData.teseShader);
+        AddShader(programID, teseCode.c_str(), GL_TESS_EVALUATION_SHADER);
+    }
 
     if (!shaderData.geomShader.empty())
     {

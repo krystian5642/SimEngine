@@ -48,6 +48,14 @@ namespace UniformNames
     UNIFORM_NAME fXAAReduceMul = "fxaaSettings.FXAAReduceMul";
 }
 
+enum class RenderPolygonMode
+{
+    None,
+    Fill,
+    Line,
+    Point
+};
+
 class Renderer
 {
 public:
@@ -67,6 +75,15 @@ public:
     virtual const MSAASettings& GetMSAASettings() const { return {}; }
     
     virtual unsigned int GetMaxSamples() const { return 0; }
+    
+    virtual void SetRenderPolygonMode(RenderPolygonMode mode) {}
+    virtual RenderPolygonMode GetRenderPolygonMode() const { return RenderPolygonMode::None; }
+    
+    virtual void SetLineWidth(float width) {}
+    virtual float GetLineWidth() const { return 0.0f; }
+    
+    virtual void SetPointSize(float size) {}
+    virtual float GetPointSize() const { return 0.0f; }
     
     virtual TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format) const = 0;
     virtual TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format) const = 0;

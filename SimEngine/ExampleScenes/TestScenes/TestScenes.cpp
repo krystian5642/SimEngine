@@ -1412,3 +1412,46 @@ void ParallaxMappingScene::DrawImGui()
         ImGui::Checkbox("Discard Fragments", &parallaxMapping.discardFragments);
     }
 }
+
+PolygonRenderModesAndTesselationScene::PolygonRenderModesAndTesselationScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 0.0f, 3.0f});
+    camera->cameraSpeed = 1.0f;
+    
+    auto light = AddObject<DirectionalLightObject>();
+    light->SetDirection({0.1f, 0.1f, -3.1f});
+    light->lightData.ambient = 1.0f;
+    light->lightData.diffuse = 0.05f;
+    
+    auto plane = AddObject<MeshEntity>();
+    plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
+    plane->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
+    // plane->SetScale({4.0f, 1.0f, 4.0f});
+    plane->SetRotation({90.0f, 0.0f, 0.0f});
+    
+    planeMesh = plane->GetMeshComponent();
+    planeMesh->lineWidth = 4.0f;
+    planeMesh->pointSize = 10.0f;
+    planeMesh->renderPolygonMode = RenderPolygonMode::Line;
+}
+
+void PolygonRenderModesAndTesselationScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    static const char* polygonModeNames[] = { "None", "Fill", "Line", "Point" };
+    auto currentMode = static_cast<int>(planeMesh->renderPolygonMode);
+
+    if (ImGui::Combo("Polygon Mode", &currentMode, polygonModeNames, 4))
+    {
+        planeMesh->renderPolygonMode = static_cast<RenderPolygonMode>(currentMode);
+    }
+    
+#if ENABLE_TESSELLATION
+    ImGui::SliderFloat("Tesselation Level", &planeMesh->tesselationLevel, 0.1f, 10.0f);
+#endif
+}
