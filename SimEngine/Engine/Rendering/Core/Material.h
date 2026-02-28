@@ -16,6 +16,14 @@ namespace UniformNames
     UNIFORM_NAME materialNormalTexture = "material.normalTexture";
     UNIFORM_NAME materialUseDiffuseTexture = "material.useDiffuseTexture";
     UNIFORM_NAME materialUseNormalTexture = "material.useNormalTexture";
+    UNIFORM_NAME materialUseParallaxMapping = "material.useParallaxMapping";
+    UNIFORM_NAME materialDisplacementTexture = "material.displacementTexture";
+    
+    UNIFORM_NAME parallaxHeightScale = "material.parallaxMapping.heightScale";
+    UNIFORM_NAME parallaxMinLayers = "material.parallaxMapping.minLayers";
+    UNIFORM_NAME parallaxMaxLayers = "material.parallaxMapping.maxLayers";
+    UNIFORM_NAME parallaxEnabled = "material.parallaxMapping.enabled";
+    UNIFORM_NAME parallaxDiscardFragments = "material.parallaxMapping.discardFragments";
 }
 
 struct MaterialData
@@ -26,12 +34,23 @@ struct MaterialData
     float shininess{1.0f};
 };
 
+struct ParallaxMappingData
+{
+    float heightScale{0.2f};
+    int minLayers{32};
+    int maxLayers{64};
+    bool enabled{true};
+    bool discardFragments{true};
+};
+
 struct MaterialResources
 {
     TexturePtr diffuseTexture;
     TexturePtr normalTexture;
+    TexturePtr displacementTexture;
     ConstShaderPtr shader;
     MaterialData data;
+    ParallaxMappingData parallaxMappingData;
     bool canUseNormalMap{true};
 };
 

@@ -13,6 +13,16 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     shaderToUse->SetFloat(UniformNames::materialShininess, data.shininess);
     shaderToUse->SetBool(UniformNames::materialUseDiffuseTexture, resources.diffuseTexture != nullptr);
     shaderToUse->SetBool(UniformNames::materialUseNormalTexture, resources.normalTexture != nullptr && resources.canUseNormalMap);
+    
+    shaderToUse->SetBool(UniformNames::parallaxEnabled, resources.parallaxMappingData.enabled);
+    
+    if (resources.parallaxMappingData.enabled)
+    {
+        shaderToUse->SetFloat(UniformNames::parallaxHeightScale, resources.parallaxMappingData.heightScale);
+        shaderToUse->SetInt(UniformNames::parallaxMinLayers, resources.parallaxMappingData.minLayers);
+        shaderToUse->SetInt(UniformNames::parallaxMaxLayers, resources.parallaxMappingData.maxLayers);
+        shaderToUse->SetBool(UniformNames::parallaxDiscardFragments, resources.parallaxMappingData.discardFragments);
+    }
 
     if (resources.diffuseTexture)
     {
@@ -24,6 +34,12 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
     {
         resources.normalTexture->Bind(1);
         shaderToUse->SetInt(UniformNames::materialNormalTexture, 1);
+    }
+    
+    if (resources.displacementTexture)
+    {
+        resources.displacementTexture->Bind(2);
+        shaderToUse->SetInt(UniformNames::materialDisplacementTexture, 2);   
     }
 }
 
