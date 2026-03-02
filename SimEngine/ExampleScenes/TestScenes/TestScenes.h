@@ -31,6 +31,7 @@ namespace SceneNames
     SCENE_NAME Earth = "Earth";
     SCENE_NAME ParallaxMapping = "Parallax Mapping";
     SCENE_NAME PolygonRenderModesAndTesselation = "Polygon Render Modes And Tesselation";
+    SCENE_NAME BloomAndHDR = "Bloom and HDR";
 }
 
 class ProjectileLauncherScene : public Scene
@@ -184,6 +185,13 @@ public:
 private:
     MeshComponent* planeMesh;
 };
+
+class BloomAndHDRScene : public Scene
+{
+public:
+    BloomAndHDRScene(const std::string& name = SceneNames::BloomAndHDR);
+};
+
 
 
 

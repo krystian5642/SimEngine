@@ -1,12 +1,13 @@
 #version 460 core
 
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
+
 in vec2 TexCoord;
 in mat3 TBN;
 in vec3 Normal;
 in vec3 FragPos;
 in vec4 DirectionaLightPos;
-
-out vec4 color;
 
 const int dirLightMaxCount = 10;
 const int pointLightMaxCount = 5;
@@ -331,9 +332,9 @@ void main()
     vec4 directionalLightColor = CalcDirectionalLightColor();
     vec4 pointLightColor = CalcPointLightColor();
     vec4 spotLightColor = CalcSpotLightColor();
-    
-    color = directionalLightColor + pointLightColor + spotLightColor;
 
-    float gamma = 2.2;
-    color = vec4(pow(color.rgb, vec3(1.0 / gamma)), color.a);
+    FragColor = directionalLightColor + pointLightColor + spotLightColor;
+
+    float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    BrightColor = brightness > 1.0 ? FragColor : vec4(0.0, 0.0, 0.0, 1.0);
 }

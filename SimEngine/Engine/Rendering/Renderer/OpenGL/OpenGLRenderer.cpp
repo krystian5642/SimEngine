@@ -55,6 +55,39 @@ void GLScreenRenderData::Reset()
     }
 }
 
+void GLBloomData::Reset()
+{
+    if (brighnressMSAATexture != 0)
+    {
+        glDeleteTextures(1, &brighnressMSAATexture);
+        brighnressMSAATexture = 0;
+    }
+    
+    if (brightnessTexture != 0)
+    {
+        glDeleteTextures(1, &brightnessTexture);
+        brightnessTexture = 0;
+    } 
+    
+    for (auto& texture : pingpongTextures)
+    {
+        if (texture != 0)
+        {
+            glDeleteTextures(1, &texture);
+            texture = 0;
+        }
+    }
+    
+    for (auto& FBO : pingpongFBO)
+    {
+        if (FBO != 0)
+        {
+            glDeleteFramebuffers(1, &FBO);
+            FBO = 0;
+        }   
+    }
+}
+
 void GLAntialiasingData::Reset()
 {
     if (FBO != 0)
@@ -92,6 +125,7 @@ OpenGLRenderer::OpenGLRenderer()
     glEnable(GL_CULL_FACE);
     
     OpenGLRenderer::InitSceneShaders();
+    InitBloomShaders();
     
     window->onWindowSizeChangedEvent.BindRaw(this, &OpenGLRenderer::OnWindowSizeChanged);
     InitRenderBuffer(window->GetBufferWidth(), window->GetBufferHeight());
@@ -248,12 +282,12 @@ MaterialPtr OpenGLRenderer::CreateReflectMaterial(const MaterialResources& resou
 
 void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 {
+    ResetRenderBuffer();
+    
     if (bufferWidth <= 0 || bufferHeight <= 0)
     {
         return;    
     }
-    
-    ResetRenderBuffer();
     
     if (antialiasingData.method == AntialiasingMethod::MSAA)
     {
@@ -262,12 +296,23 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
     
         glGenTextures(1, &antialiasingData.colorbufferTexture);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.colorbufferTexture);
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(msaaSettings.samples), GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(msaaSettings.samples)
+            , GL_RGBA16F, bufferWidth, bufferHeight, GL_TRUE);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, antialiasingData.colorbufferTexture, 0);
+        
+        glGenTextures(1, &bloomData.brighnressMSAATexture);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, bloomData.brighnressMSAATexture);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(msaaSettings.samples),
+            GL_RGBA16F, bufferWidth, bufferHeight, GL_TRUE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
+            GL_TEXTURE_2D_MULTISAMPLE, bloomData.brighnressMSAATexture, 0);
+        
+        constexpr GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+        glDrawBuffers(2, attachments);
         
         glGenRenderbuffers(1, &antialiasingData.RBO);
         glBindRenderbuffer(GL_RENDERBUFFER, antialiasingData.RBO);
@@ -285,13 +330,22 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
     
         glGenTextures(1, &screenRenderData.postProcessingTexture);
         glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
-    
+        
+        glGenTextures(1, &bloomData.brightnessTexture);
+        glBindTexture(GL_TEXTURE_2D, bloomData.brightnessTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomData.brightnessTexture, 0);
+        
         status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE)
         {       
@@ -305,23 +359,49 @@ void OpenGLRenderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 
         glGenTextures(1, &screenRenderData.postProcessingTexture);
         glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenRenderData.postProcessingTexture, 0);
+        
+        glGenTextures(1, &bloomData.brightnessTexture);
+        glBindTexture(GL_TEXTURE_2D, bloomData.brightnessTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomData.brightnessTexture, 0);
+
+        constexpr GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+        glDrawBuffers(2, attachments);
+        
         glGenRenderbuffers(1, &screenRenderData.postProcessingRBO);
         glBindRenderbuffer(GL_RENDERBUFFER, screenRenderData.postProcessingRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screenRenderData.postProcessingRBO);
-
+        
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE)
         {       
             throw std::runtime_error("ERROR: Framebuffer is not complete!! Error code " + std::to_string(status));
         }
+    }
+    
+    glGenFramebuffers(2, bloomData.pingpongFBO);
+    glGenTextures(2, bloomData.pingpongTextures);
+    for (int i = 0; i < 2; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomData.pingpongFBO[i]);
+        glBindTexture(GL_TEXTURE_2D, bloomData.pingpongTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomData.pingpongTextures[i], 0);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -404,8 +484,43 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, antialiasingData.FBO);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screenRenderData.postProcessingFBO);
-        glBlitFramebuffer(0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, bufferWidth, bufferHeight
+            , 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        
+        glReadBuffer(GL_COLOR_ATTACHMENT1);
+        glDrawBuffer(GL_COLOR_ATTACHMENT1);
+        glBlitFramebuffer(0, 0, bufferWidth, bufferHeight
+            , 0, 0, bufferWidth, bufferHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
+    
+    // bloom
+    bool horizontalBlur = true, firstIteration = true;
+    int amountOfIterations = 600;
+    bloomData.bloomShader->Bind();
+    
+    glBindVertexArray(screenRenderData.quadVAO);
+    glDisable(GL_DEPTH_TEST);
+    glActiveTexture(GL_TEXTURE0);
+    
+    for (int i = 0; i < amountOfIterations; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomData.pingpongFBO[horizontalBlur ? 1 : 0]);
+        bloomData.bloomShader->SetBool("horizontal", horizontalBlur);
+        glBindTexture(GL_TEXTURE_2D, firstIteration ? bloomData.brightnessTexture : bloomData.pingpongTextures[horizontalBlur ? 0 : 1]);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+        horizontalBlur = !horizontalBlur;
+        if (firstIteration)
+        {
+            firstIteration = false;
+        }
+    }
+    
+    bloomData.bloomShader->Unbind();
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -424,8 +539,16 @@ void OpenGLRenderer::RenderScene(const Scene* scene) const
     
     glBindVertexArray(screenRenderData.quadVAO);
     glDisable(GL_DEPTH_TEST);
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, screenRenderData.postProcessingTexture);
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, bloomData.pingpongTextures[horizontalBlur ? 0 : 1]);
+    
+    shader->SetInt("bloomTexture", 1);
+    
+    shader->Validate();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     shader->Unbind();
@@ -464,6 +587,14 @@ void OpenGLRenderer::InitSceneShaders()
     FXAAshaderData.vertShader = ShaderData::shadersFolder + "FXAA.vert";
     FXAAshaderData.fragShader = ShaderData::shadersFolder + "FXAA.frag";
     sceneShaders.FXAAshader = CREATE_SHADER(FXAAshaderData);
+}
+
+void OpenGLRenderer::InitBloomShaders()
+{
+    ShaderData bloomShaderData;
+    bloomShaderData.vertShader = ShaderData::shadersFolder + "bloomBlur.vert";
+    bloomShaderData.fragShader = ShaderData::shadersFolder + "bloomBlur.frag";
+    bloomData.bloomShader = CREATE_SHADER(bloomShaderData);
 }
 
 void OpenGLRenderer::Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const
@@ -591,6 +722,7 @@ void OpenGLRenderer::ResetRenderBuffer()
 {
     screenRenderData.Reset();
     antialiasingData.Reset();
+    bloomData.Reset();
 }
 
 void OpenGLRenderer::OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight)

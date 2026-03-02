@@ -29,6 +29,18 @@ struct GLScreenRenderData
     void Reset();
 };
 
+struct GLBloomData
+{
+    GLuint brighnressMSAATexture{};
+    GLuint brightnessTexture{};
+    GLuint pingpongFBO[2];
+    GLuint pingpongTextures[2];
+    
+    ConstGLShaderPtr bloomShader;
+    
+    void Reset();
+};
+
 struct GLAntialiasingData
 {
     GLuint FBO{};
@@ -87,6 +99,8 @@ private:
     void RenderScene(const Scene* scene) const override;
     void InitSceneShaders() override;
     
+    void InitBloomShaders();
+    
     void Render(const std::shared_ptr<const Shader>& shader, const Scene* scene, bool visualPass) const;
     
     // Render passes
@@ -103,6 +117,8 @@ private:
     GLSceneShaders sceneShaders;
     GLScreenRenderData screenRenderData;
     GLAntialiasingData antialiasingData;
+    
+    GLBloomData bloomData;
     
     FXAASettings fxaaSettings;
     MSAASettings msaaSettings;
