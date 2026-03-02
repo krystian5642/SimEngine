@@ -1,30 +1,23 @@
 #version 460 core
-
 out vec4 FragColor;
 
 in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
-
-const float kernel[9] = float[]( 
-    1.0, 1.0, 1.0, 
-    1.0, -8.0, 1.0, 
-    1.0, 1.0, 1.0 
-);
-
-const float offset = 1.0 / 100.0;
+uniform sampler2D bloomTexture;
 
 void main() 
 {
-    FragColor = texture(screenTexture, TexCoords);
+    const float gamma = 2.2;
+    const float exposure = 1.0;
     
-/*    int kernelIndex = 0;
-    for(int x = -1; x <= 1; x++)
-    {
-        for(int y = -1; y <= 1; y++)
-        {
-            FragColor += kernel[kernelIndex] * texture(screenTexture, TexCoords + offset * vec2(x, y));
-            kernelIndex++;
-        }
-    }*/
+    vec3 hdrColor = texture(screenTexture, TexCoords).rgb;
+    vec3 bloomColor = texture(bloomTexture, TexCoords).rgb;
+    
+    hdrColor += bloomColor;
+    
+    //vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+    //result = pow(result, vec3(1.0 / gamma));
+    
+    FragColor = vec4(hdrColor, 1.0); //vec4(result, 1.0);
 }

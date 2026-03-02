@@ -1482,6 +1482,8 @@
     <ClInclude Include="External\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Engine\Rendering\Shaders\bloomBlur.frag" />
+    <Content Include="Engine\Rendering\Shaders\bloomBlur.vert" />
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.frag" />
     <Content Include="Engine\Rendering\Shaders\directional_shadow_map.vert" />
     <Content Include="Engine\Rendering\Shaders\FXAA.frag" />

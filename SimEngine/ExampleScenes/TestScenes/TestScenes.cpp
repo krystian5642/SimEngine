@@ -1455,3 +1455,35 @@ void PolygonRenderModesAndTesselationScene::DrawImGui()
     ImGui::SliderFloat("Tesselation Level", &planeMesh->tesselationLevel, 0.1f, 10.0f);
 #endif
 }
+
+BloomAndHDRScene::BloomAndHDRScene(const std::string& name)
+    : Scene(name)
+{
+    MaterialManager::Get().RegisterCreateAsset("bloom", []
+    {
+        MaterialResources resources;
+        MaterialData& data = resources.data;
+        
+        data.ambient = {0.6615f, 0.1745f, 0.0215f};
+        data.diffuse = {0.6615f, 0.1745f, 0.0215f};
+        data.specular = {0.633f, 0.727811f, 0.633f};
+        data.shininess = 0.6f * 20.0f;
+        
+        return std::make_shared<Material>(resources); 
+    });
+    
+    auto camera = AddObject<CameraEntity>("Camera");
+    auto cameraComp = camera->GetCameraComponent();
+    cameraComp->SetAsActiveCamera();
+    cameraComp->SetPosition({0.0f, 0.0f, 7.0f});
+    camera->cameraSpeed = 1.0f;
+    
+    auto light = AddObject<DirectionalLightObject>("Light");
+    light->SetDirection({0.1f, 0.1f, -40.0f});
+    light->lightData.ambient = 8.4f;
+    light->lightData.diffuse = 8.9f;
+    
+    auto ball = AddObject<MeshEntity>();
+    ball->SetMesh(MeshManager::Get().GetAssetByName("planet"));
+    ball->SetMaterial(MaterialManager::Get().GetAssetByName("jade"));
+}
