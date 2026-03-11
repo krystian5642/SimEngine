@@ -1,8 +1,6 @@
 ﻿
 #include "Window.h"
 
-#include <GLFW/glfw3.h>
-
 Window::Window(int width, int height, const std::string& title)
     : width(width)
     , height(height)
@@ -13,10 +11,8 @@ Window::Window(int width, int height, const std::string& title)
         throw std::runtime_error("Failed to initialize GLFW");
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     if (!window)
@@ -35,9 +31,6 @@ Window::Window(int width, int height, const std::string& title)
     glfwSetKeyCallback(window, OnKeyEvent);
     
     glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
-    glViewport(0, 0, bufferWidth, bufferHeight);
-    
-   // glfwSwapInterval(1);
 }
 
 Window::~Window()

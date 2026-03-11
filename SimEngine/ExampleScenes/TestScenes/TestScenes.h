@@ -34,6 +34,13 @@ namespace SceneNames
     SCENE_NAME BloomAndHDR = "Bloom and HDR";
 }
 
+class SimpleScene : public Scene
+{
+public:
+    SimpleScene(const std::string& name = "Simple Scene");
+};
+
+/*
 class ProjectileLauncherScene : public Scene
 {
 public:
@@ -191,6 +198,7 @@ class BloomAndHDRScene : public Scene
 public:
     BloomAndHDRScene(const std::string& name = SceneNames::BloomAndHDR);
 };
+*/
 
 
 

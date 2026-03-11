@@ -95,7 +95,7 @@ MeshPtr MeshManager::LoadMesh(const std::string& path)
         vertex.position -= center;
     }
     
-    return Mesh::CreateMesh({vertices, indices});
+    /*return Mesh::CreateMesh({vertices, indices});*/
 }
 
 MeshManager::MeshManager() 
@@ -133,7 +133,8 @@ MeshPtr MeshManager::LoadPlane()
         1,3,2
     };
     
-    return Mesh::CreateMesh({vertices, indices});
+    return nullptr;
+    /*return Mesh::CreateMesh({vertices, indices});*/
 }
 
 MeshPtr MeshManager::LoadSkybox()
@@ -176,8 +177,8 @@ MeshPtr MeshManager::LoadSkybox()
         1, 6, 3,
         3, 6, 7
     };
-    
-    return Mesh::CreateMesh({skyboxVertices, skyboxIndices});
+    return nullptr;
+    /*return Mesh::CreateMesh({skyboxVertices, skyboxIndices});*/
 }
 
 MeshPtr MeshManager::LoadPlanet()

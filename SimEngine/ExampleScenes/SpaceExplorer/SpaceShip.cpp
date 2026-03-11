@@ -1,7 +1,4 @@
 ﻿#include "SpaceShip.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Components/InputComponent.h"

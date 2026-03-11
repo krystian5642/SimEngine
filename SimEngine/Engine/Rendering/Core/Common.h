@@ -9,7 +9,7 @@ class Line;
 class Texture;
 class Shader;
 
-class Renderer;
+class Renderer_Old;
 
 using TexturePtr = std::shared_ptr<Texture>;
 using LinePtr = std::shared_ptr<Line>;
@@ -20,4 +20,4 @@ using ShadowMapPtr = std::shared_ptr<ShadowMap>;
 using ShaderPtr = std::shared_ptr<Shader>;
 using InstancedMeshPtr = std::shared_ptr<InstancedMesh>;
 
-using RendererPtr = std::unique_ptr<Renderer>;
+using RendererPtr = std::unique_ptr<Renderer_Old>;

@@ -1,7 +1,4 @@
 ﻿#include "GravityShip.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Components/InputComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Managers/MaterialManager.h"

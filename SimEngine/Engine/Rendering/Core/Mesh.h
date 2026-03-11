@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Rendering/Renderer/Renderer.h"
 
 struct VertexData
 {
@@ -27,11 +26,6 @@ class Mesh
 public:
     Mesh(const MeshData& meshData) {}
     virtual ~Mesh() {}
-    
-    static MeshPtr CreateMesh(const MeshData& meshData)
-    {
-        return Renderer::Get()->CreateMesh(meshData);
-    }
     
     virtual void Draw() const = 0;
 };

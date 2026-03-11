@@ -3,7 +3,6 @@
 #include "Components/ProceduralSphereMeshComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
-#include "Rendering/Renderer/Renderer.h"
 #include "Components/PhysicsComponent.h"
 
 ProceduralPlanet::ProceduralPlanet(ObjectBase* parent, Scene* scene, const std::string& name)
@@ -23,7 +22,7 @@ void ProceduralPlanet::SetPlanetColourGradient(const Gradient1D& newGradient)
 {
     planetColourGradient = newGradient;
     
-    MaterialManager::Get().RegisterCreateAsset("procedural_planet_material" + std::to_string(materialIndex++), [&]
+  /*  MaterialManager::Get().RegisterCreateAsset("procedural_planet_material" + std::to_string(materialIndex++), [&]
     {
         MaterialResources resources;
         MaterialData& data = resources.data;
@@ -35,7 +34,7 @@ void ProceduralPlanet::SetPlanetColourGradient(const Gradient1D& newGradient)
         
         resources.diffuseTexture = planetColourGradient.GetTexture();
         return std::make_shared<Material>(resources); 
-    });
+    });*/
     
     meshComponent->material = MaterialManager::Get().GetAssetByName("procedural_planet_material" + std::to_string(materialIndex - 1));
 }

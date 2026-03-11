@@ -103,7 +103,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;C:\VulkanSDK\1.4.328.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -113,8 +113,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/External/GLEW/lib/Release/x64;$(SolutionDir)/External/GLFW/lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/External/GLFW/lib-vc2022;C:\VulkanSDK\1.4.328.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -126,7 +126,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLEW\include;$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External\GLFW\include;$(SolutionDir)\External;$(SolutionDir)\External\spdlog\include;$(SolutionDir)\SimEngine\Engine;$(SolutionDir)\SimEngine\External\imgui;C:\VulkanSDK\1.4.328.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -136,8 +136,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/External/GLEW/lib/Release/x64;$(SolutionDir)/External/GLFW/lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/External/GLFW/lib-vc2022;C:\VulkanSDK\1.4.328.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -490,95 +490,7 @@
     <ClCompile Include="Engine\Rendering\Core\Line.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Material.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Texture.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLInstancedMesh.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLShader.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLSkybox.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Core\GLTexture.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLOmniShadowMap.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLShadowMap.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\OpenGL\OpenGLRenderer.cpp" />
-    <ClCompile Include="Engine\Rendering\Renderer\Renderer.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <UseDynamicDebugging>false</UseDynamicDebugging>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <ForcedIncludeFiles>C:\Users\kryst\Desktop\SimEngine\\SimEngine\Engine\Core\PCH\pch.h</ForcedIncludeFiles>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>C:\Users\kryst\Desktop\SimEngine\\SimEngine\Engine\Core\PCH\pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\SimEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\SimEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\kryst\Desktop\SimEngine\\External\GLEW\include;C:\Users\kryst\Desktop\SimEngine\\External\GLFW\include;C:\Users\kryst\Desktop\SimEngine\\External;C:\Users\kryst\Desktop\SimEngine\\External\spdlog\include;C:\Users\kryst\Desktop\SimEngine\\SimEngine\Engine;C:\Users\kryst\Desktop\SimEngine\\SimEngine\External\imgui;</AdditionalIncludeDirectories>
-      <AdditionalOptions>/utf-8 </AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
+    <ClCompile Include="Engine\Rendering\Renderer\Renderer.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\ObjectBase.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\SceneObject.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Entities\CameraEntity.cpp" />
@@ -1387,13 +1299,6 @@
       <AdditionalOptions>/utf-8 </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="External\imgui\imgui.cpp" />
-    <ClCompile Include="External\imgui\imgui_demo.cpp" />
-    <ClCompile Include="External\imgui\imgui_draw.cpp" />
-    <ClCompile Include="External\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="External\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="External\imgui\imgui_tables.cpp" />
-    <ClCompile Include="External\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -1430,17 +1335,6 @@
     <ClInclude Include="Engine\Rendering\Core\Skybox.h" />
     <ClInclude Include="Engine\Rendering\Core\Texture.h" />
     <ClInclude Include="Engine\Rendering\Lighting\ShadowMap.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLInstancedMesh.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLLine.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMaterial.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLMesh.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLShader.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLSkybox.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Core\GLTexture.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLOmniShadowMap.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLShadowMap.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\Lighting\GLShadowMapTypes.h" />
-    <ClInclude Include="Engine\Rendering\Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Engine\Rendering\Renderer\Renderer.h" />
     <ClInclude Include="Engine\Rendering\UniformNames.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\ObjectBase.h" />
@@ -1472,14 +1366,6 @@
     <ClInclude Include="ExampleScenes\TestScenes\ProjectileLauncher.h" />
     <ClInclude Include="ExampleScenes\TestScenes\SphereGrid.h" />
     <ClInclude Include="ExampleScenes\TestScenes\TestScenes.h" />
-    <ClInclude Include="External\imgui\imconfig.h" />
-    <ClInclude Include="External\imgui\imgui.h" />
-    <ClInclude Include="External\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="External\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="External\imgui\imgui_internal.h" />
-    <ClInclude Include="External\imgui\imstb_rectpack.h" />
-    <ClInclude Include="External\imgui\imstb_textedit.h" />
-    <ClInclude Include="External\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Engine\Rendering\Shaders\bloomBlur.frag" />

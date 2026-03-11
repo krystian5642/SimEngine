@@ -3,7 +3,6 @@
 #include "ProjectileLauncher.h"
 #include "CelestialObject.h"
 #include "GravityShip.h"
-#include "imgui.h"
 #include "Core/MathUtils.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
@@ -21,13 +20,12 @@
 #include "Components/ProceduralSphereMeshComponent.h"
 #include "Components/RotatingComponent.h"
 #include "Rendering/Core/InstancedMesh.h"
-#include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Texture.h"
 #include "Scene/Systems/Physics/SimpleGravitySystem.h"
 #include "Rendering/Core/Shader.h"
 #include "Rendering/Core/Mesh.h"
 
-ProjectileLauncherScene::ProjectileLauncherScene(const std::string& name)
+/*ProjectileLauncherScene::ProjectileLauncherScene(const std::string& name)
     : Scene(name)
 {
     const std::vector<std::string> skyboxFaces = {
@@ -668,11 +666,11 @@ RandomRigidBodiesScene::RandomRigidBodiesScene(const std::string& name)
     centerOfMassIndicator->SetMaterial(MaterialManager::Get().GetAssetByName("emerald"));
     centerOfMassIndicator->SetScale({1.0f, 1.0f, 20.0f});
     
-    /*auto plane = AddObject<MeshEntity>();
+    auto plane = AddObject<MeshEntity>();
     plane->SetMesh(MeshManager::Get().GetAssetByName("plane"));
     plane->SetMaterial(MaterialManager::Get().GetAssetByName("chrome"));
     plane->SetScale({100.0f, 1.0f, 100.0f});
-    plane->Move({0.0f, -8.0f, 0.0f});*/
+    plane->Move({0.0f, -8.0f, 0.0f});
     
     GenerateRandomRigidBody3D();
 }
@@ -1054,7 +1052,7 @@ InstancingScene::InstancingScene(const std::string& name)
                 ins->SetPosition(t.position);
             }
         }
-    }*/
+    }
 }
 
 RotationTestScene::RotationTestScene(const std::string& name)
@@ -1152,13 +1150,13 @@ void AntialiasingScene::DrawImGui()
 {
     Scene::DrawImGui();
 
-    auto method = static_cast<int>(Renderer::Get()->GetAntialiasingMethod());
+    auto method = static_cast<int>(Renderer_Old::Get()->GetAntialiasingMethod());
     static const char* items[] = { "None", "FXAA", "MSAA" };
 
     ImGui::PushItemWidth(70);
     if (ImGui::Combo("AA Method", &method, items, IM_ARRAYSIZE(items)))
     {
-        Renderer::Get()->SetAntialiasingMethod(static_cast<AntialiasingMethod>(method));
+        Renderer_Old::Get()->SetAntialiasingMethod(static_cast<AntialiasingMethod>(method));
     }
     ImGui::PopItemWidth();
 
@@ -1166,7 +1164,7 @@ void AntialiasingScene::DrawImGui()
     {
         bool changed = false;
         
-        auto FXAA = Renderer::Get()->GetFXAASettings();
+        auto FXAA = Renderer_Old::Get()->GetFXAASettings();
     
         changed |= ImGui::SliderFloat("Span Max",    &FXAA.FXAASpanMax,    1.0f, 100.0f);
         changed |= ImGui::SliderFloat("Reduce Min",  &FXAA.FXAAReduceMin,  0.0f, 100.0f);
@@ -1174,7 +1172,7 @@ void AntialiasingScene::DrawImGui()
         
         if (changed)
         {
-            Renderer::Get()->SetFXAASettings(FXAA);
+            Renderer_Old::Get()->SetFXAASettings(FXAA);
         }   
     }
     else if (method == static_cast<int>(AntialiasingMethod::MSAA))
@@ -1182,18 +1180,18 @@ void AntialiasingScene::DrawImGui()
         static const char* sampleItems[] = { "2", "4", "8", "16" };
         static int sampleValues[] = {  2,   4,   8,  16  };
 
-        auto MSAA = Renderer::Get()->GetMSAASettings();
+        auto MSAA = Renderer_Old::Get()->GetMSAASettings();
         
         int currentSamples = static_cast<int>(std::log2(MSAA.samples)) - 1;
 
-        const auto maxSamples = static_cast<int>(Renderer::Get()->GetMaxSamples());
+        const auto maxSamples = static_cast<int>(Renderer_Old::Get()->GetMaxSamples());
         auto availableCount = static_cast<int>(std::ranges::upper_bound(sampleValues, maxSamples) - std::begin(sampleValues));
 
         ImGui::PushItemWidth(70);
         if (ImGui::Combo("Samples", &currentSamples, sampleItems, availableCount))
         {
             MSAA.samples = sampleValues[currentSamples];
-            Renderer::Get()->SetMSAASettings(MSAA);
+            Renderer_Old::Get()->SetMSAASettings(MSAA);
         }
         ImGui::PopItemWidth();
     }
@@ -1486,4 +1484,9 @@ BloomAndHDRScene::BloomAndHDRScene(const std::string& name)
     auto ball = AddObject<MeshEntity>();
     ball->SetMesh(MeshManager::Get().GetAssetByName("planet"));
     ball->SetMaterial(MaterialManager::Get().GetAssetByName("jade"));
+}*/
+    
+SimpleScene::SimpleScene(const std::string& name)
+    : Scene(name)
+{
 }

@@ -10,7 +10,7 @@ PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::
 {
     lightCount++;
     
-    shadowMap = ShadowMap::CreateOmniShadowMap(2024, 2024);
+    /*shadowMap = ShadowMap::CreateOmniShadowMap(2024, 2024);*/
 
     lightMatrices.resize(6);
     

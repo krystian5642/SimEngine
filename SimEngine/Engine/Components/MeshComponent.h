@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 #include "SceneComponent.h"
-#include "Rendering/Renderer/Renderer.h"
-
 class Mesh;
 class Material;
 
@@ -23,7 +21,6 @@ public:
     MeshPtr mesh;
     MaterialPtr material;
     
-    RenderPolygonMode renderPolygonMode{RenderPolygonMode::Fill};
     float lineWidth{1.0f};
     float pointSize{3.0f};
     

@@ -11,7 +11,7 @@ InstancedMeshComponent::InstancedMeshComponent(ObjectBase* parent, Scene* scene,
 
 void InstancedMeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
 {
-    if (!instancedMesh)
+    /*if (!instancedMesh)
     {
         std::cout << "No mesh specified" << std::endl;
         return;
@@ -47,5 +47,5 @@ void InstancedMeshComponent::Draw(const std::shared_ptr<const Shader>& shader, b
         activeShader->Unbind();
     }
     
-    shader->SetBool(UniformNames::useInstanceRendering, false);
+    shader->SetBool(UniformNames::useInstanceRendering, false);*/
 }

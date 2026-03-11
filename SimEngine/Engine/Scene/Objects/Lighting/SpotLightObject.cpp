@@ -1,6 +1,4 @@
 ﻿#include "SpotLightObject.h"
-
-#include "Rendering/Renderer/Renderer.h"
 #include "Rendering/Core/Shader.h"
 
 SpotLightObject::SpotLightObject(ObjectBase* parent, Scene* scene, const std::string& name)

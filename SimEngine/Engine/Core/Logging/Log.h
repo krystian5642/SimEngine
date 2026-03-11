@@ -2,11 +2,11 @@
 
 #include "spdlog/spdlog.h"
 
+#define ASSERT(x, ...) { if(!(x)) { LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+
 #define LOG_INFO(...)  ::Log::GetLogger()->info("INFO : {}", __VA_ARGS__)
 #define LOG_WARN(...)  ::Log::GetLogger()->warn("WARN : {}", __VA_ARGS__)
 #define LOG_ERROR(...) ::Log::GetLogger()->error("ERROR : {}", __VA_ARGS__)
-#define LOG_TRACE(...) ::Log::GetLogger()->trace("TRACE : {}", __VA_ARGS__)
-#define LOG_FATAL(...) ::Log::GetLogger()->fatal("FATAL : {}", __VA_ARGS__)
 
 class Log
 {

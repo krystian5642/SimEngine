@@ -1,12 +1,10 @@
 ﻿#include "LineComponent.h"
-
-#include "Rendering/Renderer/Renderer.h"
 #include "Scene/Objects/Entities/Entity.h"
 
 LineComponent::LineComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : RenderComponent(parent, scene, name)
 {
-    line = Line::CreateLine();
+    /*line = Line::CreateLine();*/
 }
 
 void LineComponent::Tick(float deltaTime)

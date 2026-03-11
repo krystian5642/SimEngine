@@ -1,7 +1,4 @@
 ﻿#include "Entity.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Components/SceneComponent.h"
 #include "Core/App.h"
 

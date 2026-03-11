@@ -2,9 +2,6 @@
 
 #include "Components/CameraComponent.h"
 #include "Components/InputComponent.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Core/App.h"
 
 CameraEntity::CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name)

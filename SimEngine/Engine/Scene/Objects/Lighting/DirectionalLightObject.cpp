@@ -10,7 +10,7 @@ DirectionalLightObject::DirectionalLightObject(ObjectBase* parent, Scene* scene,
 {
     lightCount++;
     
-    shadowMap = ShadowMap::CreateShadowMap(2048, 2048);
+    /*shadowMap = ShadowMap::CreateShadowMap(2048, 2048);*/
     
     lightProjectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
     UpdateViewProjectionMatrix();

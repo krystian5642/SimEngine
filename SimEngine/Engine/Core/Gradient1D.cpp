@@ -56,5 +56,6 @@ TexturePtr Gradient1D::GetTexture() const
     data.width = resolution;
     data.height = 1;
     
-    return Texture::CreateTexture(data);
+    return nullptr;
+    /*return Texture::CreateTexture(data);*/
 }

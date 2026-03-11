@@ -1,109 +1,87 @@
 ﻿#pragma once
 
-#include "Rendering/Core/Material.h"
-
-enum class TextureFormat;
-struct TextureData;
-class Window;
-class Scene;
-struct MaterialResources;
-struct ShaderData;
-struct MeshData;
-class Shader;
-class Texture;
-class Material;
-class Mesh;
-class ShadowMap;
-struct Transform;
-
-enum class RendererType
+struct QueueFamilyIndices
 {
-    OpenGL
+    std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
+    
+    bool isComplete() const
+    {
+        return graphicsFamily.has_value() && presentFamily.has_value();
+    }
 };
 
-enum class AntialiasingMethod
+struct SwapChainDetails
 {
-    None,
-    FXAA,
-    MSAA
-};
-
-struct FXAASettings
-{
-    float FXAASpanMax{8.0f};
-    float FXAAReduceMin{1.0f / 128.0f};
-    float FXAAReduceMul{1.0f / 8.0f};
-};
-
-struct MSAASettings
-{
-    unsigned int samples{4};
-};
-
-namespace UniformNames
-{
-    UNIFORM_NAME texelSize = "texelSize";
-    UNIFORM_NAME fXAASpanMax = "fxaaSettings.FXAASpanMax";
-    UNIFORM_NAME fXAAReduceMin = "fxaaSettings.FXAAReduceMin";
-    UNIFORM_NAME fXAAReduceMul = "fxaaSettings.FXAAReduceMul";
-}
-
-enum class RenderPolygonMode
-{
-    None,
-    Fill,
-    Line,
-    Point
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
+    
+    bool isComplete() const
+    {
+        return !formats.empty() && !presentModes.empty();
+    }
 };
 
 class Renderer
 {
 public:
-    virtual ~Renderer() {}
+    void Init();
+    void Shutdown();
     
-    static Renderer* Get() { return rendererAPI.get(); }
+private:
+    void createInstance();
+    void setupDebugMessenger();
+    void createSurface();
+    void pickPhysicalDevice();
+    void createLogicalDevice();
+    void createSwapChain();
     
-    static void Init(RendererType type);
+    bool checkInstanceExtensionSupport(const std::vector<const char*>& extensions) const;
+    bool checkValidationLayerSupport() const;
+    bool checkPhysicalDeviceSuitable(VkPhysicalDevice device) const;
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device) const;
     
-    virtual void SetAntialiasingMethod(AntialiasingMethod antialiasingMethod) {}
-    virtual AntialiasingMethod GetAntialiasingMethod() const { return AntialiasingMethod::None; }
+    std::vector<const char*> getRequiredExtensions() const;
     
-    virtual void SetFXAASettings(const FXAASettings& settings) {}
-    virtual const FXAASettings& GetFXAASettings() const { return {}; }
+    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance
+        , const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo
+        , const VkAllocationCallbacks* pAllocator
+        , VkDebugUtilsMessengerEXT* pDebugMessenger);
     
-    virtual void SetMSAASettings(const MSAASettings& settings) {}
-    virtual const MSAASettings& GetMSAASettings() const { return {}; }
+    void DestroyDebugUtilsMessengerEXT(VkInstance instance
+        , VkDebugUtilsMessengerEXT debugMessenger
+        , const VkAllocationCallbacks* pAllocator);
     
-    virtual unsigned int GetMaxSamples() const { return 0; }
+    QueueFamilyIndices getQueueFamilies(VkPhysicalDevice device) const;
+    SwapChainDetails getSwapChainDetails(VkPhysicalDevice device) const;
     
-    virtual void SetRenderPolygonMode(RenderPolygonMode mode) {}
-    virtual RenderPolygonMode GetRenderPolygonMode() const { return RenderPolygonMode::None; }
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) const;
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) const;
     
-    virtual void SetLineWidth(float width) {}
-    virtual float GetLineWidth() const { return 0.0f; }
+    const std::vector<const char*> validationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+    };
     
-    virtual void SetPointSize(float size) {}
-    virtual float GetPointSize() const { return 0.0f; }
+    const std::vector<const char*> deviceExtensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
+    };
     
-    virtual TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format) const = 0;
-    virtual TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format) const = 0;
+#ifdef _DEBUG
+    const bool enableValidationLayers = true;
+#else
+    const bool enableValidationLayers = false;
+#endif
     
-    virtual ShaderPtr CreateShader(const ShaderData& shaderData) const = 0;
-    virtual MeshPtr CreateMesh(const MeshData& meshData) const = 0;
-    virtual InstancedMeshPtr CreateInstancedMesh(MeshPtr mesh, const std::vector<Transform>& transforms) const = 0;
-    virtual LinePtr CreateLine() const = 0;
+    VkDebugUtilsMessengerEXT debugMessenger;
     
-    virtual SkyboxPtr CreateSkybox(const std::vector<std::string>& faceLocations) const { return nullptr; }
+    VkInstance instance;
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
+    VkSurfaceKHR surface;
     
-    virtual ShadowMapPtr CreateShadowMap(int width, int height) const { return nullptr; }
-    virtual ShadowMapPtr CreateOmniShadowMap(int width, int height) const { return nullptr; }
-    
-    virtual MaterialPtr CreateRefractMaterial(const MaterialResources& resources) const { return nullptr; }
-    virtual MaterialPtr CreateReflectMaterial(const MaterialResources& resources) const { return nullptr; }
-    
-    virtual void RenderScene(const Scene* scene) const = 0;
-    virtual void InitSceneShaders() = 0;
-    
-protected:
-    static inline RendererPtr rendererAPI;
+    struct{
+        VkPhysicalDevice physicalDevice;
+        VkDevice logicalDevice;
+    } mainDevice;
 };

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Rendering/UniformNames.h"
-#include "Rendering/Renderer/Renderer.h"
 
 namespace UniformNames
 {
@@ -21,16 +20,6 @@ public:
     {}
     
     virtual ~ShadowMap() {}
-    
-    static ShadowMapPtr CreateShadowMap(int width, int height)
-    {
-        return Renderer::Get()->CreateShadowMap(width, height);
-    }
-    
-    static ShadowMapPtr CreateOmniShadowMap(int width, int height)
-    {
-        return Renderer::Get()->CreateOmniShadowMap(width, height);
-    }
     
     virtual void Write() const = 0;
     virtual void Read(unsigned int textureUnit) const = 0;

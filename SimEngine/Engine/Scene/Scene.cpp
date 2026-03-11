@@ -1,10 +1,6 @@
 ﻿#include "Scene.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Components/CameraComponent.h"
 #include "Core/App.h"
-#include "Rendering/Renderer/Renderer.h"
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
 #include "Scene/Objects/Lighting/PointLightObject.h"
 #include "Scene/Objects/Entities/CameraEntity.h"
@@ -48,7 +44,7 @@ void Scene::OnDestroy()
     
 void Scene::Render() const
 {
-    Renderer::Get()->RenderScene(this);
+    /*Renderer_Old::Get()->RenderScene(this);*/
 }
     
 void Scene::RegisterDirectionalLight(DirectionalLightObject* dirLight)

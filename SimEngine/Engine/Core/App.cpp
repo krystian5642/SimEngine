@@ -1,15 +1,9 @@
 ﻿#include "App.h"
 
-#include "imgui_impl_glfw.h"
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
 
 #include "Logging/Log.h"
-#include "Rendering/Renderer/OpenGL/OpenGLRenderer.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
-
-#include <GLFW/glfw3.h>
 
 App::App()
 {
@@ -19,15 +13,8 @@ App::App()
 void App::Run()
 {
     Log::Init();
-    Renderer::Init(RendererType::OpenGL);
     SceneManager::Init();
-    
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    
-    ImGui_ImplGlfw_InitForOpenGL(window.GetGLFWWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 460 core");
+    renderer.Init();
 
     lastFrameTime = glfwGetTime();
     while (!window.ShouldClose())
@@ -37,15 +24,6 @@ void App::Run()
         lastFrameTime = currentFrameTime;
         
         window.Update();
-        if (glfwGetWindowAttrib(window.GetGLFWWindow(), GLFW_ICONIFIED) != 0)
-        {
-            ImGui_ImplGlfw_Sleep(10);
-            continue;
-        }
-        
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
         
         const double tickTime1 = glfwGetTime();
         SceneManager::Tick(deltaTime);
@@ -55,6 +33,7 @@ void App::Run()
         SceneManager::Render();
         const double renderTime2 = glfwGetTime();
         
+        /*
         ImGui::Begin("Menu");
         
         ImGui::Text("Stats");
@@ -63,27 +42,28 @@ void App::Run()
         ImGui::Text("Render Time: %.3f ms", (renderTime2 - renderTime1) * 1000.0f);
         ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
         ImGui::Separator();
+        */
         
         
-        const auto currentScene = SceneManager::GetCurrentScene();
+        //const auto currentScene = SceneManager::GetCurrentScene();
         
-        ImGui::Text("Object count: %zu", currentScene->GetObjectCount());
+        /*ImGui::Text("Object count: %zu", currentScene->GetObjectCount());*/
         
-        const auto& cameraPosition = currentScene->GetCameraPosition();
+       // const auto& cameraPosition = currentScene->GetCameraPosition();
         
-        float pitch, yaw;
-        currentScene->GetCameraRotation(pitch, yaw);
+        //float pitch, yaw;
+        //currentScene->GetCameraRotation(pitch, yaw);
         
-        ImGui::Text("Camera position: (%.3f, %.3f, %.3f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        /*ImGui::Text("Camera position: (%.3f, %.3f, %.3f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
         ImGui::Text("Camera rotation: (pitch %.3f, yaw %.3f)", pitch, yaw);
         
         ImGui::Separator();
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))
         {
             isPaused = !isPaused;
-        }
+        }*/
         
-        ImGui::Separator();
+        /*ImGui::Separator();
         
         ImGui::Text("Current scene: %s", currentScene->GetName().c_str());
         // Main Scenes
@@ -93,9 +73,10 @@ void App::Run()
             {
                 SceneManager::LoadScene("Space Explorer");
             }
-        }
+        }*/
 
         // Test Scenes
+        /*
         if (ImGui::CollapsingHeader("Test Scenes"))
         {
             const auto scenes = SceneManager::GetSceneNames();
@@ -106,30 +87,32 @@ void App::Run()
                     continue;
                 }
                 
-                if (ImGui::Button(scene.c_str()))
+                /*if (ImGui::Button(scene.c_str()))
                 {
                     SceneManager::LoadScene(scene);
-                }
+                }#1#
             }
         }
+        */
         
-        ImGui::Separator();
-        ImGui::Spacing();
-        SceneManager::GetCurrentScene()->DrawImGui();
+        /*ImGui::Separator();
+        ImGui::Spacing();*/
+        //SceneManager::GetCurrentScene()->DrawImGui();
         
-        ImGui::End(); 
+        /*ImGui::End(); 
         
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
         
         window.SwapBuffers();
     }
     
     SceneManager::OnDestroy();
+    renderer.Shutdown();
     
-    ImGui_ImplOpenGL3_Shutdown();
+    /*ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    ImGui::DestroyContext();*/
     
     glfwTerminate();
 }

@@ -45,8 +45,8 @@ void Material::Use(const std::shared_ptr<const Shader>& shader) const
 
 MaterialPtr ReflectMaterial::CreateReflectMaterial()
 {
-    auto rendererAPI = Renderer::Get();
-        
+
+    /*
     ShaderData shaderData;
     shaderData.fragShader = ShaderData::shadersFolder + "reflect.frag";
     shaderData.vertShader = ShaderData::shadersFolder + "reflect.vert";
@@ -54,12 +54,13 @@ MaterialPtr ReflectMaterial::CreateReflectMaterial()
     MaterialResources resources;
     resources.shader = rendererAPI->CreateShader(shaderData);
         
-    return rendererAPI->CreateReflectMaterial(resources);
+    return rendererAPI->CreateReflectMaterial(resources);*/
+    return nullptr;
 }
 
 MaterialPtr RefractMaterial::CreateRefractMaterial()
 {
-    auto rendererAPI = Renderer::Get();
+    /*auto rendererAPI = Renderer_Old::Get();
         
     ShaderData shaderData;
     shaderData.fragShader = ShaderData::shadersFolder + "refract.frag";
@@ -68,5 +69,6 @@ MaterialPtr RefractMaterial::CreateRefractMaterial()
     MaterialResources resources;
     resources.shader = rendererAPI->CreateShader(shaderData);
         
-    return rendererAPI->CreateRefractMaterial(resources);
+    return rendererAPI->CreateRefractMaterial(resources);*/
+    return nullptr;
 }

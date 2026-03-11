@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Window.h"
+#include "Rendering/Renderer/Renderer.h"
 
 class App;
 
@@ -27,6 +28,7 @@ protected:
 
 private:
     Window window{1920, 1080, "Sim Engine"};
+    Renderer renderer;
 
     double lastFrameTime{};
     

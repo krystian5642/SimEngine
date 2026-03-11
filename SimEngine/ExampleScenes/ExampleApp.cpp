@@ -10,7 +10,7 @@ ExampleApp::ExampleApp()
 {
     SceneManager::SetDefaultScene(SceneNames::BloomAndHDR);
     
-    // test scenes
+    /*// test scenes
     REGISTER_SCENE(ProjectileLauncher);
     REGISTER_SCENE(GravityShip);
     REGISTER_SCENE(BallCollision2D);
@@ -32,5 +32,5 @@ ExampleApp::ExampleApp()
     REGISTER_SCENE(BloomAndHDR);
     
     // main scenes
-    REGISTER_SCENE(SpaceExplorer);
+    REGISTER_SCENE(SpaceExplorer);*/
 }

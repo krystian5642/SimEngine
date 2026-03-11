@@ -1,8 +1,6 @@
 ﻿#include "SceneManager.h"
 
 #include "Scene.h"
-#include "Rendering/Renderer/Renderer.h"
-
 void SceneManager::LoadDefaultScene()
 {
     LoadScene(defaultSceneName);
@@ -20,12 +18,10 @@ void SceneManager::LoadScene(const std::string& sceneName)
         currentScene->OnDestroy();
     }
         
-    currentScene = loadSceneFuncs[sceneName]();
-        
-    Renderer::Get()->InitSceneShaders();
+    /*currentScene = loadSceneFuncs[sceneName]();
     
     currentScene->Init();
-    currentScene->Start();
+    currentScene->Start();*/
 }
     
 void SceneManager::Init()
@@ -35,17 +31,17 @@ void SceneManager::Init()
     
 void SceneManager::Tick(float deltaTime)
 {
-    currentScene->Tick(deltaTime);
+    //currentScene->Tick(deltaTime);
 }
     
 void SceneManager::OnDestroy()
 {
-    currentScene->OnDestroy();
+    //currentScene->OnDestroy();
 }
     
 void SceneManager::Render()
 {
-    currentScene->Render();
+    //currentScene->Render();
 }
 
 std::vector<std::string> SceneManager::GetSceneNames()

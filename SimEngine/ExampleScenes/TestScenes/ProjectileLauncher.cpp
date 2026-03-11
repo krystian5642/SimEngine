@@ -5,9 +5,6 @@
 #include "Components/InputComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Scene/Scene.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Projectile.h"
 #include "Components/LineComponent.h"
 #include "Core/PhysicsUtils.h"

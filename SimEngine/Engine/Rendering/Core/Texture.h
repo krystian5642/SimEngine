@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Rendering/Renderer/Renderer.h"
 
 struct TextureData
 {
@@ -22,16 +21,6 @@ public:
     virtual ~Texture();
     
     virtual void Bind(unsigned int offset = 0) const = 0;
-    
-    static TexturePtr CreateTexture(const std::string& fileLocation, TextureFormat format = TextureFormat::RGB)
-    {
-        return Renderer::Get()->CreateTexture(fileLocation, format);
-    }
-    
-    static TexturePtr CreateTexture(const TextureData& textureData, TextureFormat format = TextureFormat::RGB)
-    {
-        return Renderer::Get()->CreateTexture(textureData, format);
-    }
 
 protected:
     void LoadFromFile(const std::string& fileLocation);

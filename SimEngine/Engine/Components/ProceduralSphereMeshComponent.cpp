@@ -108,5 +108,5 @@ void ProceduralSphereMeshComponent::GenerateMesh()
         vertex.uv.x = (length - minHeight) / (maxHeight - minHeight);
     }
     
-    mesh = Mesh::CreateMesh(meshData);
+    /*mesh = Mesh::CreateMesh(meshData);*/
 }

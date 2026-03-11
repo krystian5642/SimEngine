@@ -19,18 +19,6 @@ void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visua
         return;
     }
     
-    if (renderPolygonMode == RenderPolygonMode::None)
-    {
-        return;
-    }
-    
-    const auto prevRenderPolygonMode = Renderer::Get()->GetRenderPolygonMode();
-    const auto prevLineWidth = Renderer::Get()->GetLineWidth();
-    const auto prevPointSize = Renderer::Get()->GetPointSize();
-    
-    Renderer::Get()->SetRenderPolygonMode(renderPolygonMode);
-    Renderer::Get()->SetLineWidth(lineWidth);
-    Renderer::Get()->SetPointSize(pointSize);   
     
     auto activeShader = shader;
     
@@ -54,21 +42,5 @@ void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visua
                 materialShader->SetMat4f(UniformNames::view, view);
             } 
         }
-        
-#if ENABLE_TESSELLATION
-        activeShader->SetFloat(UniformNames::tesselationLevel, tesselationLevel);
-#endif
     }
-    
-    SceneComponent::Draw(activeShader, visualPass);
-    mesh->Draw();
-    
-    if (activeShader != shader)
-    {
-        activeShader->Unbind();
-    }
-    
-    Renderer::Get()->SetRenderPolygonMode(prevRenderPolygonMode);
-    Renderer::Get()->SetLineWidth(prevLineWidth);
-    Renderer::Get()->SetPointSize(prevPointSize);   
 }

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Rendering/UniformNames.h"
-#include "Rendering/Renderer/Renderer.h"
 
 class Shader;
 
@@ -13,12 +12,6 @@ class Line
 {
 public:
     Line() {}
-    virtual ~Line() {}
-    
-    static LinePtr CreateLine()
-    {
-        return Renderer::Get()->CreateLine();
-    }
     
     virtual void Draw() const = 0;
     
