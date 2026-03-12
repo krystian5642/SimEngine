@@ -1,4 +1,6 @@
 ﻿#include "Renderer.h"
+
+#include "ShaderCompiler.h"
 #include "Core/App.h"
 #include "Core/Logging/Log.h"
 
@@ -10,16 +12,23 @@ void Renderer::Init()
     pickPhysicalDevice();
     createLogicalDevice();
     createSwapChain();
+    createGraphicsPipeline();
 }
 
 void Renderer::Shutdown()
 {
+    for (const auto& image : swapChainImages)
+    {
+        vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
+    }
+    
+    vkDestroySwapchainKHR(mainDevice.logicalDevice, swapChain, nullptr);
+    vkDestroyDevice(mainDevice.logicalDevice, nullptr);
+    vkDestroySurfaceKHR(instance, surface, nullptr);
     if (enableValidationLayers)
     { 
         DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
-    vkDestroySurfaceKHR(instance, surface, nullptr);
-    vkDestroyDevice(mainDevice.logicalDevice, nullptr);
     vkDestroyInstance(instance, nullptr);
 }
 
@@ -68,7 +77,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     , const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData
     , void* pUserData) 
 {
-    LOG_ERROR("validation layer: ", pCallbackData->pMessage);
+    LOG_ERROR("validation layer: {}", pCallbackData->pMessage);
 
     return VK_FALSE;
 }
@@ -164,6 +173,94 @@ void Renderer::createSwapChain()
     
     const auto surfaceFormat = chooseSwapSurfaceFormat(swapChainDetails.formats);
     const auto presentMode = chooseSwapPresentMode(swapChainDetails.presentModes);
+    const auto extent = chooseSwapExtent(swapChainDetails.capabilities); 
+    
+    uint32_t imageCount = swapChainDetails.capabilities.minImageCount + 1;
+    if (swapChainDetails.capabilities.maxImageCount > 0
+        && imageCount > swapChainDetails.capabilities.maxImageCount)
+    {
+        imageCount = swapChainDetails.capabilities.maxImageCount;
+    }
+    
+    VkSwapchainCreateInfoKHR swapChainCreateInfo{};
+    swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    swapChainCreateInfo.surface = surface;
+    swapChainCreateInfo.imageFormat = surfaceFormat.format;
+    swapChainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+    swapChainCreateInfo.presentMode = presentMode;
+    swapChainCreateInfo.imageExtent = extent;
+    swapChainCreateInfo.minImageCount = imageCount;
+    swapChainCreateInfo.imageArrayLayers = 1;
+    swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    swapChainCreateInfo.preTransform = swapChainDetails.capabilities.currentTransform;
+    swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    swapChainCreateInfo.clipped = VK_TRUE;
+    
+    const auto queueFamilyIndices = getQueueFamilies(mainDevice.physicalDevice);
+    
+    if (queueFamilyIndices.graphicsFamily != queueFamilyIndices.presentFamily)
+    {
+        const uint32_t indices[] = {
+            queueFamilyIndices.graphicsFamily.value(),
+            queueFamilyIndices.presentFamily.value(),
+        };
+        
+        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        swapChainCreateInfo.queueFamilyIndexCount = 2;
+        swapChainCreateInfo.pQueueFamilyIndices = indices;
+    }
+    else
+    {
+        swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        swapChainCreateInfo.queueFamilyIndexCount = 0;
+        swapChainCreateInfo.pQueueFamilyIndices = nullptr;
+    }
+    
+    swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+    
+    const auto result = vkCreateSwapchainKHR(mainDevice.logicalDevice, &swapChainCreateInfo, nullptr, &swapChain);
+    ASSERT(result == VK_SUCCESS, "Failed to create swap chain") 
+    
+    swapChainImageFormat = surfaceFormat.format;
+    swapChainExtent = extent;
+    
+    uint32_t swapChainImageCount;
+    vkGetSwapchainImagesKHR(mainDevice.logicalDevice, swapChain, &swapChainImageCount, nullptr);
+    
+    std::vector<VkImage> images(swapChainImageCount);
+    vkGetSwapchainImagesKHR(mainDevice.logicalDevice, swapChain, &swapChainImageCount, images.data());
+    
+    for (auto image : images)
+    {
+        SwapChainImage swapChainImage;
+        swapChainImage.image = image;
+        swapChainImage.imageView = createImageView(image, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+        
+        swapChainImages.push_back(swapChainImage);
+    }
+}
+
+void Renderer::createGraphicsPipeline()
+{
+    auto vertShaderModule = ShaderCompiler::CompileHLSLShaderToSPIRV(mainDevice.logicalDevice, shadersFolder + "test.vs.hlsl");
+    auto fragShaderModule = ShaderCompiler::CompileHLSLShaderToSPIRV(mainDevice.logicalDevice, shadersFolder + "test.fs.hlsl");
+    
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vertShaderStageInfo.module = vertShaderModule;
+    vertShaderStageInfo.pName = "main";
+    
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    fragShaderStageInfo.module = fragShaderModule;
+    fragShaderStageInfo.pName = "main";
+    
+    VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+    
+    vkDestroyShaderModule(mainDevice.logicalDevice, vertShaderModule, nullptr);
+    vkDestroyShaderModule(mainDevice.logicalDevice, fragShaderModule, nullptr);
 }
 
 bool Renderer::checkInstanceExtensionSupport(const std::vector<const char*>& extensions) const
@@ -174,7 +271,7 @@ bool Renderer::checkInstanceExtensionSupport(const std::vector<const char*>& ext
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
     
-    for (const auto extension : extensions)
+    for (auto extension : extensions)
     {   
         bool extensionFound = false;
         for (const auto& availableExtension : availableExtensions)
@@ -203,10 +300,10 @@ bool Renderer::checkValidationLayerSupport() const
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
     
-    for (const auto layerName : validationLayers)
+    for (auto layerName : validationLayers)
     {
         bool layerFound = false;
-        for (const auto layer : availableLayers)
+        for (const auto& layer : availableLayers)
         {
             if (strcmp(layerName, layer.layerName) == 0)
             {
@@ -256,7 +353,7 @@ bool Renderer::checkDeviceExtensionSupport(VkPhysicalDevice device) const
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
     
-    for (const auto extension : deviceExtensions)
+    for (auto extension : deviceExtensions)
     {
         bool extensionFound = false;
         for (const auto& availableExtension : availableExtensions)
@@ -391,12 +488,12 @@ VkSurfaceFormatKHR Renderer::chooseSwapSurfaceFormat(const std::vector<VkSurface
 {
     if (availableFormats.size() == 1 && availableFormats[0].format == VK_FORMAT_UNDEFINED)
     {
-        return {VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR};
+        return {VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR};
     }
     
     for (const auto& availableFormat : availableFormats)
     {
-        if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+        if (availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
         {
             return availableFormat;
         }
@@ -415,3 +512,64 @@ VkPresentModeKHR Renderer::chooseSwapPresentMode(const std::vector<VkPresentMode
     }
     return VK_PRESENT_MODE_FIFO_KHR;
 }
+
+VkExtent2D Renderer::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) const
+{
+    if (capabilities.currentExtent.width != UINT32_MAX)
+    {
+        return capabilities.currentExtent;
+    }
+    
+    int width, height;
+    glfwGetFramebufferSize(App::GetCurrentWindow()->GetGLFWWindow(), &width, &height);
+    
+    VkExtent2D actualExtent;
+    actualExtent.width = static_cast<uint32_t>(width);
+    actualExtent.height = static_cast<uint32_t>(height);
+    
+    actualExtent.width = glm::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+    actualExtent.height = glm::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+    
+    return actualExtent;
+}
+
+VkImageView Renderer::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) const
+{
+    VkImageViewCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    createInfo.image = image;
+    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    createInfo.format = format;
+    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.subresourceRange.aspectMask = aspectFlags;
+    createInfo.subresourceRange.baseMipLevel = 0;
+    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.baseArrayLayer = 0;
+    createInfo.subresourceRange.layerCount = 1;
+    
+    VkImageView imageView;
+    const auto result = vkCreateImageView(mainDevice.logicalDevice, &createInfo, nullptr, &imageView);
+    ASSERT(result == VK_SUCCESS, "Failed to create image view")
+    
+    return imageView;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

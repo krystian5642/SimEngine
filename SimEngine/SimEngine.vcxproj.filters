@@ -183,6 +183,9 @@
     <ClCompile Include="ExampleScenes\TestScenes\TestScenes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Rendering\Renderer\ShaderCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h">
@@ -380,8 +383,12 @@
     <ClInclude Include="ExampleScenes\TestScenes\TestScenes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Rendering\Renderer\Utilities.h">
+    <ClInclude Include="Engine\Rendering\Renderer\ShaderCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Rendering\Renderer\Shaders_2\test.vs.hlsl" />
+    <None Include="Engine\Rendering\Renderer\Shaders_2\test.ps.hlsl" />
   </ItemGroup>
 </Project>

@@ -22,6 +22,12 @@ struct SwapChainDetails
         return !formats.empty() && !presentModes.empty();
     }
 };
+ 
+struct SwapChainImage
+{
+    VkImage image;
+    VkImageView imageView;
+};
 
 class Renderer
 {
@@ -36,6 +42,7 @@ private:
     void pickPhysicalDevice();
     void createLogicalDevice();
     void createSwapChain();
+    void createGraphicsPipeline();
     
     bool checkInstanceExtensionSupport(const std::vector<const char*>& extensions) const;
     bool checkValidationLayerSupport() const;
@@ -58,6 +65,9 @@ private:
     
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) const;
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) const;
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) const;
+    
+    VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) const;
     
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
@@ -67,21 +77,26 @@ private:
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
     
+    const std::string shadersFolder = "Engine/Rendering/Renderer/Shaders_2/";
+    
 #ifdef _DEBUG
     const bool enableValidationLayers = true;
 #else
     const bool enableValidationLayers = false;
 #endif
     
-    VkDebugUtilsMessengerEXT debugMessenger;
-    
     VkInstance instance;
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
+    VkDebugUtilsMessengerEXT debugMessenger;
     VkSurfaceKHR surface;
-    
     struct{
         VkPhysicalDevice physicalDevice;
         VkDevice logicalDevice;
     } mainDevice;
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
+    VkSwapchainKHR swapChain;
+    std::vector<SwapChainImage> swapChainImages;
+    
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
 };

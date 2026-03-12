@@ -114,7 +114,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/External/GLFW/lib-vc2022;C:\VulkanSDK\1.4.328.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,7 +137,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/External/GLFW/lib-vc2022;C:\VulkanSDK\1.4.328.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -491,6 +491,13 @@
     <ClCompile Include="Engine\Rendering\Core\Material.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Texture.cpp" />
     <ClCompile Include="Engine\Rendering\Renderer\Renderer.cpp" />
+    <ClCompile Include="Engine\Rendering\Renderer\ShaderCompiler.cpp" />
+    <None Include="Engine\Rendering\Renderer\Shaders_2\test.fs.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Engine\Rendering\Renderer\Shaders_2\test.vs.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="Engine\Scene\Objects\Core\ObjectBase.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\SceneObject.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Entities\CameraEntity.cpp" />
@@ -1336,6 +1343,7 @@
     <ClInclude Include="Engine\Rendering\Core\Texture.h" />
     <ClInclude Include="Engine\Rendering\Lighting\ShadowMap.h" />
     <ClInclude Include="Engine\Rendering\Renderer\Renderer.h" />
+    <ClInclude Include="Engine\Rendering\Renderer\ShaderCompiler.h" />
     <ClInclude Include="Engine\Rendering\UniformNames.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\ObjectBase.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\ObjectContainer.h" />
