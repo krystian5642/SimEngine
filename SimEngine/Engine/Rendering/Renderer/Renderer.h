@@ -42,6 +42,7 @@ private:
     void pickPhysicalDevice();
     void createLogicalDevice();
     void createSwapChain();
+    void createRenderPass();
     void createGraphicsPipeline();
     
     bool checkInstanceExtensionSupport(const std::vector<const char*>& extensions) const;
@@ -96,6 +97,10 @@ private:
     VkQueue presentQueue;
     VkSwapchainKHR swapChain;
     std::vector<SwapChainImage> swapChainImages;
+    
+    VkRenderPass renderPass;
+    VkPipeline graphicsPipeline;
+    VkPipelineLayout pipelineLayout;
     
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;

@@ -1,7 +1,7 @@
 struct VSOutput
 {
-    [[vk::location(0)]] float4 position : SV_POSITION;
-    [[vk::location(1)]] float3 color : COLOR0;
+    float4 position : SV_POSITION;
+    [[vk::location(0)]] float3 color : COLOR0;
 };
 
 static const float3 positions[3] =
