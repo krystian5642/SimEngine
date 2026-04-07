@@ -4,7 +4,7 @@
 #include "SpaceExplorer/SpaceExplorerScene.h"
 #include "TestScenes/TestScenes.h"
 
-#define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, [] -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })
+#define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, []() -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })
 
 ExampleApp::ExampleApp()
 {
