@@ -2,7 +2,6 @@
 #include "PointLightObject.h"
 
 #include "Rendering/Core/Shader.h"
-#include "Rendering/Lighting/ShadowMap.h"
 #include "Scene/Scene.h"
 
 PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::string& name)
@@ -10,8 +9,6 @@ PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::
 {
     lightCount++;
     
-    shadowMap = ShadowMap::CreateOmniShadowMap(2024, 2024);
-
     lightMatrices.resize(6);
     
     lightProjectionMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 100.0f);
@@ -33,9 +30,9 @@ void PointLightObject::OnDestroy()
     scene->UnregisterPointLight(this);
 }
     
-void PointLightObject::Use(const std::shared_ptr<const Shader>& shader) const
+void PointLightObject::Use(const Shader* shader) const
 {
-    const auto index = std::to_string(lightIndex);
+    /*const auto index = std::to_string(lightIndex);
     
     const auto pointLightPosition = "pointLights[" + index + "].position";
     const auto pointLightColor = "pointLights[" + index + "].lightData.color";
@@ -47,7 +44,7 @@ void PointLightObject::Use(const std::shared_ptr<const Shader>& shader) const
     shader->SetVec3f(pointLightColor, lightData.color);
     shader->SetFloat(pointLightAmbient, lightData.ambient);
     shader->SetFloat(pointLightDiffuse, lightData.diffuse);
-    shader->SetFloat(farPlane, 100.0f);
+    shader->SetFloat(farPlane, 100.0f);*/
     
     shader->SetInt("pointLightCount", lightCount);
 }

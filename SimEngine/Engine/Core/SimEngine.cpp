@@ -2,9 +2,6 @@
 
 int main()
 {
-    App::currentApp = CreateApplication();
-    App::currentApp->Run();
-    delete App::currentApp;
-    
+    App::Get().Run();
     return 0;
 }

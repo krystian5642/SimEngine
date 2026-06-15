@@ -8,7 +8,7 @@ class SceneComponent : public RenderComponent
 public:
     SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name);
     
-    void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const override;
+    void Draw() const override {}
 
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotationDelta);
@@ -19,9 +19,6 @@ public:
     void SetRotation(const glm::vec3& newRotation);
     void SetScale(const glm::vec3& newScale);
     
-    void SetUseQuaternionsForRotation(bool use);
-    bool GetUseQuaternionsForRotation() const;
-
     void AttachComponent(SceneComponent* component);
     void DetachComponent(SceneComponent* component);
 
@@ -45,6 +42,5 @@ private:
     glm::vec3 up;
     glm::vec3 right;
     
-private:
     std::vector<SceneComponent*> attachedComponents;
 };

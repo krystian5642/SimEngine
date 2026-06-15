@@ -1,34 +1,24 @@
 ﻿#pragma once
 
 #include "Window.h"
-
-class App;
-
-extern App* CreateApplication();
+#include "Rendering/Core/Renderer.h"
 
 class Scene;
 
 class App
 {
 public:
-    App();
-    virtual ~App() = 0 {}
-
     void Run();
     
-    static Window* GetCurrentWindow() { return currentWindow; }
+    static App& Get();
     
-    bool GetIsPaused() const { return isPaused; }
+    Window window{1920, 1080, "Sim Engine"};
+    Renderer renderer;
     
-    static inline App* currentApp = nullptr;
-    
-protected:
     bool isPaused{false};
 
 private:
-    Window window{1920, 1080, "Sim Engine"};
-
-    double lastFrameTime{};
+    App();
     
-    static inline Window* currentWindow;
+    double lastFrameTime{};
 };

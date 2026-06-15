@@ -10,8 +10,8 @@ namespace UniformNames
 {
     UNIFORM_NAME dirLightDirection = "dirLight.direction";
     UNIFORM_NAME dirLightColor = "dirLight.lightData.color";
-    UNIFORM_NAME dirLightAmbient = "dirLight.lightData.ambient";
-    UNIFORM_NAME dirLightDiffuse = "dirLight.lightData.diffuse";  
+    UNIFORM_NAME dirLightAmbient = "dirLight.lightData.ambientIntensity";
+    UNIFORM_NAME dirLightDiffuse = "dirLight.lightData.diffuseIntensity";  
 }
 
 class DirectionalLightObject : public LightObjectBase
@@ -22,7 +22,7 @@ public:
 
     void Init() override;
     void OnDestroy() override;
-    void Use(const std::shared_ptr<const Shader>& shader) const override;
+    void Use(const Shader* shader) const override;
 
     const glm::mat4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
     

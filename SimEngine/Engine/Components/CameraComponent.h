@@ -16,19 +16,14 @@ class CameraComponent : public Component
 public:
     CameraComponent(ObjectBase* parent, Scene* scene, const std::string& name);
     
-    void Tick(float deltaTime) override;
-    
     void Move(const glm::vec3& moveDelta);
     void Rotate(float pitchDelta, float yawDelta);
     
-    void RotateAroundTarget(float pitchDelta, float yawDelta);
-
     void SetPosition(const glm::vec3& newPosition);
     void SetRotation(float newPitch, float newYaw);
     
     void SetAsActiveCamera();
-    void SetFollowTarget(const Entity* target);
-
+    
     const glm::vec3& GetForwardVector() const { return forward; }
     const glm::vec3& GetRightVector() const { return right; }
     const glm::vec3& GetPosition() const { return position; }
@@ -46,8 +41,6 @@ private:
     void UpdateView();
     void OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight);
     
-    const Entity* followTarget{nullptr};
-    
     glm::vec3 forward{0.0f, 0.0f, -1.0f};
     glm::vec3 up;
     glm::vec3 right;
@@ -58,6 +51,4 @@ private:
     
     glm::mat4 projection;
     glm::mat4 view;
-    
-    glm::vec3 lastTargetPosition{};
 };

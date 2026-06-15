@@ -1,8 +1,5 @@
 #pragma once
 
-#define SUPPORT_OPENGL 1
-#define ENABLE_TESSELLATION 0
-
 #include <iostream>
 #include <ostream>
 #include <fstream>
@@ -27,8 +24,4 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/noise.hpp>
 
-#if SUPPORT_OPENGL
 #include <GL/glew.h>
-#endif
-
-#include "Rendering/Core/Common.h"

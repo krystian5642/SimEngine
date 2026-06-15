@@ -11,7 +11,7 @@ MeshComponent::MeshComponent(ObjectBase* parent, Scene* scene, const std::string
 {
 }
     
-void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
+void MeshComponent::Draw() const
 {
     if (!mesh)
     {
@@ -19,56 +19,33 @@ void MeshComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visua
         return;
     }
     
-    if (renderPolygonMode == RenderPolygonMode::None)
+    if (!material)
     {
+        std::cout << "No material specified" << std::endl;
         return;
     }
     
-    const auto prevRenderPolygonMode = Renderer::Get()->GetRenderPolygonMode();
-    const auto prevLineWidth = Renderer::Get()->GetLineWidth();
-    const auto prevPointSize = Renderer::Get()->GetPointSize();
-    
-    Renderer::Get()->SetRenderPolygonMode(renderPolygonMode);
-    Renderer::Get()->SetLineWidth(lineWidth);
-    Renderer::Get()->SetPointSize(pointSize);   
-    
-    auto activeShader = shader;
-    
-    if (visualPass && material)
+    const auto& shader = material->data.shader;
+    if (!shader)
     {
-        if (material)
-        {
-            material->Use(shader);
-            auto materialShader = material->GetResources().shader;
-            if (materialShader)
-            {
-                materialShader->Bind();
-                activeShader = materialShader;
-            
-                const auto currentScene = SceneManager::GetCurrentScene();
-    
-                const auto projection = currentScene->GetProjectionMatrix();
-                const auto& view = currentScene->GetViewMatrix();
-
-                materialShader->SetMat4f(UniformNames::projection, projection);
-                materialShader->SetMat4f(UniformNames::view, view);
-            } 
-        }
-        
-#if ENABLE_TESSELLATION
-        activeShader->SetFloat(UniformNames::tesselationLevel, tesselationLevel);
-#endif
+        std::cout << "No shader specified" << std::endl;
+        return;
     }
     
-    SceneComponent::Draw(activeShader, visualPass);
+    shader->BindAndValidate();
+        
+    shader->SetMat4f(UniformNames::model, GetModelMatrix());
+    material->Use();
+    
+    const auto currentScene = SceneManager::GetCurrentScene();
+    
+    const auto& projection = currentScene->GetProjectionMatrix();
+    const auto& view = currentScene->GetViewMatrix();
+
+    shader->SetMat4f(UniformNames::projection, projection);
+    shader->SetMat4f(UniformNames::view, view);
+    
     mesh->Draw();
     
-    if (activeShader != shader)
-    {
-        activeShader->Unbind();
-    }
-    
-    Renderer::Get()->SetRenderPolygonMode(prevRenderPolygonMode);
-    Renderer::Get()->SetLineWidth(prevLineWidth);
-    Renderer::Get()->SetPointSize(prevPointSize);   
+    shader->Unbind();
 }

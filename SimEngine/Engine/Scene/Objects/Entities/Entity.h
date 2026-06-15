@@ -32,9 +32,6 @@ public:
     void SetRotation(const glm::vec3& newRotation);
     void SetScale(const glm::vec3& newScale);
     
-    void SetUseQuaternionsForRotation(bool use);
-    bool GetUseQuaternionsForRotation() const;
-    
     const glm::vec3& GetPosition() const { return rootComponent->GetPosition(); }
     const glm::vec3& GetRotation() const { return rootComponent->GetRotation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }

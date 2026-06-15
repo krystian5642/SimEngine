@@ -4,7 +4,6 @@
 
 #include "Components/CameraComponent.h"
 #include "Core/App.h"
-#include "Rendering/Renderer/Renderer.h"
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
 #include "Scene/Objects/Lighting/PointLightObject.h"
 #include "Scene/Objects/Entities/CameraEntity.h"
@@ -32,7 +31,7 @@ void Scene::Tick(float deltaTime)
     static constexpr auto maxDeltaTime = 1.0f / 60.0f;
     deltaTime = std::min(deltaTime, maxDeltaTime);
     
-    const auto isPaused = App::currentApp->GetIsPaused();
+    const auto isPaused = App::Get().isPaused;
     objects.Tick(deltaTime, isPaused);
 }
     
@@ -48,7 +47,7 @@ void Scene::OnDestroy()
     
 void Scene::Render() const
 {
-    Renderer::Get()->RenderScene(this);
+    App::Get().renderer.RenderScene(this);
 }
     
 void Scene::RegisterDirectionalLight(DirectionalLightObject* dirLight)
@@ -136,7 +135,7 @@ SceneObject* Scene::GetObjectByHandle(const SceneObjectHandle& handle) const
     return slot.version == handle.version ? slot.object : nullptr;
 }
     
-glm::mat4 Scene::GetProjectionMatrix() const
+const glm::mat4& Scene::GetProjectionMatrix() const
 {
     return activeCamera->GetProjectionMatrix();
 }

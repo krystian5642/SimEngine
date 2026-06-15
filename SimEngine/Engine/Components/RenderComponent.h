@@ -2,8 +2,6 @@
 
 #include "Component.h"
 
-class Shader;
-
 class RenderComponent : public Component
 {
 public:
@@ -12,5 +10,5 @@ public:
     void Init() override;
     void OnDestroy() override;
 
-    virtual void Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const = 0;
+    virtual void Draw() const = 0;
 };

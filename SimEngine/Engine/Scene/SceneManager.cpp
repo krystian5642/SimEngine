@@ -1,7 +1,7 @@
 ﻿#include "SceneManager.h"
 
 #include "Scene.h"
-#include "Rendering/Renderer/Renderer.h"
+#include "Core/App.h"
 
 void SceneManager::LoadDefaultScene()
 {
@@ -22,8 +22,8 @@ void SceneManager::LoadScene(const std::string& sceneName)
         
     currentScene = loadSceneFuncs[sceneName]();
         
-    Renderer::Get()->InitSceneShaders();
-    
+    App::Get().renderer.InitSceneShaders();
+
     currentScene->Init();
     currentScene->Start();
 }

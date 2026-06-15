@@ -63,9 +63,8 @@ void CameraEntity::OnMouseMove(const InputData& inputData)
         const auto pitchDelta = static_cast<float>(inputData.mouseYDelta) / 10.0f;
         const auto yawDelta = static_cast<float>(inputData.mouseXDelta) / 10.0f;
         
-        if (!App::GetCurrentWindow()->IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+        if (!App::Get().window.IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
         {
-            cameraComponent->RotateAroundTarget(pitchDelta, yawDelta);
             return;
         }
         

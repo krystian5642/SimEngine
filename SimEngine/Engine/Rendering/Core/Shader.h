@@ -1,13 +1,8 @@
 ﻿#pragma once
 
-#include "Rendering/Renderer/Renderer.h"
-
 struct ShaderData
 {
     std::string vertShader;
-    std::string tescShader;
-    std::string teseShader;
-    std::string geomShader;
     std::string fragShader;
     
     static inline std::string shadersFolder = "Engine/Rendering/Shaders/";
@@ -16,36 +11,37 @@ struct ShaderData
 class Shader
 {
 public:
-    Shader(const ShaderData& shaderData) {}
-    virtual ~Shader() {}
+    Shader(const ShaderData& shaderData);
+    ~Shader();
     
-    static ShaderPtr CreateShader(const ShaderData& shaderData)
-    {
-        return Renderer::Get()->CreateShader(shaderData);
-    }
+    virtual void BindAndValidate() const;
+    void Unbind() const;
     
-    virtual void Compile(const ShaderData& shaderData) = 0;
+    void Compile(const ShaderData& shaderData);
+    void Validate() const;
     
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-    
-    virtual void Validate() const = 0;
+    void SetInt(std::string_view name, int value) const;
+    void SetFloat(std::string_view name, float value) const;
+    void SetBool(std::string_view name, bool value) const;
+    void SetUInt(std::string_view name, unsigned int value) const;
+    void SetIntArray(std::string_view name, const int* values, size_t count) const;
+    void SetFloatArray(std::string_view name, const float* values, size_t count) const;
+    void SetBoolArray(std::string_view name, const bool* values, size_t count) const;
 
-    virtual void SetInt(std::string_view name, int value) const = 0;
-    virtual void SetFloat(std::string_view name, float value) const = 0;
-    virtual void SetBool(std::string_view name, bool value) const = 0;
-    virtual void SetUInt(std::string_view name, unsigned int value) const = 0;
-    virtual void SetIntArray(std::string_view name, const int* values, size_t count) const = 0;
-    virtual void SetFloatArray(std::string_view name, const float* values, size_t count) const = 0;
-    virtual void SetBoolArray(std::string_view name, const bool* values, size_t count) const = 0;
+    void SetMat2f(std::string_view name, const glm::mat2& m) const;
+    void SetMat3f(std::string_view name, const glm::mat3& m) const;
+    void SetMat4f(std::string_view name, const glm::mat4& m) const;
+    void SetMat4Array(std::string_view name, const glm::mat4* values, size_t count) const;
+
+    void SetVec2f(std::string_view name, const glm::vec2& v) const;
+    void SetVec3f(std::string_view name, const glm::vec3& v) const;
+    void SetVec4f(std::string_view name, const glm::vec4& v) const;
+    void SetVec3Array(std::string_view name, const glm::vec3* values, size_t count) const;
     
-    virtual void SetMat2f(std::string_view name, const glm::mat2& m) const = 0;
-    virtual void SetMat3f(std::string_view name, const glm::mat3& m) const = 0;
-    virtual void SetMat4f(std::string_view name, const glm::mat4& m) const = 0;
-    virtual void SetMat4Array(std::string_view name, const glm::mat4* values, size_t count) const = 0;
+    GLint GetUniformLocation(std::string_view name) const;
+private:
+    void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
     
-    virtual void SetVec2f(std::string_view name, const glm::vec2& v) const = 0;
-    virtual void SetVec3f(std::string_view name, const glm::vec3& v) const = 0;
-    virtual void SetVec4f(std::string_view name, const glm::vec4& v) const = 0;
-    virtual void SetVec3Array(std::string_view name, const glm::vec3* values, size_t count) const = 0;
+    GLuint programID{};
+    mutable GLuint previousProgramID{};
 };

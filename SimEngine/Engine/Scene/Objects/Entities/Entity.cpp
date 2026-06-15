@@ -31,7 +31,7 @@ void Entity::Tick(float deltaTime)
 {
     SceneObject::Tick(deltaTime);
     
-    const auto isPaused = App::currentApp->GetIsPaused();
+    const auto isPaused = App::Get().isPaused;
     
     components.Tick(deltaTime, isPaused);
     childEntities.Tick(deltaTime, isPaused);
@@ -131,14 +131,4 @@ void Entity::SetScale(const glm::vec3& newScale)
     {
         child->SetScale(newScale);
     });
-}
-
-void Entity::SetUseQuaternionsForRotation(bool use)
-{
-    rootComponent->SetUseQuaternionsForRotation(use);
-}
-
-bool Entity::GetUseQuaternionsForRotation() const
-{
-    return rootComponent->GetUseQuaternionsForRotation();
 }

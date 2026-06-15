@@ -9,14 +9,12 @@ class MeshManager : public AssetManager<Mesh>
 public:
     static MeshManager& Get();
 
-    static MeshPtr LoadMesh(const std::string& path);
+    static std::shared_ptr<Mesh> LoadMesh(const std::string& path);
     
 private:
     MeshManager();
 
-    static MeshPtr LoadCube();
-    static MeshPtr LoadSphere();
-    static MeshPtr LoadPlane();
-    static MeshPtr LoadSkybox();
-    static MeshPtr LoadPlanet();
+    static std::shared_ptr<Mesh> LoadCube();
+    static std::shared_ptr<Mesh> LoadSphere();
+    static std::shared_ptr<Mesh> LoadPlane();
 };

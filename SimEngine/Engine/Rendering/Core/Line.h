@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Rendering/UniformNames.h"
-#include "Rendering/Renderer/Renderer.h"
 
 class Shader;
 
@@ -12,15 +11,10 @@ namespace UniformNames
 class Line
 {
 public:
-    Line() {}
-    virtual ~Line() {}
+    Line();
+    ~Line();
     
-    static LinePtr CreateLine()
-    {
-        return Renderer::Get()->CreateLine();
-    }
-    
-    virtual void Draw() const = 0;
+    virtual void Draw() const;
     
     const std::vector<glm::vec3>& GetPoints() const { return points; }
     void SetPoints(const std::vector<glm::vec3>& newPoints);
@@ -35,7 +29,11 @@ public:
     
 protected:
     std::vector<glm::vec3> points;
-    ShaderPtr shader;
+    std::shared_ptr<Shader> shader;
     
     float currentLength{0.0f};
+    
+private:
+    GLuint VAO{};
+    GLuint VBO{};
 };

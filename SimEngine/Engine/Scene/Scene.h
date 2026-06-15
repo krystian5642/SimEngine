@@ -2,7 +2,6 @@
 
 #include "Scene/Objects/Core/SceneObject.h"
 #include "Scene/Objects/Core/ObjectContainer.h"
-#include "Rendering/Core/Skybox.h"
 
 class Window;
 class Skybox;
@@ -65,7 +64,7 @@ public:
     void UnregisterObject(SceneObject* object);
     SceneObject* GetObjectByHandle(const SceneObjectHandle& handle) const;
     
-    glm::mat4 GetProjectionMatrix() const;
+    const glm::mat4& GetProjectionMatrix() const;
     const glm::mat4& GetViewMatrix() const;
     const glm::vec3& GetCameraPosition() const;
     void GetCameraRotation(float& pitch, float& yaw) const;
@@ -91,9 +90,6 @@ public:
     void SetActiveCamera(CameraComponent* camera) { activeCamera = camera; }
     const CameraComponent* GetActiveCamera() const { return activeCamera; }
     
-    void SetSkybox(SkyboxPtr newSkybox) { skybox = std::move(newSkybox); }
-    const Skybox* GetSkybox() const { return skybox.get(); }
-    
     const SceneLightsData& GetLightsData() const { return lightsData; }
     const SceneRenderData& GetRenderData() const { return renderData; }
     
@@ -102,9 +98,7 @@ public:
 
 protected:
     ObjectContainer<SceneObject> objects;
-    
-    SkyboxPtr skybox;
-  
+
 private:
     SceneLightsData lightsData;
     SceneRenderData renderData;

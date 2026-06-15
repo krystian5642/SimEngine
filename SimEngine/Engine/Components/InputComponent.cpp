@@ -10,10 +10,10 @@ InputComponent::InputComponent(ObjectBase* parent, Scene* scene, const std::stri
     
 void InputComponent::Tick(float deltaTime)
 {
-    auto* window = App::GetCurrentWindow();
+    Window& window = App::Get().window;
     for (auto& [key, inputAction] : keyToActionMap)
     {
-        if (window->IsKeyDown(key))
+        if (window.IsKeyDown(key))
         {
             InputData inputData{};
             inputData.deltaTime = deltaTime;
@@ -23,8 +23,8 @@ void InputComponent::Tick(float deltaTime)
 
     if (onMouseMoveAction)
     {
-        const double xDelta = window->ConsumeXMouseDelta();
-        const double yDelta = window->ConsumeYMouseDelta();
+        const double xDelta = window.ConsumeXMouseDelta();
+        const double yDelta = window.ConsumeYMouseDelta();
  
         const InputData inputData{deltaTime, xDelta, yDelta};
         onMouseMoveAction->Execute(inputData);
@@ -32,7 +32,7 @@ void InputComponent::Tick(float deltaTime)
     
     if (onMouseScrollAction)
     {
-        const double yDelta = window->ConsumeYMouseScrollDelta();
+        const double yDelta = window.ConsumeYMouseScrollDelta();
         
         if (glm::abs(yDelta) > 0.1f)
         {

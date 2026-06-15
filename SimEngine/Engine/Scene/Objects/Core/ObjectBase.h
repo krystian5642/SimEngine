@@ -6,7 +6,7 @@ class ObjectBase;
 class ObjectBase
 {
 public:
-    ObjectBase(ObjectBase* parent, const std::string& name);
+    ObjectBase(ObjectBase* parent, const std::string& name) : parent(parent), name(name) {}
     virtual ~ObjectBase() = 0 {}
     
     virtual void DestroyChild(ObjectBase* child) {}

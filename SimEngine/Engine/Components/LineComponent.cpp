@@ -1,12 +1,11 @@
 ﻿#include "LineComponent.h"
 
-#include "Rendering/Renderer/Renderer.h"
 #include "Scene/Objects/Entities/Entity.h"
 
 LineComponent::LineComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : RenderComponent(parent, scene, name)
 {
-    line = Line::CreateLine();
+    line = std::make_unique<Line>();
 }
 
 void LineComponent::Tick(float deltaTime)
@@ -16,14 +15,11 @@ void LineComponent::Tick(float deltaTime)
     if (followParent)
     {
         auto actor = dynamic_cast<Entity*>(parent);
-        AddPoint(actor->GetPosition());
+        line->AddPoint(actor->GetPosition());
     }
 }
 
-void LineComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
+void LineComponent::Draw() const
 {
-    if (visualPass)
-    {
-        line->Draw();
-    }
+    line->Draw();
 }

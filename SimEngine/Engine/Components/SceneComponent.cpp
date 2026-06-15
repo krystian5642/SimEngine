@@ -10,11 +10,6 @@ SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::stri
     UpdateVectors();
 }
 
-void SceneComponent::Draw(const std::shared_ptr<const Shader>& shader, bool visualPass) const
-{
-    shader->SetMat4f(UniformNames::model, modelMatrix);
-}
-
 void SceneComponent::Move(const glm::vec3& moveDelta)
 {
     if (MathUtils::IsNearlyZeroVector(moveDelta))
@@ -49,7 +44,6 @@ void SceneComponent::Rotate(const glm::vec3& rotationDelta)
 
 void SceneComponent::Rotate(const glm::quat& rotationDelta)
 {
-    transform.rotationQuaternion = glm::normalize(rotationDelta * transform.rotationQuaternion);
     UpdateVectors();
 
     for (const auto& attachedComponent : attachedComponents)
@@ -90,21 +84,6 @@ void SceneComponent::SetScale(const glm::vec3& newScale)
 {
     const auto scaleDelta = newScale - transform.scale;
     Scale(scaleDelta);
-}
-
-void SceneComponent::SetUseQuaternionsForRotation(bool use)
-{
-    transform.useQuaternion = use;
-    
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->SetUseQuaternionsForRotation(use);
-    }
-}
-
-bool SceneComponent::GetUseQuaternionsForRotation() const
-{
-    return transform.useQuaternion;
 }
 
 void SceneComponent::UpdateVectors()

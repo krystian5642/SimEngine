@@ -19,7 +19,7 @@ public:
 
     void Init() override;
     void OnDestroy() override;
-    void Use(const std::shared_ptr<const Shader>& shader) const override;
+    void Use(const Shader* shader) const override;
 
     const glm::vec3& GetPosition() const { return position; }
     void SetPosition(const glm::vec3& newPosition);

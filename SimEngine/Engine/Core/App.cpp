@@ -4,29 +4,37 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 
-#include "Logging/Log.h"
-#include "Rendering/Renderer/OpenGL/OpenGLRenderer.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
+#include "ExampleScenes/TestScenes.h"
 
 #include <GLFW/glfw3.h>
 
+#define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, []() -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })
+
 App::App()
 {
-    currentWindow = &window;
+    SceneManager::SetDefaultScene(SceneNames::BallLauncher);
+    
+    REGISTER_SCENE(FallingBalls);
+    REGISTER_SCENE(Gravity);
+    REGISTER_SCENE(BallCollisions2D);
+    REGISTER_SCENE(BallCollisions3D);
+    REGISTER_SCENE(BallLauncher);
 }
 
 void App::Run()
 {
-    Log::Init();
-    Renderer::Init(RendererType::OpenGL);
+    renderer.Init();
     SceneManager::Init();
     
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     
-    ImGui_ImplGlfw_InitForOpenGL(window.GetGLFWWindow(), true);
+    auto win = &window;
+    
+    ImGui_ImplGlfw_InitForOpenGL(win->GetGLFWWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 460 core");
 
     lastFrameTime = glfwGetTime();
@@ -86,26 +94,13 @@ void App::Run()
         ImGui::Separator();
         
         ImGui::Text("Current scene: %s", currentScene->GetName().c_str());
-        // Main Scenes
-        if (ImGui::CollapsingHeader("Main Scenes", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            if (ImGui::Button("Space Explorer"))
-            {
-                SceneManager::LoadScene("Space Explorer");
-            }
-        }
-
-        // Test Scenes
+        
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Test Scenes"))
         {
             const auto scenes = SceneManager::GetSceneNames();
             for (const auto& scene : scenes)
             {
-                if (scene == "Space Explorer")
-                {
-                    continue;
-                }
-                
                 if (ImGui::Button(scene.c_str()))
                 {
                     SceneManager::LoadScene(scene);
@@ -130,6 +125,10 @@ void App::Run()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    
-    glfwTerminate();
+}
+
+App& App::Get()
+{
+    static App app;
+    return app;
 }
