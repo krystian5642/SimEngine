@@ -82,12 +82,12 @@ MeshManager::MeshManager()
 
 std::shared_ptr<Mesh> MeshManager::LoadCube()
 {
-    return LoadMesh("Models/cube/cube.obj");
+    return LoadMesh("Models/cube.obj");
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadSphere()
 {
-    return LoadMesh("Models/XXR_BS_T_01/XXR_B_BLOODSTONE_002.obj");
+    return LoadMesh("Models/sphere.obj");
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadPlane()
