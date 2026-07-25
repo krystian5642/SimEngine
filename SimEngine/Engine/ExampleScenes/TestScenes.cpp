@@ -242,7 +242,7 @@ CylindricalCoordinateScene::CylindricalCoordinateScene(const std::string& name)
     ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
     auto lineComponent = ball->AddComponent<LineComponent>();
     lineComponent->followParent = true;
-    lineComponent->line->thickness = 10.0f;
+    lineComponent->line->thickness = 3.0f;
     
     ball->SetCoordinateSystemType(CoordinateSystemType::Cylindrical);
     
