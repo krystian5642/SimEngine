@@ -15,7 +15,7 @@ void LineComponent::Tick(float deltaTime)
     if (followParent)
     {
         auto actor = dynamic_cast<Entity*>(parent);
-        line->AddPoint(actor->GetPosition());
+        line->AddPoint(actor->GetPosition(true));
     }
 }
 

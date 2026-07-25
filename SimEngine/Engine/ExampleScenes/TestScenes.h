@@ -5,6 +5,8 @@
 
 #define SCENE_NAME inline const std::string
 
+class MeshEntity;
+
 namespace SceneNames
 {
     SCENE_NAME FallingBalls = "Falling Balls";
@@ -12,6 +14,7 @@ namespace SceneNames
     SCENE_NAME BallCollisions2D = "Ball Collisions 2D";
     SCENE_NAME BallCollisions3D = "Ball Collisions 3D";
     SCENE_NAME BallLauncher = "Ball Launcher";
+    SCENE_NAME CylindricalCoordinate = "Cylindrical Coordinate";
 }
 
 class FallingBallsScene : public Scene
@@ -42,4 +45,15 @@ class BallLauncherScene : public Scene
 {
 public:
     BallLauncherScene(const std::string& name = SceneNames::BallLauncher);
+};
+
+class CylindricalCoordinateScene : public Scene
+{
+public:
+    CylindricalCoordinateScene(const std::string& name = SceneNames::CylindricalCoordinate);
+    
+    void DrawImGui() override;
+    
+private:
+    MeshEntity* ball;
 };

@@ -28,7 +28,8 @@ public:
     float maxLength{-1.0f};
     
 protected:
-    std::vector<glm::vec3> points;
+    // Points need to be in the cartesian coordinate system
+    std::vector<glm::vec3> points; 
     std::shared_ptr<Shader> shader;
     
     float currentLength{0.0f};

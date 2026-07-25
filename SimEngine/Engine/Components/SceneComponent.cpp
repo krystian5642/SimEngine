@@ -1,13 +1,13 @@
 ﻿#include "SceneComponent.h"
 
 #include "Core/MathUtils.h"
-#include "Rendering/UniformNames.h"
-#include "Rendering/Core/Shader.h"
 
 SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name)
     : RenderComponent(parent, scene, name)
 {
     UpdateVectors();
+    
+    coordinateSystem = std::make_unique<CartesianCoordinateSystem>();
 }
 
 void SceneComponent::Move(const glm::vec3& moveDelta)
@@ -17,7 +17,7 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
         return;
     }
     
-    transform.position += moveDelta;
+    transform.cartesianPosition = coordinateSystem->Move(moveDelta);
     UpdateVectors();
 
     for (const auto& attachedComponent : attachedComponents)
@@ -70,13 +70,13 @@ void SceneComponent::Scale(const glm::vec3& scaleDelta)
 
 void SceneComponent::SetPosition(const glm::vec3& newPosition)
 {
-    const auto moveDelta = newPosition - transform.position;
+    const auto moveDelta = newPosition - coordinateSystem->GetPosition();
     Move(moveDelta);
 }
 
 void SceneComponent::SetRotation(const glm::vec3& newRotation)
 {
-    const auto rotationDelta = newRotation- transform.rotation;
+    const auto rotationDelta = newRotation - transform.rotation;
     Rotate(rotationDelta);
 }
 
@@ -84,6 +84,25 @@ void SceneComponent::SetScale(const glm::vec3& newScale)
 {
     const auto scaleDelta = newScale - transform.scale;
     Scale(scaleDelta);
+}
+
+void SceneComponent::SetCoordinateSystemType(CoordinateSystemType newType)
+{
+    switch (newType)
+    {
+    case CoordinateSystemType::Cartesian:
+        coordinateSystem = std::make_unique<CartesianCoordinateSystem>();
+        break;
+
+    case CoordinateSystemType::Cylindrical:
+        coordinateSystem = std::make_unique<CylindricalCoordinateSystem>();
+        break;
+    }
+    
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->SetCoordinateSystemType(newType);
+    }
 }
 
 void SceneComponent::UpdateVectors()

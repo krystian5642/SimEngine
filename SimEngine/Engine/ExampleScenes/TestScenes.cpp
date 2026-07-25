@@ -1,6 +1,7 @@
 ﻿#include "TestScenes.h"
 
 #include "BallLauncher.h"
+#include "imgui.h"
 #include "Components/LineComponent.h"
 #include "Core/App.h"
 #include "Managers/MaterialManager.h"
@@ -213,4 +214,56 @@ BallLauncherScene::BallLauncherScene(const std::string& name)
     light->lightData.diffuseIntensity = 0.8f;
     
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+}
+
+CylindricalCoordinateScene::CylindricalCoordinateScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({14.0f, 4.0f, 0.0f});
+    camera->SetRotation(-22.0f, 270.0f);
+    
+    auto plane = AddObject<MeshEntity>();
+    
+    plane->meshComponent->mesh = MeshManager::Get().GetAssetByName("plane");
+    plane->meshComponent->material = MaterialManager::Get().GetAssetByName("chrome");
+    
+    plane->SetScale({80.0f, 1.0f, 80.0f});
+    plane->Move({0.0f, -2.0f, 0.0f});
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, -60.0f, 0.1f});
+    light->lightData.ambientIntensity = 0.5f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    ball = AddObject<MeshEntity>("Center Object");
+    ball->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
+    auto lineComponent = ball->AddComponent<LineComponent>();
+    lineComponent->followParent = true;
+    lineComponent->line->thickness = 10.0f;
+    
+    ball->SetCoordinateSystemType(CoordinateSystemType::Cylindrical);
+    
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+}
+
+void CylindricalCoordinateScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    auto position = ball->GetPosition();
+    
+    ImGui::SeparatorText("Position (cylindrical)");
+
+    bool changed = false;
+    changed |= ImGui::DragFloat("Radius", &position.x, 0.05f, 0.0f);
+    changed |= ImGui::DragFloat("Angle", &position.y, 0.05f, 0.0f, glm::two_pi<float>());
+    changed |= ImGui::DragFloat("Height", &position.z, 0.05f);
+        
+    if (changed)
+    {
+        ball->SetPosition(position);
+    }
 }

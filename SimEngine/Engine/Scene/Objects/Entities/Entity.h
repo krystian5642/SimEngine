@@ -32,9 +32,11 @@ public:
     void SetRotation(const glm::vec3& newRotation);
     void SetScale(const glm::vec3& newScale);
     
-    const glm::vec3& GetPosition() const { return rootComponent->GetPosition(); }
+    const glm::vec3& GetPosition(bool getCartesianPosition = false) const { return rootComponent->GetPosition(getCartesianPosition); }
     const glm::vec3& GetRotation() const { return rootComponent->GetRotation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }
+    
+    void SetCoordinateSystemType(CoordinateSystemType newType);
 
     virtual bool CanMove() const { return true; }
     

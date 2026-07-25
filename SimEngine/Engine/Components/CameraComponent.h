@@ -41,13 +41,13 @@ private:
     void UpdateView();
     void OnWindowSizeChanged(Window* window, int bufferWidth, int bufferHeight);
     
-    glm::vec3 forward{0.0f, 0.0f, -1.0f};
+    glm::vec3 forward{0.0f, 0.0f, 1.0f};
     glm::vec3 up;
     glm::vec3 right;
     
     glm::vec3 position{0.0f, 0.0f, 3.0f};
     float pitch{};
-    float yaw{180.0f};
+    float yaw{};
     
     glm::mat4 projection;
     glm::mat4 view;

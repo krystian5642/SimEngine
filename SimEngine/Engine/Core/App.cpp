@@ -14,13 +14,14 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::BallLauncher);
+    SceneManager::SetDefaultScene(SceneNames::CylindricalCoordinate);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
     REGISTER_SCENE(BallCollisions2D);
     REGISTER_SCENE(BallCollisions3D);
     REGISTER_SCENE(BallLauncher);
+    REGISTER_SCENE(CylindricalCoordinate);
 }
 
 void App::Run()

@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Components\CoordinateSystems\CoordinateSystems.cpp" />
     <ClCompile Include="Engine\Components\InputComponent.cpp" />
     <ClCompile Include="Engine\Components\LineComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
@@ -194,6 +195,7 @@
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
+    <ClInclude Include="Engine\Components\CoordinateSystems\CoordinateSystems.h" />
     <ClInclude Include="Engine\Components\InputComponent.h" />
     <ClInclude Include="Engine\Components\LineComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />

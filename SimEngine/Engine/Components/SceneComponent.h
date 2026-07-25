@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "RenderComponent.h"
+#include "CoordinateSystems/CoordinateSystems.h"
 #include "Core/MathUtils.h"
 
 class SceneComponent : public RenderComponent
@@ -26,11 +27,13 @@ public:
     const glm::vec3& GetUpVector() const { return up; }
     const glm::vec3& GetRightVector() const { return right; }
     
-    const glm::vec3& GetPosition() const { return transform.position; }
+    const glm::vec3& GetPosition(bool getCartesianPosition = false) const { return coordinateSystem->GetPosition(getCartesianPosition); }
     const glm::vec3& GetRotation() const { return transform.rotation; }
     const glm::vec3& GetScale() const { return transform.scale; }
     const glm::mat4& GetModelMatrix() const { return modelMatrix; }
-
+    
+    void SetCoordinateSystemType(CoordinateSystemType newType);
+    
 private:
     void UpdateVectors();
     void UpdateModelMatrix();
@@ -41,6 +44,8 @@ private:
     glm::vec3 forward;
     glm::vec3 up;
     glm::vec3 right;
+    
+    std::unique_ptr<CoordinateSystem> coordinateSystem;
     
     std::vector<SceneComponent*> attachedComponents;
 };

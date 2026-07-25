@@ -132,3 +132,13 @@ void Entity::SetScale(const glm::vec3& newScale)
         child->SetScale(newScale);
     });
 }
+
+void Entity::SetCoordinateSystemType(CoordinateSystemType newType)
+{
+    rootComponent->SetCoordinateSystemType(newType);
+    
+    childEntities.ForEach([newType](Entity* child, int index)
+    {
+        child->SetCoordinateSystemType(newType);
+    });
+}
