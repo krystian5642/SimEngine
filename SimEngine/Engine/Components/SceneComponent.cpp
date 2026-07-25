@@ -97,6 +97,13 @@ void SceneComponent::SetCoordinateSystemType(CoordinateSystemType newType)
     case CoordinateSystemType::Cylindrical:
         coordinateSystem = std::make_unique<CylindricalCoordinateSystem>();
         break;
+        
+    case CoordinateSystemType::Spherical:
+        coordinateSystem = std::make_unique<SphericalCoordinateSystem>();
+        break;
+        
+    default:
+        throw std::runtime_error("Unknown coordinate system type");
     }
     
     for (const auto& attachedComponent : attachedComponents)

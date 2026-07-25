@@ -14,7 +14,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::CylindricalCoordinate);
+    SceneManager::SetDefaultScene(SceneNames::SphericalCoordinate);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -22,6 +22,7 @@ App::App()
     REGISTER_SCENE(BallCollisions3D);
     REGISTER_SCENE(BallLauncher);
     REGISTER_SCENE(CylindricalCoordinate);
+    REGISTER_SCENE(SphericalCoordinate);
 }
 
 void App::Run()

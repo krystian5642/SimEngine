@@ -15,6 +15,7 @@ namespace SceneNames
     SCENE_NAME BallCollisions3D = "Ball Collisions 3D";
     SCENE_NAME BallLauncher = "Ball Launcher";
     SCENE_NAME CylindricalCoordinate = "Cylindrical Coordinate";
+    SCENE_NAME SphericalCoordinate = "Spherical Coordinate";
 }
 
 class FallingBallsScene : public Scene
@@ -51,6 +52,17 @@ class CylindricalCoordinateScene : public Scene
 {
 public:
     CylindricalCoordinateScene(const std::string& name = SceneNames::CylindricalCoordinate);
+    
+    void DrawImGui() override;
+    
+private:
+    MeshEntity* ball;
+};
+
+class SphericalCoordinateScene : public Scene
+{
+public:
+    SphericalCoordinateScene(const std::string& name = SceneNames::SphericalCoordinate);
     
     void DrawImGui() override;
     

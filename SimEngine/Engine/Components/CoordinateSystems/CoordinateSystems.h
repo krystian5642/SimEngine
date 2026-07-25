@@ -4,6 +4,7 @@ enum class CoordinateSystemType
 {
     Cartesian,
     Cylindrical,
+    Spherical,
 };
 
 class CoordinateSystem
@@ -29,6 +30,13 @@ protected:
 };
 
 class CylindricalCoordinateSystem : public CoordinateSystem
+{
+protected:
+    void CheckCoordinates() override;
+    void UpdateCartesianPosition() override;
+};
+
+class SphericalCoordinateSystem : public CoordinateSystem
 {
 protected:
     void CheckCoordinates() override;
