@@ -119,6 +119,19 @@ float Renderer::GetPointSize() const
     return size;
 }
 
+void Renderer::EnableBlending(bool enable)
+{
+    if (enable)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+    }
+}
+
 void Renderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
 {
     ResetRenderBuffer();
@@ -269,7 +282,7 @@ void Renderer::InitSceneShaders()
     ShaderData screenShaderData;
     screenShaderData.vertShader = ShaderData::shadersFolder + "screen.vert";
     screenShaderData.fragShader = ShaderData::shadersFolder + "screen.frag";
-    sceneShaders.screenShader = std::make_shared<Shader>(screenShaderData);   
+    sceneShaders.screenShader = std::make_shared<Shader>(screenShaderData);
 }
 
 void Renderer::Render(const Scene* scene) const

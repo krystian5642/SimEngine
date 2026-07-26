@@ -14,7 +14,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::SphericalCoordinate);
+    SceneManager::SetDefaultScene(SceneNames::CoriolisEffect);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -23,6 +23,8 @@ App::App()
     REGISTER_SCENE(BallLauncher);
     REGISTER_SCENE(CylindricalCoordinate);
     REGISTER_SCENE(SphericalCoordinate);
+    REGISTER_SCENE(ArrowTest);
+    REGISTER_SCENE(CoriolisEffect);
 }
 
 void App::Run()

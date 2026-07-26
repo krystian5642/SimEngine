@@ -17,7 +17,7 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
         return;
     }
     
-    transform.cartesianPosition = coordinateSystem->Move(moveDelta);
+    transform.SetCartesianPosition(coordinateSystem->Move(moveDelta));
     UpdateVectors();
 
     for (const auto& attachedComponent : attachedComponents)
@@ -33,7 +33,7 @@ void SceneComponent::Rotate(const glm::vec3& rotationDelta)
         return;
     }
     
-    transform.rotation += rotationDelta;
+    transform.SetRotation(transform.GetRotation() + rotationDelta);
     UpdateVectors();
     
     for (const auto& attachedComponent : attachedComponents)
@@ -59,7 +59,7 @@ void SceneComponent::Scale(const glm::vec3& scaleDelta)
         return;
     }
     
-    transform.scale += scaleDelta;
+    transform.SetScale(transform.GetScale() + scaleDelta);
     UpdateVectors();
     
     for (const auto& attachedComponent : attachedComponents)
@@ -76,13 +76,13 @@ void SceneComponent::SetPosition(const glm::vec3& newPosition)
 
 void SceneComponent::SetRotation(const glm::vec3& newRotation)
 {
-    const auto rotationDelta = newRotation - transform.rotation;
+    const auto rotationDelta = newRotation - transform.GetRotation();
     Rotate(rotationDelta);
 }
 
 void SceneComponent::SetScale(const glm::vec3& newScale)
 {
-    const auto scaleDelta = newScale - transform.scale;
+    const auto scaleDelta = newScale - transform.GetScale();
     Scale(scaleDelta);
 }
 
@@ -114,17 +114,10 @@ void SceneComponent::SetCoordinateSystemType(CoordinateSystemType newType)
 
 void SceneComponent::UpdateVectors()
 {
-    UpdateModelMatrix();
-    
-    forward = glm::normalize(glm::mat3(modelMatrix) * glm::vec3(0.0f, 0.0f, -1.0f));
+    forward = glm::normalize(glm::mat3(transform.GetModelMatrix()) * glm::vec3(0.0f, 0.0f, -1.0f));
     
     right = glm::normalize(glm::cross(forward, {0.0f, 1.0f, 0.0f}));
     up = glm::cross(right, forward);
-}
-
-void SceneComponent::UpdateModelMatrix()
-{
-    modelMatrix = transform.CalculateModelMatrix();
 }
 
 void SceneComponent::AttachComponent(SceneComponent* component)

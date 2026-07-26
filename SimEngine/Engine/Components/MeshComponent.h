@@ -14,7 +14,4 @@ public:
     
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Material> material;
-    
-    float lineWidth{1.0f};
-    float pointSize{3.0f};
 };

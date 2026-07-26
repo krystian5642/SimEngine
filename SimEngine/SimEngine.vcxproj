@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Components\VectorVisualizerComponent.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\CoordinateSystems\CoordinateSystems.cpp" />
     <ClCompile Include="Engine\Components\InputComponent.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Components\VectorVisualizerComponent.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\CoordinateSystems\CoordinateSystems.h" />
@@ -247,6 +249,8 @@
     <ClInclude Include="External\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Engine\Rendering\Shaders\arrow.frag" />
+    <Content Include="Engine\Rendering\Shaders\arrow.vert" />
     <Content Include="Engine\Rendering\Shaders\line.frag" />
     <Content Include="Engine\Rendering\Shaders\line.vert" />
     <Content Include="Engine\Rendering\Shaders\mesh.frag" />

@@ -53,6 +53,8 @@ public:
     void SetPointSize(float size);
     float GetPointSize() const;
     
+    void EnableBlending(bool enable);
+    
     const std::shared_ptr<const Shader>& GetBaseShader() const { return sceneShaders.meshShader; }
     
     glm::vec3 clearColor{0.0f, 0.0f, 0.0f};

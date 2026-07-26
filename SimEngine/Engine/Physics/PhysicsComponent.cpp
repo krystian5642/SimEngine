@@ -57,7 +57,7 @@ void PhysicsComponent::Move(const glm::vec3& moveDelta)
     parentEntity->Move(moveDelta);
 }
 
-void PhysicsComponent::StopImediately()
+void PhysicsComponent::StopImmediately()
 {
     physicsData.linearVelocity = glm::vec3{0.0f};
 }

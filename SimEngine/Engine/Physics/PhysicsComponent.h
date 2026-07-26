@@ -31,7 +31,7 @@ public:
 
     void Move(const glm::vec3& moveDelta);
     
-    void StopImediately();
+    void StopImmediately();
     
     bool CollidesWith(const PhysicsComponent* other) const;
     float GetRadius() const;

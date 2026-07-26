@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Components/VectorVisualizerComponent.h"
 #include "Physics/Gravity/GravitySystem.h"
 #include "Scene/Scene.h"
 
@@ -16,6 +17,8 @@ namespace SceneNames
     SCENE_NAME BallLauncher = "Ball Launcher";
     SCENE_NAME CylindricalCoordinate = "Cylindrical Coordinate";
     SCENE_NAME SphericalCoordinate = "Spherical Coordinate";
+    SCENE_NAME ArrowTest = "Arrow Test";
+    SCENE_NAME CoriolisEffect = "Coriolis Effect";
 }
 
 class FallingBallsScene : public Scene
@@ -68,4 +71,44 @@ public:
     
 private:
     MeshEntity* ball;
+};
+
+class ArrowTestScene : public Scene
+{
+public:
+    ArrowTestScene(const std::string& name = SceneNames::ArrowTest);
+    
+    void Tick(float deltaTime) override;
+    
+    void DrawImGui() override;
+    
+private:
+    glm::vec3 testStart{};
+    glm::vec3 testDirection{1.0f, 0.0f, 0.0f};
+    
+    VectorVisualizerComponent* visualizer;
+};
+
+class CoriolisEffectScene : public Scene
+{
+public:
+    CoriolisEffectScene(const std::string& name = SceneNames::CoriolisEffect);
+    
+    void Tick(float deltaTime) override;
+    
+private:
+    MeshEntity* ball;
+    MeshEntity* cylinder;
+    VectorVisualizerComponent* velocityVisualizer;
+    VectorVisualizerComponent* coriolisForceVisualizer;
+    VectorVisualizerComponent* angularVelocityVisualizer;
+    PhysicsComponent* physicsComponent;
+    
+    glm::vec3 coriolisForce;
+    
+    std::vector<MeshEntity*> spawnedEntities;
+    
+    float cylinderYawSpeed{2.0f};
+    float spawnInterval = 0.05f;
+    float timeSinceLastSpawn{0.0f};
 };

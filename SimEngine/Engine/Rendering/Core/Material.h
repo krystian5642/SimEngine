@@ -19,6 +19,7 @@ struct MaterialData
 class Material
 {
 public:
+    Material() = default;
     Material(const MaterialData& materialData) : data(materialData) {}
 
     void Use() const;

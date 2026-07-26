@@ -28,18 +28,16 @@ public:
     const glm::vec3& GetRightVector() const { return right; }
     
     const glm::vec3& GetPosition(bool getCartesianPosition = false) const { return coordinateSystem->GetPosition(getCartesianPosition); }
-    const glm::vec3& GetRotation() const { return transform.rotation; }
-    const glm::vec3& GetScale() const { return transform.scale; }
-    const glm::mat4& GetModelMatrix() const { return modelMatrix; }
+    const glm::vec3& GetRotation() const { return transform.GetRotation(); }
+    const glm::vec3& GetScale() const { return transform.GetScale(); }
+    const glm::mat4& GetModelMatrix() const { return transform.GetModelMatrix(); }
     
     void SetCoordinateSystemType(CoordinateSystemType newType);
     
 private:
     void UpdateVectors();
-    void UpdateModelMatrix();
     
     Transform transform;
-    glm::mat4 modelMatrix;
     
     glm::vec3 forward;
     glm::vec3 up;

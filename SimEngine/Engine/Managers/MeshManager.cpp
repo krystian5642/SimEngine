@@ -11,7 +11,7 @@ MeshManager& MeshManager::Get()
     return meshManager;
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
+std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path, bool autoCenterPivot)
 {
     std::vector<VertexData> vertices;
     std::vector<unsigned int> indices;
@@ -63,12 +63,14 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path)
         }
     }
     
-    auto center = (max + min) / 2.0f;
-    for (auto& vertex : vertices)
+    if (autoCenterPivot)
     {
-        vertex.position -= center;
+        auto center = (max + min) / 2.0f;
+        for (auto& vertex : vertices)
+        {
+            vertex.position -= center;
+        }
     }
-    
     return std::make_shared<Mesh>(MeshData{vertices, indices});
 }
 
@@ -78,6 +80,9 @@ MeshManager::MeshManager()
     createAssetFuncs["cube"] = &MeshManager::LoadCube;
     createAssetFuncs["sphere"] = &MeshManager::LoadSphere;
     createAssetFuncs["plane"] = &MeshManager::LoadPlane;
+    createAssetFuncs["cylinder"] = &MeshManager::LoadCylinder;
+    createAssetFuncs["arrow_cylinder"] = &MeshManager::LoadArrowCylinder;
+    createAssetFuncs["arrow_cone"] = &MeshManager::LoadArrowCone;
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadCube()
@@ -106,4 +111,19 @@ std::shared_ptr<Mesh> MeshManager::LoadPlane()
     };
     
     return std::make_shared<Mesh>(MeshData{vertices, indices});
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadCylinder()
+{
+    return LoadMesh("Models/cylinder.obj", false);
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadArrowCylinder()
+{
+    return LoadMesh("Models/arrow_cylinder.obj", false);
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadArrowCone()
+{
+    return LoadMesh("Models/arrow_cone.obj", false);
 }

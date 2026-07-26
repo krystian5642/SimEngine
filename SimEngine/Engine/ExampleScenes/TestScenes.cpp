@@ -2,6 +2,7 @@
 
 #include "BallLauncher.h"
 #include "imgui.h"
+#include "Components/VectorVisualizerComponent.h"
 #include "Components/LineComponent.h"
 #include "Core/App.h"
 #include "Managers/MaterialManager.h"
@@ -318,5 +319,141 @@ void SphericalCoordinateScene::DrawImGui()
     {
         ball->SetPosition(position);
     }
+}
+
+ArrowTestScene::ArrowTestScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({14.0f, 4.0f, 0.0f});
+    camera->SetRotation(-22.0f, 270.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, -60.0f, 0.1f});
+    light->lightData.ambientIntensity = 0.5f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    auto ball = AddObject<MeshEntity>();
+    ball->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
+    
+    visualizer = ball->AddComponent<VectorVisualizerComponent>();
+    
+    ball->meshComponent->SetScale({0.2f, 0.2f, 0.2f});
+    
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+}
+
+void ArrowTestScene::Tick(float deltaTime)
+{
+    Scene::Tick(deltaTime);
+ 
+    visualizer->SetStart(testStart);
+    visualizer->SetDirection(testDirection);
+}
+
+void ArrowTestScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    ImGui::SeparatorText("Test Direction");
+    
+    ImGui::DragFloat("X##Direction", &testDirection.x, 0.05f);
+    ImGui::DragFloat("Y##Direction", &testDirection.y, 0.05f);
+    ImGui::DragFloat("Z##Direction", &testDirection.z, 0.05f);
+    
+    ImGui::SeparatorText("Test Start");
+    
+    ImGui::DragFloat("X##Start", &testStart.x, 0.05f);
+    ImGui::DragFloat("Y##Start", &testStart.y, 0.05f);
+    ImGui::DragFloat("Z##Start", &testStart.z, 0.05f);
+}
+
+CoriolisEffectScene::CoriolisEffectScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({18.0f, 12.0f, -18.0f});
+    camera->SetRotation(-30.0f, -40.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, -60.0f, 0.1f});
+    light->lightData.ambientIntensity = 0.5f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    ball = AddObject<MeshEntity>();
+    ball->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
+    ball->SetPosition({15.0f, 4.0f, 0.0f});
+    physicsComponent = ball->AddComponent<PhysicsComponent>();
+    physicsComponent->physicsData.mass = 0.3f;
+    physicsComponent->physicsData.linearDamping = -1.0f;
+    physicsComponent->physicsData.linearVelocity = {-3.0f, 0.0f, 0.0f};
+    velocityVisualizer = ball->AddComponent<VectorVisualizerComponent>();
+    velocityVisualizer->useParentLocationAsStart = true;
+    velocityVisualizer->SetDirection(physicsComponent->physicsData.linearVelocity);
+    
+    coriolisForceVisualizer = ball->AddComponent<VectorVisualizerComponent>();
+    coriolisForceVisualizer->useParentLocationAsStart = true;
+    
+    coriolisForce = -2 * physicsComponent->physicsData.mass * glm::cross(physicsComponent->physicsData.linearVelocity, {0.0f, glm::radians(cylinderYawSpeed), 0.0f});
+    coriolisForceVisualizer->SetDirection(coriolisForce);
+    coriolisForceVisualizer->color = glm::vec4(1.0f, 1.0f, 1.0f, 0.9f);
+    coriolisForceVisualizer->scaleFactor = 50.0f;
+    
+    cylinder = AddObject<MeshEntity>();
+    cylinder->meshComponent->mesh = MeshManager::Get().GetAssetByName("cylinder");
+    cylinder->meshComponent->material = MaterialManager::Get().GetAssetByName("turquoise");
+    
+    cylinder->SetPosition({0.0f, -4.0f, 0.0f});
+    cylinder->SetScale({15.0f, 3.0f, 15.0f});
+    angularVelocityVisualizer = cylinder->AddComponent<VectorVisualizerComponent>();
+    angularVelocityVisualizer->SetStart(cylinder->GetPosition());
+    angularVelocityVisualizer->SetDirection({0.0f, cylinderYawSpeed, 0.0f});
+    
+    angularVelocityVisualizer->color = glm::vec4(1.0f, 1.0f, 0.0f, 0.9f);
+    
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+}
+
+void CoriolisEffectScene::Tick(float deltaTime)
+{
+    Scene::Tick(deltaTime);
+    
+    timeSinceLastSpawn += deltaTime;
+    if (spawnInterval <= timeSinceLastSpawn && spawnedEntities.size() < 200)
+    {
+        auto newBall = AddObject<MeshEntity>();
+        newBall->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+        newBall->meshComponent->material = MaterialManager::Get().GetAssetByName("obsidian");
+    
+        glm::vec3 position = ball->GetPosition();
+        position.y = -4.0f;
+    
+        newBall->SetPosition(position);
+        spawnedEntities.push_back(newBall);
+        
+        timeSinceLastSpawn = 0.0f;
+    }
+    
+    for (auto* spawned : spawnedEntities)
+    {
+        glm::vec3 newPosition = spawned->GetPosition();
+        
+        auto modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::rotate(modelMatrix,  glm::radians(cylinderYawSpeed * deltaTime), glm::vec3(0.0f, 1.0f, 0.0f));
+        newPosition = glm::mat3(modelMatrix) * newPosition;
+        
+        spawned->SetPosition(newPosition);
+    }
+    
+    velocityVisualizer->SetDirection(physicsComponent->physicsData.linearVelocity);
+    
+    coriolisForceVisualizer->SetDirection(coriolisForce);
+    physicsComponent->ApplyForce(coriolisForce);
+    
+    cylinder->Rotate({0.0f, cylinderYawSpeed * deltaTime, 0.0f});
 }
 
