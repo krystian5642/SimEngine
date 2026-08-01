@@ -14,7 +14,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::SpringTest);
+    SceneManager::SetDefaultScene(SceneNames::HarmonicOscillator);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -26,6 +26,7 @@ App::App()
     REGISTER_SCENE(ArrowTest);
     REGISTER_SCENE(CoriolisEffect);
     REGISTER_SCENE(SpringTest);
+    REGISTER_SCENE(HarmonicOscillator);
 }
 
 void App::Run()
@@ -48,6 +49,8 @@ void App::Run()
         double currentFrameTime = glfwGetTime();
         float deltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
         lastFrameTime = currentFrameTime;
+        
+        deltaTime = std::min(deltaTime, maxDeltaTime);
         
         window.Update();
         if (glfwGetWindowAttrib(window.GetGLFWWindow(), GLFW_ICONIFIED) != 0)

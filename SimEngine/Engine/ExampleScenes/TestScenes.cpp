@@ -537,3 +537,62 @@ void SpringTestScene::DrawImGui()
 
 }
 
+HarmonicOscillatorScene::HarmonicOscillatorScene(const std::string& name)
+    : Scene(name)
+{
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+    
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({-1.0f, -2.5f, 24.0f});
+    camera->SetRotation(0.0f, 180.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection(glm::vec3(0.0f, -0.707f, -0.707f));
+    light->lightData.color = glm::vec3(1.0f);
+    light->lightData.diffuseIntensity = 1.0;
+    
+    auto harmonicOscillator = AddObject<Entity>();
+    spring = harmonicOscillator->AddComponent<SpringComponent>();
+    spring->SetStart({0.0f, 3.0f, 0.0f});
+    spring->SetEnd(initialBallPosition + glm::vec3(0.0f, 1.0f, 0.0f));
+    auto springLine = spring->GetSpringLine();
+    
+    sphere1 = harmonicOscillator->AddComponent<MeshComponent>();
+    sphere1->SetPosition(initialBallPosition);
+    sphere1->mesh = MeshManager::Get().GetAssetByName("sphere");
+    sphere1->material = MaterialManager::Get().GetAssetByName("emerald");
+    sphere1->SetScale(glm::vec3{1.5f});
+    
+    auto meshCube = harmonicOscillator->AddComponent<MeshComponent>();
+    meshCube->mesh = MeshManager::Get().GetAssetByName("cube");
+    meshCube->material = MaterialManager::Get().GetAssetByName("bronze");
+    meshCube->Move(glm::vec3(0.0f, 3.0f, 0.0f));
+    meshCube->SetScale(glm::vec3{2.5f, 0.2f, 2.5f});
+    
+    springLine->thickness = 4.0f;
+    springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+}
+
+void HarmonicOscillatorScene::Tick(float deltaTime)
+{
+    Scene::Tick(deltaTime);
+    
+    const glm::vec3 force = gravityForce - k * (currentBallPosition - equilibriumPosition);
+    const glm::vec3 acceleration = force / ballMass;
+    
+    currentBallVelocity += acceleration * deltaTime;
+    
+    const glm::vec3 deltaMove = currentBallVelocity * deltaTime;
+    sphere1->Move(deltaMove);
+    
+    currentBallPosition += deltaMove;
+    
+    spring->SetEnd(spring->GetEnd() + deltaMove);
+}
+
+void HarmonicOscillatorScene::DrawImGui()
+{
+    Scene::DrawImGui();
+}
+

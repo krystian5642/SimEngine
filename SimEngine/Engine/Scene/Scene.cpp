@@ -28,9 +28,6 @@ void Scene::Start()
 
 void Scene::Tick(float deltaTime)
 {
-    static constexpr auto maxDeltaTime = 1.0f / 60.0f;
-    deltaTime = std::min(deltaTime, maxDeltaTime);
-    
     const auto isPaused = App::Get().isPaused;
     objects.Tick(deltaTime, isPaused);
 }

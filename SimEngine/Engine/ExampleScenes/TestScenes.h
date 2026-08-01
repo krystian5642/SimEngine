@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Components/MeshComponent.h"
 #include "Components/VectorVisualizerComponent.h"
 #include "Physics/Gravity/GravitySystem.h"
 #include "Scene/Scene.h"
@@ -21,6 +22,7 @@ namespace SceneNames
     SCENE_NAME ArrowTest = "Arrow Test";
     SCENE_NAME CoriolisEffect = "Coriolis Effect";
     SCENE_NAME SpringTest = "Spring Test";
+    SCENE_NAME HarmonicOscillator = "Harmonic Oscillator";
 }
 
 class FallingBallsScene : public Scene
@@ -127,4 +129,27 @@ public:
     
 private:
     SpringComponent* springComponent;
+};
+
+class HarmonicOscillatorScene : public Scene
+{
+public:
+    HarmonicOscillatorScene(const std::string& name = SceneNames::HarmonicOscillator);
+    
+    void Tick(float deltaTime) override;
+    
+    void DrawImGui() override;
+    
+private:
+    SpringComponent* spring;
+    MeshComponent* sphere1;
+    
+    const glm::vec3 equilibriumPosition{0.0f, -2.0f, 0.0f};
+    const glm::vec3 initialBallPosition{0.0f, -4.0f, 0.0f};
+    const float k{10.0f};
+    const float ballMass{5.0f};
+    
+    glm::vec3 currentBallPosition = initialBallPosition;
+    glm::vec3 currentBallVelocity{0.0f};
+    const glm::vec3 gravityForce{0.0f, -9.81f * ballMass, 0.0f};
 };
