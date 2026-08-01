@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Components\SpringComponent.cpp" />
     <ClCompile Include="Engine\Components\VectorVisualizerComponent.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\CoordinateSystems\CoordinateSystems.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Components\SpringComponent.h" />
     <ClInclude Include="Engine\Components\VectorVisualizerComponent.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />

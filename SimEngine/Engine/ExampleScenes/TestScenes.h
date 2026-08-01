@@ -6,6 +6,7 @@
 
 #define SCENE_NAME inline const std::string
 
+class SpringComponent;
 class MeshEntity;
 
 namespace SceneNames
@@ -19,6 +20,7 @@ namespace SceneNames
     SCENE_NAME SphericalCoordinate = "Spherical Coordinate";
     SCENE_NAME ArrowTest = "Arrow Test";
     SCENE_NAME CoriolisEffect = "Coriolis Effect";
+    SCENE_NAME SpringTest = "Spring Test";
 }
 
 class FallingBallsScene : public Scene
@@ -96,6 +98,8 @@ public:
     
     void Tick(float deltaTime) override;
     
+    void DrawImGui() override;
+    
 private:
     MeshEntity* ball;
     MeshEntity* cylinder;
@@ -108,7 +112,19 @@ private:
     
     std::vector<MeshEntity*> spawnedEntities;
     
-    float cylinderYawSpeed{2.0f};
-    float spawnInterval = 0.05f;
+    float cylinderYawSpeed{5.0f};
+    float spawnInterval{0.05f};
     float timeSinceLastSpawn{0.0f};
+};
+
+
+class SpringTestScene : public Scene
+{
+public:
+    SpringTestScene(const std::string& name = SceneNames::SpringTest);
+    
+    void DrawImGui() override;
+    
+private:
+    SpringComponent* springComponent;
 };

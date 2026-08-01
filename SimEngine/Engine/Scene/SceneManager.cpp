@@ -35,11 +35,7 @@ void SceneManager::Init()
     
 void SceneManager::Tick(float deltaTime)
 {
-    const auto isPaused = App::Get().isPaused;
-    if (!isPaused)
-    {
-        currentScene->Tick(deltaTime);
-    }
+    currentScene->Tick(deltaTime);
 }
     
 void SceneManager::OnDestroy()

@@ -14,7 +14,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::CoriolisEffect);
+    SceneManager::SetDefaultScene(SceneNames::SpringTest);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -25,6 +25,7 @@ App::App()
     REGISTER_SCENE(SphericalCoordinate);
     REGISTER_SCENE(ArrowTest);
     REGISTER_SCENE(CoriolisEffect);
+    REGISTER_SCENE(SpringTest);
 }
 
 void App::Run()

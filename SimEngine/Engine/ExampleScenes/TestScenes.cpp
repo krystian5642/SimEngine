@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "Components/VectorVisualizerComponent.h"
 #include "Components/LineComponent.h"
+#include "Components/SpringComponent.h"
 #include "Core/App.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
@@ -398,7 +399,7 @@ CoriolisEffectScene::CoriolisEffectScene(const std::string& name)
     coriolisForceVisualizer = ball->AddComponent<VectorVisualizerComponent>();
     coriolisForceVisualizer->useParentLocationAsStart = true;
     
-    coriolisForce = -2 * physicsComponent->physicsData.mass * glm::cross(physicsComponent->physicsData.linearVelocity, {0.0f, glm::radians(cylinderYawSpeed), 0.0f});
+    coriolisForce = 2 * physicsComponent->physicsData.mass * glm::cross(physicsComponent->physicsData.linearVelocity, {0.0f, glm::radians(cylinderYawSpeed), 0.0f});
     coriolisForceVisualizer->SetDirection(coriolisForce);
     coriolisForceVisualizer->color = glm::vec4(1.0f, 1.0f, 1.0f, 0.9f);
     coriolisForceVisualizer->scaleFactor = 50.0f;
@@ -421,6 +422,11 @@ CoriolisEffectScene::CoriolisEffectScene(const std::string& name)
 void CoriolisEffectScene::Tick(float deltaTime)
 {
     Scene::Tick(deltaTime);
+    
+    if (const auto isPaused = App::Get().isPaused)
+    {
+        return;
+    }
     
     timeSinceLastSpawn += deltaTime;
     if (spawnInterval <= timeSinceLastSpawn && spawnedEntities.size() < 200)
@@ -452,8 +458,66 @@ void CoriolisEffectScene::Tick(float deltaTime)
     velocityVisualizer->SetDirection(physicsComponent->physicsData.linearVelocity);
     
     coriolisForceVisualizer->SetDirection(coriolisForce);
-    physicsComponent->ApplyForce(coriolisForce);
+    //physicsComponent->ApplyForce(coriolisForce);
     
     cylinder->Rotate({0.0f, cylinderYawSpeed * deltaTime, 0.0f});
+}
+
+void CoriolisEffectScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    ImGui::ColorButton("##yellow", ImVec4(1.0f, 1.0f, 0.0f, 0.9f), 
+                        ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
+    ImGui::SameLine();
+    ImGui::Text("Angular velocity");
+
+    ImGui::ColorButton("##red", ImVec4(1.0f, 0.0f, 0.0f, 0.9f), 
+                        ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
+    ImGui::SameLine();
+    ImGui::Text("Velocity");
+
+    ImGui::ColorButton("##white", ImVec4(1.0f, 1.0f, 1.0f, 0.9f), 
+                        ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
+    ImGui::SameLine();
+    ImGui::Text("Coriolis force");
+}
+
+SpringTestScene::SpringTestScene(const std::string& name)
+{
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+    
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({-3.0f, 1.0f, 6.0f});
+    camera->SetRotation(-14.0f, 158.0f);
+    
+    auto sprintObj = AddObject<Entity>();
+    springComponent = sprintObj->AddComponent<SpringComponent>();
+    springComponent->springLine->thickness = 4.0f;
+    springComponent->springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+}
+
+void SpringTestScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    glm::vec3 startEdit = springComponent->GetStart();
+    if (ImGui::DragFloat3("Start", &startEdit.x, 0.05f))
+    {
+        springComponent->SetStart(startEdit);
+    }
+    
+    float lengthEdit = springComponent->GetSpringLength();
+    if (ImGui::DragFloat("Spring Length", &lengthEdit, 0.05f, 0.01f, 100.0f))
+    {
+        springComponent->SetSpringLength(lengthEdit);
+    }
+    
+    float deltaEdit = springComponent->GetDeltaSpringLength();
+    if (ImGui::DragFloat("Delta Length", &deltaEdit, 0.001f, 0.0001f))
+    {
+        springComponent->SetDeltaSpringLength(deltaEdit);
+    }
 }
 
