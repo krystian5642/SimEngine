@@ -12,7 +12,7 @@ public:
     
     static App& Get();
     
-    Window window{1280, 720, "Sim Engine"};
+    Window window{1280, 820, "Sim Engine"};
     Renderer renderer;
     
     bool isPaused{false};

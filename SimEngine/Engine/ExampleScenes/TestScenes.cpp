@@ -2,6 +2,7 @@
 
 #include "BallLauncher.h"
 #include "imgui.h"
+#include "implot.h"
 #include "Components/VectorVisualizerComponent.h"
 #include "Components/LineComponent.h"
 #include "Components/SpringComponent.h"
@@ -570,8 +571,15 @@ HarmonicOscillatorScene::HarmonicOscillatorScene(const std::string& name)
     meshCube->Move(glm::vec3(0.0f, 3.0f, 0.0f));
     meshCube->SetScale(glm::vec3{2.5f, 0.2f, 2.5f});
     
+    forceVisualizer = harmonicOscillator->AddComponent<VectorVisualizerComponent>();
+    forceVisualizer->color = glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
+    forceVisualizer->scaleFactor = 0.2f;
+    
     springLine->thickness = 4.0f;
     springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    
+    plot.SetMaxPoints(500);
+    plot.AddPoint(elapsedTime, currentBallPosition.y - equilibriumPosition.y);
 }
 
 void HarmonicOscillatorScene::Tick(float deltaTime)
@@ -588,11 +596,30 @@ void HarmonicOscillatorScene::Tick(float deltaTime)
     
     currentBallPosition += deltaMove;
     
+    forceVisualizer->SetStart(currentBallPosition);
+    forceVisualizer->SetDirection(force);
+    
     spring->SetEnd(spring->GetEnd() + deltaMove);
+    
+    elapsedTime += deltaTime;
+    timeSinceLastAddPoint += deltaTime;
+    
+    if (timeSinceLastAddPoint >= addPointInterval)
+    {
+        plot.AddPoint(elapsedTime, currentBallPosition.y - equilibriumPosition.y);
+        timeSinceLastAddPoint = 0.0f;
+    }
 }
 
 void HarmonicOscillatorScene::DrawImGui()
 {
     Scene::DrawImGui();
+    
+    ImPlot::BeginPlot("Harmonic Motion");
+    
+    ImPlot::SetupAxes("t", "x(t)", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
+    ImPlot::PlotLine("x(t)", plot.GetXValuesData(), plot.GetYValuesData(), plot.GetPointCount());
+    
+    ImPlot::EndPlot();
 }
 

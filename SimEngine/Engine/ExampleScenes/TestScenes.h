@@ -2,6 +2,7 @@
 
 #include "Components/MeshComponent.h"
 #include "Components/VectorVisualizerComponent.h"
+#include "Core/Plot.h"
 #include "Physics/Gravity/GravitySystem.h"
 #include "Scene/Scene.h"
 
@@ -143,6 +144,12 @@ public:
 private:
     SpringComponent* spring;
     MeshComponent* sphere1;
+    VectorVisualizerComponent* forceVisualizer;
+    
+    Plot plot;
+    float elapsedTime{0.0f};
+    const float addPointInterval{1.0f / 60.0f};
+    float timeSinceLastAddPoint{0.0f};
     
     const glm::vec3 equilibriumPosition{0.0f, -2.0f, 0.0f};
     const glm::vec3 initialBallPosition{0.0f, -4.0f, 0.0f};

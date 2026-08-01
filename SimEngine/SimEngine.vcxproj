@@ -158,6 +158,7 @@
     <ClCompile Include="Engine\Core\PCH\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Engine\Core\Plot.cpp" />
     <ClCompile Include="Engine\Core\SimEngine.cpp" />
     <ClCompile Include="Engine\Core\Window.cpp" />
     <ClCompile Include="Engine\ExampleScenes\BallLauncher.cpp" />
@@ -193,6 +194,8 @@
     <ClCompile Include="External\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="External\imgui\imgui_tables.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="External\imgui\implot.cpp" />
+    <ClCompile Include="External\imgui\implot_items.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\SpringComponent.h" />
@@ -210,6 +213,7 @@
     <ClInclude Include="Engine\Core\Files\File.h" />
     <ClInclude Include="Engine\Core\MathUtils.h" />
     <ClInclude Include="Engine\Core\PCH\pch.h" />
+    <ClInclude Include="Engine\Core\Plot.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\ExampleScenes\BallLauncher.h" />
     <ClInclude Include="Engine\ExampleScenes\TestScenes.h" />
@@ -246,6 +250,8 @@
     <ClInclude Include="External\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="External\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="External\imgui\imgui_internal.h" />
+    <ClInclude Include="External\imgui\implot.h" />
+    <ClInclude Include="External\imgui\implot_internal.h" />
     <ClInclude Include="External\imgui\imstb_rectpack.h" />
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />

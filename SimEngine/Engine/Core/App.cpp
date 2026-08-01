@@ -10,6 +10,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "implot.h"
+
 #define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, []() -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })
 
 App::App()
@@ -36,6 +38,7 @@ void App::Run()
     
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGui::StyleColorsDark();
     
     auto win = &window;
