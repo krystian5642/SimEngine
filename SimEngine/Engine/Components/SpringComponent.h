@@ -8,22 +8,33 @@ public:
     SpringComponent(ObjectBase* parent, Scene* scene, const std::string& name);
     
     void Draw() const override;
-    
-    std::unique_ptr<Line> springLine;
 
+    void SetCoilsNum(int newCoilsNum);
+    int GetCoilsNum() const { return coilsNum; }
+    
     void SetStart(const glm::vec3& newStart);
     const glm::vec3& GetStart() const { return start; }
     
-    void SetSpringLength(float newSpringLength);
-    float GetSpringLength() const { return springLength; }
+    void SetEnd(const glm::vec3& newEnd);
+    const glm::vec3& GetEnd() const { return end; }
     
-    void SetDeltaSpringLength(float newDeltaSpringLength);
-    float GetDeltaSpringLength() const { return deltaSpringLength; }
+    void SetRadius(float newRadius);
+    float GetRadius() const { return radius; }
+    
+    void SetDeltaAngle(float newDeltaAngle);
+    float GetDeltaAngle() const { return deltaAngle; }
+    
+    Line* GetSpringLine() const { return springLine.get(); }
     
 private:
-    void CreateSpring();
+    void RecreateSpringPoints();
     
+    std::unique_ptr<Line> springLine;
+    
+    // Spring properties
+    int coilsNum{10};
     glm::vec3 start{0.0f};
-    float springLength{4.0f};
-    float deltaSpringLength{0.01f};
+    glm::vec3 end{0.0f, -5.0f, 0.0f};
+    float radius{1.0f};
+    float deltaAngle{0.1f};
 };

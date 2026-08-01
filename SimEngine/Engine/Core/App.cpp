@@ -77,8 +77,7 @@ void App::Run()
         ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
         ImGui::Separator();
         
-        
-        const auto currentScene = SceneManager::GetCurrentScene();
+        auto currentScene = SceneManager::GetCurrentScene();
         
         ImGui::Text("Object count: %zu", currentScene->GetObjectCount());
         
@@ -94,6 +93,13 @@ void App::Run()
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))
         {
             isPaused = !isPaused;
+        }
+        
+        ImGui::SameLine();
+        if (ImGui::Button("Reset scene"))
+        {
+            SceneManager::ResetCurrentScene();
+            currentScene = SceneManager::GetCurrentScene();
         }
         
         ImGui::Separator();

@@ -48,6 +48,11 @@ void SceneManager::Render()
     currentScene->Render();
 }
 
+void SceneManager::ResetCurrentScene()
+{
+    LoadScene(currentScene->GetName());
+}
+
 std::vector<std::string> SceneManager::GetSceneNames()
 {
     std::vector<std::string> keys;

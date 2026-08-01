@@ -42,7 +42,7 @@ BallLauncher::BallLauncher(ObjectBase* parent, Scene* scene, const std::string& 
     physicsComponent->physicsData.canFall = false;
 
     lineComponent = AddComponent<LineComponent>();
-    lineComponent->line->thickness = 5.0f;
+    lineComponent->GetLine()->thickness = 5.0f;
 }
 
 void BallLauncher::Tick(float deltaTime)
@@ -145,5 +145,5 @@ void BallLauncher::UpdateTrajectory()
     std::vector<glm::vec3> trajectoryPoints;
     PhysicsUtils::PredictProjectileTrajectory(trajectoryData,trajectoryPoints);
 
-    lineComponent->line->SetPoints(trajectoryPoints);
+    lineComponent->GetLine()->SetPoints(trajectoryPoints);
 }

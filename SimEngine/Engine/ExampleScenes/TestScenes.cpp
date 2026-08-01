@@ -244,7 +244,7 @@ CylindricalCoordinateScene::CylindricalCoordinateScene(const std::string& name)
     ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
     auto lineComponent = ball->AddComponent<LineComponent>();
     lineComponent->followParent = true;
-    lineComponent->line->thickness = 3.0f;
+    lineComponent->GetLine()->thickness = 3.0f;
     
     ball->SetCoordinateSystemType(CoordinateSystemType::Cylindrical);
     
@@ -296,7 +296,7 @@ SphericalCoordinateScene::SphericalCoordinateScene(const std::string& name)
     ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
     auto lineComponent = ball->AddComponent<LineComponent>();
     lineComponent->followParent = true;
-    lineComponent->line->thickness = 3.0f;
+    lineComponent->GetLine()->thickness = 3.0f;
     
     ball->SetCoordinateSystemType(CoordinateSystemType::Spherical);
     
@@ -484,6 +484,7 @@ void CoriolisEffectScene::DrawImGui()
 }
 
 SpringTestScene::SpringTestScene(const std::string& name)
+    : Scene(name)
 {
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
     
@@ -494,13 +495,21 @@ SpringTestScene::SpringTestScene(const std::string& name)
     
     auto sprintObj = AddObject<Entity>();
     springComponent = sprintObj->AddComponent<SpringComponent>();
-    springComponent->springLine->thickness = 4.0f;
-    springComponent->springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    auto springLine = springComponent->GetSpringLine();
+    
+    springLine->thickness = 4.0f;
+    springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 }
 
 void SpringTestScene::DrawImGui()
 {
     Scene::DrawImGui();
+    
+    int coilsEdit = springComponent->GetCoilsNum();
+    if (ImGui::DragInt("Coils Num", &coilsEdit, 1, 1, 200))
+    {
+        springComponent->SetCoilsNum(coilsEdit);
+    }
     
     glm::vec3 startEdit = springComponent->GetStart();
     if (ImGui::DragFloat3("Start", &startEdit.x, 0.05f))
@@ -508,16 +517,23 @@ void SpringTestScene::DrawImGui()
         springComponent->SetStart(startEdit);
     }
     
-    float lengthEdit = springComponent->GetSpringLength();
-    if (ImGui::DragFloat("Spring Length", &lengthEdit, 0.05f, 0.01f, 100.0f))
+    glm::vec3 endEdit = springComponent->GetEnd();
+    if (ImGui::DragFloat3("End", &endEdit.x, 0.05f))
     {
-        springComponent->SetSpringLength(lengthEdit);
+        springComponent->SetEnd(endEdit);
     }
     
-    float deltaEdit = springComponent->GetDeltaSpringLength();
-    if (ImGui::DragFloat("Delta Length", &deltaEdit, 0.001f, 0.0001f))
+    float radiusEdit = springComponent->GetRadius();
+    if (ImGui::DragFloat("Radius", &radiusEdit, 0.02f, 0.01f, 50.0f))
     {
-        springComponent->SetDeltaSpringLength(deltaEdit);
+        springComponent->SetRadius(radiusEdit);
     }
+    
+    float deltaAngleEdit = springComponent->GetDeltaAngle();
+    if (ImGui::DragFloat("Delta Angle", &deltaAngleEdit, 0.01f, 0.001f, 1.0f))
+    {
+        springComponent->SetDeltaAngle(deltaAngleEdit);
+    }
+
 }
 

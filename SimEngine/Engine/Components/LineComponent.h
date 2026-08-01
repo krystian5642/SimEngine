@@ -13,7 +13,10 @@ public:
     void Tick(float deltaTime) override;
     void Draw() const override;
     
-    std::unique_ptr<Line> line;
-    
     bool followParent{false};
+    
+    Line* GetLine() const { return line.get(); }
+    
+private:
+    std::unique_ptr<Line> line;
 };

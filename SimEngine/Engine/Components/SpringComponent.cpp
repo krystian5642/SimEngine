@@ -4,7 +4,7 @@ SpringComponent::SpringComponent(ObjectBase* parent, Scene* scene, const std::st
     : RenderComponent(parent, scene, name)
 {
     springLine = std::make_unique<Line>();
-    CreateSpring();
+    RecreateSpringPoints();
 }
 
 void SpringComponent::Draw() const
@@ -12,46 +12,57 @@ void SpringComponent::Draw() const
     springLine->Draw();
 }
 
+void SpringComponent::SetCoilsNum(int newCoilsNum)
+{
+    coilsNum = newCoilsNum;
+    RecreateSpringPoints();
+}
+
 void SpringComponent::SetStart(const glm::vec3& newStart)
 {
     start = newStart;
-    CreateSpring();
+    RecreateSpringPoints();
 }
 
-void SpringComponent::SetSpringLength(float newSpringLength)
+void SpringComponent::SetEnd(const glm::vec3& newEnd)
 {
-    springLength = newSpringLength;
-    CreateSpring();
+    end = newEnd;
+    RecreateSpringPoints();
 }
 
-void SpringComponent::SetDeltaSpringLength(float newDeltaSpringLength)
+void SpringComponent::SetRadius(float newRadius)
 {
-    springLength *= newDeltaSpringLength / deltaSpringLength;
-    deltaSpringLength = newDeltaSpringLength;
-    CreateSpring();
+    radius = newRadius;
+    RecreateSpringPoints();
 }
 
-void SpringComponent::CreateSpring()
+void SpringComponent::SetDeltaAngle(float newDeltaAngle)
+{
+    deltaAngle = newDeltaAngle;
+    RecreateSpringPoints();
+}
+
+void SpringComponent::RecreateSpringPoints()
 {
     springLine->ClearPoints();
     
-    float radius = 1.0f;
+    const float springLength = end.y - start.y;
+    const float coilHeight = springLength / static_cast<float>(coilsNum);
+    const float deltaSpringLength = coilHeight * deltaAngle / glm::two_pi<float>();
     
-    start.x = radius;
-    glm::vec3 point = start;
+    glm::vec3 point{radius, 0.0f, 0.0f};
     
-    springLine->AddPoint(point);
-    float omega = 0.0f;
+    springLine->AddPoint(point + start);
     
-    while (glm::abs(point.y - start.y) < springLength)
+    float angle = 0.0f;
+    while (glm::abs(point.y + start.y - end.y) > 0.1f)
     {
-        point.x = radius * glm::cos(omega);
-        point.z = radius * glm::sin(omega);
+        point.x = radius * glm::cos(angle);
+        point.y += deltaSpringLength;
+        point.z = radius * glm::sin(angle);
         
-        omega += 0.1f;
+        angle += deltaAngle;
         
-        point.y -= deltaSpringLength;
-        
-        springLine->AddPoint(point);
+        springLine->AddPoint(point + start);
     }
 }

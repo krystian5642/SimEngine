@@ -19,6 +19,7 @@ public:
     static void Tick(float deltaTime);
     static void OnDestroy();
     static void Render();
+    static void ResetCurrentScene();
     static std::vector<std::string> GetSceneNames();
     
 protected:
