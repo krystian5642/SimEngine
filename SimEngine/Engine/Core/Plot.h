@@ -19,3 +19,12 @@ private:
     int maxPoints{-1};
     size_t index{0};
 };
+
+struct RuntimePlotData
+{
+    Plot plot;
+    float addPointInterval{1.0f / 60.0f};
+        
+    float elapsedTime{0.0f};
+    float timeSinceLastAddPoint{0.0f};
+};

@@ -4,45 +4,49 @@ SpringComponent::SpringComponent(ObjectBase* parent, Scene* scene, const std::st
     : RenderComponent(parent, scene, name)
 {
     springLine = std::make_unique<Line>();
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
 void SpringComponent::Draw() const
 {
+    if (bShouldRecreateSpringPoints)
+    {
+        RecreateSpringPoints();
+    }
     springLine->Draw();
 }
 
 void SpringComponent::SetCoilsNum(int newCoilsNum)
 {
     coilsNum = newCoilsNum;
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
 void SpringComponent::SetStart(const glm::vec3& newStart)
 {
     start = newStart;
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
 void SpringComponent::SetEnd(const glm::vec3& newEnd)
 {
     end = newEnd;
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
 void SpringComponent::SetRadius(float newRadius)
 {
     radius = newRadius;
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
 void SpringComponent::SetDeltaAngle(float newDeltaAngle)
 {
     deltaAngle = newDeltaAngle;
-    RecreateSpringPoints();
+    bShouldRecreateSpringPoints = true;
 }
 
-void SpringComponent::RecreateSpringPoints()
+void SpringComponent::RecreateSpringPoints() const
 {
     springLine->ClearPoints();
     
@@ -65,4 +69,6 @@ void SpringComponent::RecreateSpringPoints()
         
         springLine->AddPoint(point + start);
     }
+    
+    bShouldRecreateSpringPoints = false;
 }

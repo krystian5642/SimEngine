@@ -17,6 +17,8 @@
 #include "Physics/Collisions/PhysicsBoundsSystem.h"
 #include "Physics/Collisions/PhysicsCollisionSystem.h"
 #include "Physics/Gravity/GravitySystem.h"
+#include "Physics/Objects/HarmonicOscillator_MasslessSpring.h"
+#include "Physics/Objects/HarmonicOscillator_MassiveSpring.h"
 
 FallingBallsScene::FallingBallsScene(const std::string& name)
     : Scene(name)
@@ -538,7 +540,7 @@ void SpringTestScene::DrawImGui()
 
 }
 
-HarmonicOscillatorScene::HarmonicOscillatorScene(const std::string& name)
+HarmonicOscillator_MasslessSpringScene::HarmonicOscillator_MasslessSpringScene(const std::string& name)
     : Scene(name)
 {
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
@@ -553,72 +555,110 @@ HarmonicOscillatorScene::HarmonicOscillatorScene(const std::string& name)
     light->lightData.color = glm::vec3(1.0f);
     light->lightData.diffuseIntensity = 1.0;
     
-    auto harmonicOscillator = AddObject<Entity>();
-    spring = harmonicOscillator->AddComponent<SpringComponent>();
-    spring->SetStart({0.0f, 3.0f, 0.0f});
-    spring->SetEnd(initialBallPosition + glm::vec3(0.0f, 1.0f, 0.0f));
-    auto springLine = spring->GetSpringLine();
+    harmonicOscillator = AddObject<HarmonicOscillator_MasslessSpring>();
     
-    sphere1 = harmonicOscillator->AddComponent<MeshComponent>();
-    sphere1->SetPosition(initialBallPosition);
-    sphere1->mesh = MeshManager::Get().GetAssetByName("sphere");
-    sphere1->material = MaterialManager::Get().GetAssetByName("emerald");
-    sphere1->SetScale(glm::vec3{1.5f});
-    
-    auto meshCube = harmonicOscillator->AddComponent<MeshComponent>();
-    meshCube->mesh = MeshManager::Get().GetAssetByName("cube");
-    meshCube->material = MaterialManager::Get().GetAssetByName("bronze");
-    meshCube->Move(glm::vec3(0.0f, 3.0f, 0.0f));
-    meshCube->SetScale(glm::vec3{2.5f, 0.2f, 2.5f});
-    
-    forceVisualizer = harmonicOscillator->AddComponent<VectorVisualizerComponent>();
-    forceVisualizer->color = glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
-    forceVisualizer->scaleFactor = 0.2f;
-    
-    springLine->thickness = 4.0f;
-    springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-    
-    plot.SetMaxPoints(500);
-    plot.AddPoint(elapsedTime, currentBallPosition.y - equilibriumPosition.y);
+    runtimePlotData.plot.SetMaxPoints(500);
+    runtimePlotData.plot.AddPoint(runtimePlotData.elapsedTime, 0.0f);
 }
 
-void HarmonicOscillatorScene::Tick(float deltaTime)
+void HarmonicOscillator_MasslessSpringScene::Tick(float deltaTime)
 {
     Scene::Tick(deltaTime);
     
-    const glm::vec3 force = gravityForce - k * (currentBallPosition - equilibriumPosition);
-    const glm::vec3 acceleration = force / ballMass;
+    runtimePlotData.elapsedTime += deltaTime;
+    runtimePlotData.timeSinceLastAddPoint += deltaTime;
     
-    currentBallVelocity += acceleration * deltaTime;
-    
-    const glm::vec3 deltaMove = currentBallVelocity * deltaTime;
-    sphere1->Move(deltaMove);
-    
-    currentBallPosition += deltaMove;
-    
-    forceVisualizer->SetStart(currentBallPosition);
-    forceVisualizer->SetDirection(force);
-    
-    spring->SetEnd(spring->GetEnd() + deltaMove);
-    
-    elapsedTime += deltaTime;
-    timeSinceLastAddPoint += deltaTime;
-    
-    if (timeSinceLastAddPoint >= addPointInterval)
+    if (runtimePlotData.timeSinceLastAddPoint >= runtimePlotData.addPointInterval)
     {
-        plot.AddPoint(elapsedTime, currentBallPosition.y - equilibriumPosition.y);
-        timeSinceLastAddPoint = 0.0f;
+        runtimePlotData.plot.AddPoint(runtimePlotData.elapsedTime, harmonicOscillator->GetOffset());
+        runtimePlotData.timeSinceLastAddPoint = 0.0f;
     }
 }
 
-void HarmonicOscillatorScene::DrawImGui()
+void HarmonicOscillator_MasslessSpringScene::DrawImGui()
 {
     Scene::DrawImGui();
+    
+    auto& physicsData = harmonicOscillator->physicsData;
+    
+    ImGui::SliderFloat("Mass", &physicsData.mass, 0.1f, 50.0f, "%.2f kg");
+    ImGui::SliderFloat("Spring length", &physicsData.springLength, 0.1f, 20.0f, "%.2f m");
+    ImGui::SliderFloat("Spring constant (k)", &physicsData.k, 0.1f, 100.0f, "%.2f N/m");
+    ImGui::SliderFloat("Gravity (g)", &physicsData.gravity, -20.0f, 20.0f, "%.2f m/s^2");
     
     ImPlot::BeginPlot("Harmonic Motion");
     
     ImPlot::SetupAxes("t", "x(t)", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
-    ImPlot::PlotLine("x(t)", plot.GetXValuesData(), plot.GetYValuesData(), plot.GetPointCount());
+    ImPlot::PlotLine("x(t)"
+        , runtimePlotData.plot.GetXValuesData()
+        , runtimePlotData.plot.GetYValuesData()
+        , runtimePlotData.plot.GetPointCount());
+    
+    ImPlot::EndPlot();
+}
+
+HarmonicOscillator_MassiveSpringScene::HarmonicOscillator_MassiveSpringScene(const std::string& name)
+    : Scene(name)
+{
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+    
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({-1.0f, -2.5f, 24.0f});
+    camera->SetRotation(-7.0f, 180.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection(glm::vec3(0.0f, -0.707f, -0.707f));
+    light->lightData.color = glm::vec3(1.0f);
+    light->lightData.diffuseIntensity = 1.0;
+    
+    harmonicOscillator = AddObject<HarmonicOscillator_MassiveSpring>();
+    
+    runtimePlotData.plot.SetMaxPoints(500);
+    runtimePlotData.plot.AddPoint(runtimePlotData.elapsedTime, 0.0f);
+}
+
+void HarmonicOscillator_MassiveSpringScene::Tick(float deltaTime)
+{
+    Scene::Tick(deltaTime);
+    
+    runtimePlotData.elapsedTime += deltaTime;
+    runtimePlotData.timeSinceLastAddPoint += deltaTime;
+    
+    if (runtimePlotData.timeSinceLastAddPoint >= runtimePlotData.addPointInterval)
+    {
+        runtimePlotData.plot.AddPoint(runtimePlotData.elapsedTime, harmonicOscillator->GetOffset());
+        runtimePlotData.timeSinceLastAddPoint = 0.0f;
+    }
+}
+
+void HarmonicOscillator_MassiveSpringScene::DrawImGui()
+{
+    Scene::DrawImGui();
+    
+    auto physicsData = harmonicOscillator->GetPhysicsData();
+    
+    bool changed = false;
+
+    changed |= ImGui::DragFloat("Mass", &physicsData.mass, 0.01f, 0.001f, 1000.0f, "%.3f kg");
+    changed |= ImGui::DragFloat("Spring Length", &physicsData.springLength, 0.1f, 0.0f, 1000.0f, "%.2f m");
+    changed |= ImGui::DragFloat("Spring Mass", &physicsData.springMass, 0.001f, 0.0f, 100.0f, "%.3f kg");
+    changed |= ImGui::DragFloat("Spring constant (k)", &physicsData.k, 0.1f, 0.0f, 10000.0f, "%.2f N/m");
+    changed |= ImGui::DragFloat("Gravity (g)", &physicsData.gravity, 0.01f, -100.0f, 100.0f, "%.2f m/s^2");
+    changed |= ImGui::SliderInt("N (segments)", &physicsData.N, 1, 100);
+
+    if (changed)
+    {
+        harmonicOscillator->SetPhysicsData(physicsData);
+    }
+    
+    ImPlot::BeginPlot("Harmonic Motion");
+    
+    ImPlot::SetupAxes("t", "x(t)", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
+    ImPlot::PlotLine("x(t)"
+        , runtimePlotData.plot.GetXValuesData()
+        , runtimePlotData.plot.GetYValuesData()
+        , runtimePlotData.plot.GetPointCount());
     
     ImPlot::EndPlot();
 }

@@ -169,6 +169,8 @@
     <ClCompile Include="Engine\Physics\Collisions\PhysicsCollisionSystem.cpp" />
     <ClCompile Include="Engine\Physics\Gravity\GravitySystem.cpp" />
     <ClCompile Include="Engine\Physics\Gravity\SimpleGravitySystem.cpp" />
+    <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.cpp" />
+    <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsUtils.cpp" />
@@ -224,6 +226,8 @@
     <ClInclude Include="Engine\Physics\Collisions\PhysicsCollisionSystem.h" />
     <ClInclude Include="Engine\Physics\Gravity\GravitySystem.h" />
     <ClInclude Include="Engine\Physics\Gravity\SimpleGravitySystem.h" />
+    <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.h" />
+    <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.h" />
     <ClInclude Include="Engine\Physics\PhysicsComponent.h" />
     <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Physics\PhysicsUtils.h" />

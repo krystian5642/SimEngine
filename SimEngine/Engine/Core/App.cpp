@@ -16,7 +16,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::HarmonicOscillator);
+    SceneManager::SetDefaultScene(SceneNames::HarmonicOscillator_MassiveSpring);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -28,7 +28,8 @@ App::App()
     REGISTER_SCENE(ArrowTest);
     REGISTER_SCENE(CoriolisEffect);
     REGISTER_SCENE(SpringTest);
-    REGISTER_SCENE(HarmonicOscillator);
+    REGISTER_SCENE(HarmonicOscillator_MasslessSpring);
+    REGISTER_SCENE(HarmonicOscillator_MassiveSpring);
 }
 
 void App::Run()

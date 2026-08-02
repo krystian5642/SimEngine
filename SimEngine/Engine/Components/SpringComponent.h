@@ -27,7 +27,7 @@ public:
     Line* GetSpringLine() const { return springLine.get(); }
     
 private:
-    void RecreateSpringPoints();
+    void RecreateSpringPoints() const;
     
     std::unique_ptr<Line> springLine;
     
@@ -37,4 +37,6 @@ private:
     glm::vec3 end{0.0f, -5.0f, 0.0f};
     float radius{1.0f};
     float deltaAngle{0.1f};
+    
+    mutable bool bShouldRecreateSpringPoints{false};
 };

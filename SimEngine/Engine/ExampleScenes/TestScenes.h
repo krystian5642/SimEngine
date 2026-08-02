@@ -1,13 +1,14 @@
 ﻿#pragma once
 
-#include "Components/MeshComponent.h"
-#include "Components/VectorVisualizerComponent.h"
 #include "Core/Plot.h"
-#include "Physics/Gravity/GravitySystem.h"
 #include "Scene/Scene.h"
 
 #define SCENE_NAME inline const std::string
 
+class VectorVisualizerComponent;
+class PhysicsComponent;
+class HarmonicOscillator_MassiveSpring;
+class HarmonicOscillator_MasslessSpring;
 class SpringComponent;
 class MeshEntity;
 
@@ -23,7 +24,8 @@ namespace SceneNames
     SCENE_NAME ArrowTest = "Arrow Test";
     SCENE_NAME CoriolisEffect = "Coriolis Effect";
     SCENE_NAME SpringTest = "Spring Test";
-    SCENE_NAME HarmonicOscillator = "Harmonic Oscillator";
+    SCENE_NAME HarmonicOscillator_MasslessSpring = "Harmonic Oscillator Massless Spring";
+    SCENE_NAME HarmonicOscillator_MassiveSpring = "Harmonic Oscillator Massive Spring";
 }
 
 class FallingBallsScene : public Scene
@@ -132,31 +134,32 @@ private:
     SpringComponent* springComponent;
 };
 
-class HarmonicOscillatorScene : public Scene
+class HarmonicOscillator_MasslessSpringScene : public Scene
 {
 public:
-    HarmonicOscillatorScene(const std::string& name = SceneNames::HarmonicOscillator);
+    HarmonicOscillator_MasslessSpringScene(const std::string& name = SceneNames::HarmonicOscillator_MasslessSpring);
     
     void Tick(float deltaTime) override;
     
     void DrawImGui() override;
     
 private:
-    SpringComponent* spring;
-    MeshComponent* sphere1;
-    VectorVisualizerComponent* forceVisualizer;
+    HarmonicOscillator_MasslessSpring* harmonicOscillator;
     
-    Plot plot;
-    float elapsedTime{0.0f};
-    const float addPointInterval{1.0f / 60.0f};
-    float timeSinceLastAddPoint{0.0f};
+    RuntimePlotData runtimePlotData;
+};
+
+class HarmonicOscillator_MassiveSpringScene : public Scene
+{
+public:
+    HarmonicOscillator_MassiveSpringScene(const std::string& name = SceneNames::HarmonicOscillator_MassiveSpring);
     
-    const glm::vec3 equilibriumPosition{0.0f, -2.0f, 0.0f};
-    const glm::vec3 initialBallPosition{0.0f, -4.0f, 0.0f};
-    const float k{10.0f};
-    const float ballMass{5.0f};
+    void Tick(float deltaTime) override;
     
-    glm::vec3 currentBallPosition = initialBallPosition;
-    glm::vec3 currentBallVelocity{0.0f};
-    const glm::vec3 gravityForce{0.0f, -9.81f * ballMass, 0.0f};
+    void DrawImGui() override;
+    
+private:
+    HarmonicOscillator_MassiveSpring* harmonicOscillator;
+    
+    RuntimePlotData runtimePlotData;
 };
