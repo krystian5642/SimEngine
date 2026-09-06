@@ -27,4 +27,6 @@ struct RuntimePlotData
         
     float elapsedTime{0.0f};
     float timeSinceLastAddPoint{0.0f};
+    
+    void Tick(float deltaTime, float y);
 };

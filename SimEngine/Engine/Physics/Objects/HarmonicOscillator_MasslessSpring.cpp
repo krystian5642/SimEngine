@@ -32,7 +32,7 @@ HarmonicOscillator_MasslessSpring::HarmonicOscillator_MasslessSpring(ObjectBase*
     
     forceVisualizer = AddComponent<VectorVisualizerComponent>();
     forceVisualizer->color = glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
-    forceVisualizer->scaleFactor = 0.2f;
+    forceVisualizer->scaleLenghtFactor = 0.2f;
 }
 
 void HarmonicOscillator_MasslessSpring::Tick(float deltaTime)

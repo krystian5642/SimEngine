@@ -9,7 +9,7 @@ HarmonicOscillator_MassiveSpring::HarmonicOscillator_MassiveSpring(ObjectBase* p
     : Entity(parent, scene, name)
 {
     RecreateHarmonicOscillator();
-}
+} 
 
 void HarmonicOscillator_MassiveSpring::Tick(float deltaTime)
 {

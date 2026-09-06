@@ -60,7 +60,7 @@ private:
 class MathUtils
 {
 public:
-    static constexpr float EPS = 1e-4f;
+    static constexpr float EPS = 1e-6f;
     
     template <class T>
     static T RandomNum(T min, T max);
@@ -72,8 +72,18 @@ public:
     
     static glm::vec3 RandomScalarVec3(float min, float max)
     {
-        const auto value = MathUtils::RandomNum(min, max);
+        const auto value = RandomNum(min, max);
         return glm::vec3{value, value, value};
+    }
+    
+    static glm::vec3 GetRotationFromDirection(glm::vec3 direction)
+    {
+        direction = glm::normalize(direction);
+        
+        const float yaw = glm::degrees(std::asin(-direction.z));
+        const float pitch = glm::degrees(std::atan2(direction.y, direction.x));
+
+        return glm::vec3(0.0f, yaw, pitch);
     }
 };
 

@@ -26,3 +26,15 @@ void Plot::SetMaxPoints(int newMaxPoints)
     xValues.reserve(maxPoints);
     yValues.reserve(maxPoints);
 }
+
+void RuntimePlotData::Tick(float deltaTime, float y)
+{
+    elapsedTime += deltaTime;
+    timeSinceLastAddPoint += deltaTime;
+    
+    if (timeSinceLastAddPoint >= addPointInterval)
+    {
+        plot.AddPoint(elapsedTime, y);
+        timeSinceLastAddPoint = 0.0f;
+    }
+}

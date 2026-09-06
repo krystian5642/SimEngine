@@ -5,6 +5,7 @@
 #include "implot.h"
 #include "Components/VectorVisualizerComponent.h"
 #include "Components/LineComponent.h"
+#include "Components/SegmentComponent.h"
 #include "Components/SpringComponent.h"
 #include "Core/App.h"
 #include "Managers/MaterialManager.h"
@@ -19,6 +20,7 @@
 #include "Physics/Gravity/GravitySystem.h"
 #include "Physics/Objects/HarmonicOscillator_MasslessSpring.h"
 #include "Physics/Objects/HarmonicOscillator_MassiveSpring.h"
+#include "Physics/Objects/Swing.h"
 
 FallingBallsScene::FallingBallsScene(const std::string& name)
     : Scene(name)
@@ -254,9 +256,9 @@ CylindricalCoordinateScene::CylindricalCoordinateScene(const std::string& name)
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
 }
 
-void CylindricalCoordinateScene::DrawImGui()
+void CylindricalCoordinateScene::DrawUI()
 {
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     auto position = ball->GetPosition();
     
@@ -306,9 +308,9 @@ SphericalCoordinateScene::SphericalCoordinateScene(const std::string& name)
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
 }
 
-void SphericalCoordinateScene::DrawImGui()
+void SphericalCoordinateScene::DrawUI()
 {
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     auto position = ball->GetPosition();
     
@@ -341,37 +343,34 @@ ArrowTestScene::ArrowTestScene(const std::string& name)
     auto ball = AddObject<MeshEntity>();
     ball->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
     ball->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
-    
-    visualizer = ball->AddComponent<VectorVisualizerComponent>();
-    
     ball->meshComponent->SetScale({0.2f, 0.2f, 0.2f});
+    visualizer = ball->AddComponent<VectorVisualizerComponent>();
     
     App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
 }
 
-void ArrowTestScene::Tick(float deltaTime)
+void ArrowTestScene::DrawUI()
 {
-    Scene::Tick(deltaTime);
- 
-    visualizer->SetStart(testStart);
-    visualizer->SetDirection(testDirection);
-}
-
-void ArrowTestScene::DrawImGui()
-{
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     ImGui::SeparatorText("Test Direction");
-    
-    ImGui::DragFloat("X##Direction", &testDirection.x, 0.05f);
-    ImGui::DragFloat("Y##Direction", &testDirection.y, 0.05f);
-    ImGui::DragFloat("Z##Direction", &testDirection.z, 0.05f);
-    
+
+    bool changed = false;
+    changed |= ImGui::DragFloat("X##Direction", &testDirection.x, 0.05f);
+    changed |= ImGui::DragFloat("Y##Direction", &testDirection.y, 0.05f);
+    changed |= ImGui::DragFloat("Z##Direction", &testDirection.z, 0.05f);
+
     ImGui::SeparatorText("Test Start");
-    
-    ImGui::DragFloat("X##Start", &testStart.x, 0.05f);
-    ImGui::DragFloat("Y##Start", &testStart.y, 0.05f);
-    ImGui::DragFloat("Z##Start", &testStart.z, 0.05f);
+
+    changed |= ImGui::DragFloat("X##Start", &testStart.x, 0.05f);
+    changed |= ImGui::DragFloat("Y##Start", &testStart.y, 0.05f);
+    changed |= ImGui::DragFloat("Z##Start", &testStart.z, 0.05f);
+
+    if (changed)
+    {
+        visualizer->SetStart(testStart);
+        visualizer->SetDirection(testDirection);
+    }
 }
 
 CoriolisEffectScene::CoriolisEffectScene(const std::string& name)
@@ -405,7 +404,7 @@ CoriolisEffectScene::CoriolisEffectScene(const std::string& name)
     coriolisForce = 2 * physicsComponent->physicsData.mass * glm::cross(physicsComponent->physicsData.linearVelocity, {0.0f, glm::radians(cylinderYawSpeed), 0.0f});
     coriolisForceVisualizer->SetDirection(coriolisForce);
     coriolisForceVisualizer->color = glm::vec4(1.0f, 1.0f, 1.0f, 0.9f);
-    coriolisForceVisualizer->scaleFactor = 50.0f;
+    coriolisForceVisualizer->scaleLenghtFactor = 50.0f;
     
     cylinder = AddObject<MeshEntity>();
     cylinder->meshComponent->mesh = MeshManager::Get().GetAssetByName("cylinder");
@@ -466,10 +465,8 @@ void CoriolisEffectScene::Tick(float deltaTime)
     cylinder->Rotate({0.0f, cylinderYawSpeed * deltaTime, 0.0f});
 }
 
-void CoriolisEffectScene::DrawImGui()
+void CoriolisEffectScene::DrawUI()
 {
-    Scene::DrawImGui();
-    
     ImGui::ColorButton("##yellow", ImVec4(1.0f, 1.0f, 0.0f, 0.9f), 
                         ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
     ImGui::SameLine();
@@ -484,6 +481,8 @@ void CoriolisEffectScene::DrawImGui()
                         ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
     ImGui::SameLine();
     ImGui::Text("Coriolis force");
+    
+    Scene::DrawUI();
 }
 
 SpringTestScene::SpringTestScene(const std::string& name)
@@ -504,9 +503,9 @@ SpringTestScene::SpringTestScene(const std::string& name)
     springLine->color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 }
 
-void SpringTestScene::DrawImGui()
+void SpringTestScene::DrawUI()
 {
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     int coilsEdit = springComponent->GetCoilsNum();
     if (ImGui::DragInt("Coils Num", &coilsEdit, 1, 1, 200))
@@ -575,9 +574,9 @@ void HarmonicOscillator_MasslessSpringScene::Tick(float deltaTime)
     }
 }
 
-void HarmonicOscillator_MasslessSpringScene::DrawImGui()
+void HarmonicOscillator_MasslessSpringScene::DrawUI()
 {
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     auto& physicsData = harmonicOscillator->physicsData;
     
@@ -622,19 +621,12 @@ void HarmonicOscillator_MassiveSpringScene::Tick(float deltaTime)
 {
     Scene::Tick(deltaTime);
     
-    runtimePlotData.elapsedTime += deltaTime;
-    runtimePlotData.timeSinceLastAddPoint += deltaTime;
-    
-    if (runtimePlotData.timeSinceLastAddPoint >= runtimePlotData.addPointInterval)
-    {
-        runtimePlotData.plot.AddPoint(runtimePlotData.elapsedTime, harmonicOscillator->GetOffset());
-        runtimePlotData.timeSinceLastAddPoint = 0.0f;
-    }
+    runtimePlotData.Tick(deltaTime, harmonicOscillator->GetOffset());
 }
 
-void HarmonicOscillator_MassiveSpringScene::DrawImGui()
+void HarmonicOscillator_MassiveSpringScene::DrawUI()
 {
-    Scene::DrawImGui();
+    Scene::DrawUI();
     
     auto physicsData = harmonicOscillator->GetPhysicsData();
     
@@ -663,3 +655,81 @@ void HarmonicOscillator_MassiveSpringScene::DrawImGui()
     ImPlot::EndPlot();
 }
 
+SegmentComponentTestScene::SegmentComponentTestScene(const std::string& name)
+    : Scene(name)
+{
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({4.0f, 1.8f, 4.2f});
+    camera->SetRotation(-13.0f, 223.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, -60.0f, 0.1f});
+    light->lightData.ambientIntensity = 0.5f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    auto entity = AddObject<Entity>();
+    segment = entity->AddComponent<SegmentComponent>();
+    
+    ball1 = AddObject<MeshEntity>();
+    ball1->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball1->meshComponent->material = MaterialManager::Get().GetAssetByName("gold");
+    
+    ball1->meshComponent->SetScale(glm::vec3{0.1f});
+    
+    ball2 = AddObject<MeshEntity>();
+    ball2->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball2->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
+    
+    ball2->meshComponent->SetScale(glm::vec3{0.1f});
+    
+    ball1->SetPosition(start);
+    ball2->SetPosition(end);
+    
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+}
+
+void SegmentComponentTestScene::DrawUI()
+{
+    Scene::DrawUI();
+    
+    ImGui::SeparatorText("Start");
+
+    bool changed = false;
+    changed |= ImGui::DragFloat("X##Start", &start.x, 0.05f);
+    changed |= ImGui::DragFloat("Y##Start", &start.y, 0.05f);
+    changed |= ImGui::DragFloat("Z##Start", &start.z, 0.05f);
+
+    ImGui::SeparatorText("End");
+
+    changed |= ImGui::DragFloat("X##End", &end.x, 0.05f);
+    changed |= ImGui::DragFloat("Y##End", &end.y, 0.05f);
+    changed |= ImGui::DragFloat("Z##End", &end.z, 0.05f);
+
+    if (changed)
+    {
+        segment->SetStart(start);
+        segment->SetEnd(end);
+        
+        ball1->SetPosition(start);
+        ball2->SetPosition(end);
+    }
+}
+
+SwingTestScene::SwingTestScene(const std::string& name)
+    : Scene(name)
+{
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+    
+    auto camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({8.0f, 0.5f, 4.0f});
+    camera->SetRotation(-10.5f, 253.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({30.1f, -60.0f, 20.1f});
+    light->lightData.ambientIntensity = 0.7f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    swing = AddObject<Swing>();
+}

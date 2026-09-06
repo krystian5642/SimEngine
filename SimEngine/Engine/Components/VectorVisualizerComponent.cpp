@@ -67,32 +67,21 @@ void VectorVisualizerComponent::SetStart(const glm::vec3& newStart)
 
 void VectorVisualizerComponent::SetDirection(const glm::vec3& newDirection)
 {
-    direction = glm::normalize(newDirection);
-    
-    const float scale = scaleFactor * glm::length(newDirection);
-    cylinderTransform.SetScale({scale, 1.0f, 1.0f});
+    const float scale = scaleLenghtFactor * glm::length(newDirection);
+    cylinderTransform.SetScale({scale, scaleFactor, scaleFactor});
         
-    glm::vec3 newRotation;
-    newRotation.x = 0.0f;
-    
-    const float yaw = fmod(atan2(-direction.z, direction.x) + glm::two_pi<float>(), glm::two_pi<float>());
-    newRotation.y = glm::degrees(yaw);
-    
-    const float pitch = asin(direction.y);
-    newRotation.z = glm::degrees(pitch);
+    const glm::vec3 newRotation = MathUtils::GetRotationFromDirection(newDirection);
     cylinderTransform.SetRotation(newRotation);
     
     auto modelMatrix = glm::mat4(1.0f);
         
-    modelMatrix = glm::rotate(modelMatrix, pitch, glm::vec3(0.0f, 0.0f, 1.0f));
-    modelMatrix = glm::rotate(modelMatrix, yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(newRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(newRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
     
     glm::vec3 newPosition{scale, 0.0f, 0.0f};
     newPosition = glm::mat3(modelMatrix) * newPosition;
     coneTransform.SetCartesianPosition(newPosition + cylinderTransform.GetCartesianPosition());
     
-    newRotation.x = 0.0f;
-    newRotation.y = glm::degrees(yaw);
-    newRotation.z = glm::degrees(pitch);
     coneTransform.SetRotation(newRotation);
+    coneTransform.SetScale({scaleFactor, scaleFactor, scaleFactor});
 }

@@ -3,9 +3,6 @@
 #include "Entity.h"
 #include "Components/MeshComponent.h"
 
-class Material;
-class Mesh;
-
 class MeshEntity : public Entity
 {
 public:

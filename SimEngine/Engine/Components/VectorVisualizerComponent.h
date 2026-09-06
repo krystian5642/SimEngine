@@ -24,6 +24,7 @@ public:
     void SetDirection(const glm::vec3& newDirection);
     
     glm::vec4 color{1.0f, 0.0f, 0.0f, 0.9f};
+    float scaleLenghtFactor{1.0f};
     float scaleFactor{1.0f};
     bool useParentLocationAsStart{false};
     
@@ -34,6 +35,4 @@ private:
     
     Transform cylinderTransform;
     Transform coneTransform;
-    
-    glm::vec3 direction{0.0f, 0.0f, 0.0f};
 };

@@ -18,18 +18,21 @@ class SceneObject : public ObjectBase
     friend class Scene;
 public:
     SceneObject(ObjectBase* parent, Scene* scene, const std::string& name);
-
+    
     virtual void Init() {}
     virtual void Start() {}
     virtual void Tick(float deltaTime) {}
     virtual void OnDestroy();
+    
+    virtual void DrawUI() {}
     
     void Destroy();
     
     const SceneObjectHandle& GetHandle() const { return handle; }
     
     bool tickWhenPaused{false};
-
+    bool openUIByDefault{false};
+    
 protected:
     Scene* const scene;
     

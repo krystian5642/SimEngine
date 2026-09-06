@@ -16,7 +16,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::HarmonicOscillator_MassiveSpring);
+    SceneManager::SetDefaultScene(SceneNames::SwingTest);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -30,6 +30,8 @@ App::App()
     REGISTER_SCENE(SpringTest);
     REGISTER_SCENE(HarmonicOscillator_MasslessSpring);
     REGISTER_SCENE(HarmonicOscillator_MassiveSpring);
+    REGISTER_SCENE(SegmentComponentTest);
+    REGISTER_SCENE(SwingTest);
 }
 
 void App::Run()
@@ -128,7 +130,7 @@ void App::Run()
         
         ImGui::Separator();
         ImGui::Spacing();
-        SceneManager::GetCurrentScene()->DrawImGui();
+        SceneManager::GetCurrentScene()->DrawUI();
         
         ImGui::End(); 
         

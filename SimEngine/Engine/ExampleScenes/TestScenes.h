@@ -2,16 +2,18 @@
 
 #include "Core/Plot.h"
 #include "Scene/Scene.h"
-
+ 
 #define SCENE_NAME inline const std::string
 
+class Swing;
+class SegmentComponent;
 class VectorVisualizerComponent;
 class PhysicsComponent;
 class HarmonicOscillator_MassiveSpring;
 class HarmonicOscillator_MasslessSpring;
 class SpringComponent;
 class MeshEntity;
-
+ 
 namespace SceneNames
 {
     SCENE_NAME FallingBalls = "Falling Balls";
@@ -26,6 +28,8 @@ namespace SceneNames
     SCENE_NAME SpringTest = "Spring Test";
     SCENE_NAME HarmonicOscillator_MasslessSpring = "Harmonic Oscillator Massless Spring";
     SCENE_NAME HarmonicOscillator_MassiveSpring = "Harmonic Oscillator Massive Spring";
+    SCENE_NAME SegmentComponentTest = "Segment Component Test";
+    SCENE_NAME SwingTest = "Swing Test";
 }
 
 class FallingBallsScene : public Scene
@@ -63,7 +67,7 @@ class CylindricalCoordinateScene : public Scene
 public:
     CylindricalCoordinateScene(const std::string& name = SceneNames::CylindricalCoordinate);
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     MeshEntity* ball;
@@ -74,7 +78,7 @@ class SphericalCoordinateScene : public Scene
 public:
     SphericalCoordinateScene(const std::string& name = SceneNames::SphericalCoordinate);
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     MeshEntity* ball;
@@ -84,10 +88,8 @@ class ArrowTestScene : public Scene
 {
 public:
     ArrowTestScene(const std::string& name = SceneNames::ArrowTest);
-    
-    void Tick(float deltaTime) override;
-    
-    void DrawImGui() override;
+
+    void DrawUI() override;
     
 private:
     glm::vec3 testStart{};
@@ -103,7 +105,7 @@ public:
     
     void Tick(float deltaTime) override;
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     MeshEntity* ball;
@@ -128,7 +130,7 @@ class SpringTestScene : public Scene
 public:
     SpringTestScene(const std::string& name = SceneNames::SpringTest);
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     SpringComponent* springComponent;
@@ -141,7 +143,7 @@ public:
     
     void Tick(float deltaTime) override;
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     HarmonicOscillator_MasslessSpring* harmonicOscillator;
@@ -156,10 +158,35 @@ public:
     
     void Tick(float deltaTime) override;
     
-    void DrawImGui() override;
+    void DrawUI() override;
     
 private:
     HarmonicOscillator_MassiveSpring* harmonicOscillator;
     
     RuntimePlotData runtimePlotData;
+};
+
+class SegmentComponentTestScene : public Scene
+{
+public:
+    SegmentComponentTestScene(const std::string& name = SceneNames::SegmentComponentTest);
+    
+    void DrawUI() override;
+    
+private:
+    glm::vec3 start{};
+    glm::vec3 end{1.0f, 0.0f, 0.0f};
+    
+    SegmentComponent* segment;
+    MeshEntity* ball1;
+    MeshEntity* ball2;
+};
+
+class SwingTestScene : public Scene
+{
+public:
+    SwingTestScene(const std::string& name = SceneNames::SwingTest);
+
+private:
+    Swing* swing;
 };

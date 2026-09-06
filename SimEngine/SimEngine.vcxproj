@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Components\SegmentComponent.cpp" />
     <ClCompile Include="Engine\Components\SpringComponent.cpp" />
     <ClCompile Include="Engine\Components\VectorVisualizerComponent.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Engine\Physics\Gravity\SimpleGravitySystem.cpp" />
     <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.cpp" />
     <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.cpp" />
+    <ClCompile Include="Engine\Physics\Objects\Swing.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsUtils.cpp" />
@@ -200,6 +202,7 @@
     <ClCompile Include="External\imgui\implot_items.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Components\SegmentComponent.h" />
     <ClInclude Include="Engine\Components\SpringComponent.h" />
     <ClInclude Include="Engine\Components\VectorVisualizerComponent.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -228,6 +231,7 @@
     <ClInclude Include="Engine\Physics\Gravity\SimpleGravitySystem.h" />
     <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.h" />
     <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.h" />
+    <ClInclude Include="Engine\Physics\Objects\Swing.h" />
     <ClInclude Include="Engine\Physics\PhysicsComponent.h" />
     <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Physics\PhysicsUtils.h" />

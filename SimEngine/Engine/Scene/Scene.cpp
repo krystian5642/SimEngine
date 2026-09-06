@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "imgui.h"
 #include "Components/CameraComponent.h"
 #include "Core/App.h"
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
@@ -31,7 +32,32 @@ void Scene::Tick(float deltaTime)
     const auto isPaused = App::Get().isPaused;
     objects.Tick(deltaTime, isPaused);
 }
+
+void Scene::DrawUI()
+{
+    ImGui::Text("Objects count : %d", objects.GetCount());
     
+    objects.ForEach([](SceneObject* object, int index)
+    {
+        const std::string& name = object->GetName();
+        const std::string label = name.empty() ? ("Object " + std::to_string(index)) : name;
+
+        ImGui::PushID(index);
+        
+        if (object->openUIByDefault)
+        {
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        }
+        
+        if (ImGui::TreeNode(label.c_str()))
+        {
+            object->DrawUI();
+            ImGui::TreePop();
+        }
+        ImGui::PopID();
+    });
+}
+
 void Scene::DestroyChild(ObjectBase* child)
 {
     objects.DestroyObject(child);
