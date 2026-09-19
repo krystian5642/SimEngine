@@ -32,11 +32,17 @@ void SegmentComponent::SetEnd(const glm::vec3& newEnd)
     const glm::vec3& direction = newEnd - GetPosition();
     const float scale = glm::length(direction);
     
-    SetScale({scale, 1.0f, 1.0f});
+    SetScale({scale, thickness, thickness});
     
     if (scale > MathUtils::EPS)
     {
         const glm::vec3 rotation = MathUtils::GetRotationFromDirection(direction);
         SetRotation(rotation);
     }
+}
+
+void SegmentComponent::SetThickness(float newThickness)
+{
+    thickness = newThickness;
+    SetScale({GetScale().x, thickness, thickness});
 }
