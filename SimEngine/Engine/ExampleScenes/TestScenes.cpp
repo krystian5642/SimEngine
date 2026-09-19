@@ -733,3 +733,168 @@ SwingTestScene::SwingTestScene(const std::string& name)
     
     swing = AddObject<Swing>();
 }
+
+ForcesTestScene::ForcesTestScene(const std::string& name)
+    : Scene(name)
+{
+    App::Get().renderer.clearColor = {0.2f, 0.2f, 0.2f}; 
+    
+    camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
+    camera->SetAsActiveCamera();
+    camera->SetPosition({24.0f, 2.1f, -2.5f});
+    camera->SetRotation(-6.2f, 277.0f);
+    
+    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light->SetDirection({0.1f, -60.0f, 0.1f});
+    light->lightData.ambientIntensity = 0.5f;
+    light->lightData.diffuseIntensity = 0.8f;
+    
+    ball1 = AddObject<MeshEntity>();
+    ball1->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball1->meshComponent->material = MaterialManager::Get().GetAssetByName("gold");
+    
+    auto line1 = ball1->AddComponent<LineComponent>();
+    line1->followParent = true;
+    line1->GetLine()->thickness = 3.0f;
+    line1->GetLine()->color = glm::vec4{0.0f, 0.0f, 1.0f, 1.0f};
+    
+    segment = ball1->AddComponent<SegmentComponent>();
+    segment->useParentLocationAsStart = true;
+    
+    F1Visualizer = ball1->AddComponent<VectorVisualizerComponent>();
+    F1Visualizer->color = glm::vec4{1.0f, 1.0f, 0.0f, 0.9f};
+    
+    F1Visualizer->useParentLocationAsStart = true;
+    
+    V1xVisualizer = ball1->AddComponent<VectorVisualizerComponent>();
+    V1xVisualizer->color = glm::vec4{0.5f, 1.0f, 0.0f, 0.9f};
+    V1xVisualizer->useParentLocationAsStart = true;
+    
+    V1yVisualizer = ball1->AddComponent<VectorVisualizerComponent>();
+    V1yVisualizer->color = glm::vec4{1.0f, 0.0f, 1.0f, 0.9f};
+    V1yVisualizer->useParentLocationAsStart = true;
+
+    V1Visualizer = ball1->AddComponent<VectorVisualizerComponent>();
+    V1Visualizer->color = glm::vec4{1.0f, 0.0f, 0.0f, 0.9f};
+    V1Visualizer->useParentLocationAsStart = true;
+    
+    ball2 = AddObject<MeshEntity>();
+    ball2->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball2->meshComponent->material = MaterialManager::Get().GetAssetByName("emerald");
+    
+    auto line2 = ball2->AddComponent<LineComponent>();
+    line2->followParent = true;
+    line2->GetLine()->thickness = 3.0f;
+    line2->GetLine()->color = glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
+    
+    F2Visualizer = ball2->AddComponent<VectorVisualizerComponent>();
+    F2Visualizer->color = glm::vec4{1.0f, 1.0f, 0.0f, 0.9f};
+    F2Visualizer->useParentLocationAsStart = true;
+    
+    V2xVisualizer = ball2->AddComponent<VectorVisualizerComponent>();
+    V2xVisualizer->color = glm::vec4{0.5f, 1.0f, 0.5f, 0.9f};
+    V2xVisualizer->useParentLocationAsStart = true;
+    
+    V2yVisualizer = ball2->AddComponent<VectorVisualizerComponent>();
+    V2yVisualizer->color = glm::vec4{1.0f, 0.0f, 1.0f, 0.9f};
+    V2yVisualizer->useParentLocationAsStart = true;
+    
+    V2Visualizer = ball2->AddComponent<VectorVisualizerComponent>();
+    V2Visualizer->color = glm::vec4{1.0f, 0.0f, 0.0f, 0.9f};
+    V2Visualizer->useParentLocationAsStart = true;
+    
+    constexpr float scaleLenghtFactor{0.1f};
+    F1Visualizer->scaleLenghtFactor = scaleLenghtFactor;
+    F2Visualizer->scaleLenghtFactor = scaleLenghtFactor;
+    
+    constexpr float scaleLenghtFactor2{0.4f};
+    V1xVisualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    V1yVisualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    V2xVisualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    V2yVisualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    V1Visualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    V2Visualizer->scaleLenghtFactor = scaleLenghtFactor2;
+    
+    F1Visualizer->scaleFactor = F2Visualizer->scaleFactor = 2.0f;
+    
+    ball1->SetPosition({0.0f, 0.0f, 3.0f});
+    ball2->SetPosition({0.0f, 0.0f, -4.0f});
+    
+    ball1->SetScale(glm::vec3{0.3f});
+    ball2->SetScale(glm::vec3{0.3f});
+    
+    ball3 = AddObject<MeshEntity>();
+    ball3->meshComponent->mesh = MeshManager::Get().GetAssetByName("sphere");
+    ball3->meshComponent->material = MaterialManager::Get().GetAssetByName("brass");
+    ball3->SetScale(glm::vec3{0.2f});
+    ball3->SetPosition((ball1->GetPosition() * mass1 + ball2->GetPosition() * mass2) / (mass1 + mass2));
+    auto line3 = ball3->AddComponent<LineComponent>();
+    line3->followParent = true;
+    line3->GetLine()->thickness = 2.0f;
+    line3->GetLine()->color = glm::vec4{0.0f, 1.0f, 0.0f, 1.0f};
+    
+    prevCenterOfMassPos = (ball1->GetPosition() * mass1 + ball2->GetPosition() * mass2) / (mass1 + mass2);
+}
+
+void ForcesTestScene::Tick(float deltaTime)
+{
+    Scene::Tick(deltaTime);
+    
+    // calc forces
+    
+    const glm::vec3 dir = ball2->GetPosition() - ball1->GetPosition();
+    const float r = glm::length(ball1->GetPosition() - ball2->GetPosition());
+    const glm::vec3 dirNormalized = dir / r;
+    const glm::vec3 relativeV = V2 - V1;
+    const glm::vec3 vPerv = relativeV - glm::dot(dirNormalized, relativeV) * dirNormalized;
+    
+    const float mi = (mass1 * mass2) / (mass1 + mass2);
+    
+    const glm::vec3 F1 = (mi * (glm::dot(vPerv, vPerv)) / r) * dirNormalized;
+    const glm::vec3 F2 = -F1;
+    
+    F1Visualizer->SetDirection(F1);
+    F2Visualizer->SetDirection(F2);
+    
+    V1 += (F1 / mass1) * deltaTime;
+    V2 += (F2 / mass2) * deltaTime;
+    
+    ball1->Move(V1 * deltaTime);
+    ball2->Move(V2 * deltaTime);
+     
+    segment->SetEnd(ball2->GetPosition());
+    
+    const glm::vec3 centerOfMassPos = (ball1->GetPosition() * mass1 + ball2->GetPosition() * mass2) / (mass1 + mass2);
+    ball3->SetPosition(centerOfMassPos);
+    
+    const glm::vec3& cameraPos = camera->GetPosition();
+    camera->SetPosition({cameraPos.x, centerOfMassPos.y, cameraPos.z});
+    
+    const glm::vec3 centerOfMassVel = (centerOfMassPos - prevCenterOfMassPos) / deltaTime;
+    V1xVisualizer->SetDirection(V1 - centerOfMassVel);
+    V1yVisualizer->SetDirection(centerOfMassVel);
+    V1Visualizer->SetDirection(V1);
+    
+    V2xVisualizer->SetDirection(V2 - centerOfMassVel);
+    V2yVisualizer->SetDirection(centerOfMassVel);
+    V2Visualizer->SetDirection(V2);
+    
+    prevCenterOfMassPos = centerOfMassPos;
+}
+
+void ForcesTestScene::DrawUI()
+{
+    Scene::DrawUI();
+    
+    if (ImGui::Button("Apply Impulse"))
+    {
+        V1 += impulseVelocityChange;
+    }
+    
+    if (ImGui::Button("Stop center of mass"))
+    {
+        const glm::vec3 centerOfMassVel = impulseVelocityChange * (mass1 / (mass1 + mass2));
+        V1 -= glm::vec3{centerOfMassVel};
+        V2 -= glm::vec3{centerOfMassVel};
+    }
+}

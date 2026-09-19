@@ -16,7 +16,7 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::SwingTest);
+    SceneManager::SetDefaultScene(SceneNames::ForcesTest);
     
     REGISTER_SCENE(FallingBalls);
     REGISTER_SCENE(Gravity);
@@ -32,6 +32,7 @@ App::App()
     REGISTER_SCENE(HarmonicOscillator_MassiveSpring);
     REGISTER_SCENE(SegmentComponentTest);
     REGISTER_SCENE(SwingTest);
+    REGISTER_SCENE(ForcesTest);
 }
 
 void App::Run()

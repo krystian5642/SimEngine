@@ -30,6 +30,7 @@ namespace SceneNames
     SCENE_NAME HarmonicOscillator_MassiveSpring = "Harmonic Oscillator Massive Spring";
     SCENE_NAME SegmentComponentTest = "Segment Component Test";
     SCENE_NAME SwingTest = "Swing Test";
+    SCENE_NAME ForcesTest = "Forces Test";
 }
 
 class FallingBallsScene : public Scene
@@ -189,4 +190,45 @@ public:
 
 private:
     Swing* swing;
+};
+
+class ForcesTestScene : public Scene
+{
+public:
+    ForcesTestScene(const std::string& name = SceneNames::ForcesTest);
+
+    void Tick(float deltaTime) override;
+    
+    void DrawUI() override;
+    
+private:
+    MeshEntity* ball1;
+    MeshEntity* ball2;
+    
+    MeshEntity* ball3;
+    
+    VectorVisualizerComponent* F1Visualizer;
+    VectorVisualizerComponent* F2Visualizer;
+    
+    VectorVisualizerComponent* V1xVisualizer;
+    VectorVisualizerComponent* V1yVisualizer;
+    VectorVisualizerComponent* V1Visualizer;
+    
+    VectorVisualizerComponent* V2xVisualizer;
+    VectorVisualizerComponent* V2yVisualizer;
+    VectorVisualizerComponent* V2Visualizer;
+    
+    CameraComponent* camera;
+    
+    SegmentComponent* segment;
+    
+    glm::vec3 V1{0.0f};
+    float mass1{1.0f};
+    
+    glm::vec3 V2{0.0f};
+    float mass2{2.0f};
+    
+    glm::vec3 impulseVelocityChange{0.0f, 5.0f, 0.0f};
+    
+    glm::vec3 prevCenterOfMassPos{0.0f};
 };

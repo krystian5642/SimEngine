@@ -21,7 +21,7 @@ public:
         float seatMass{10.0f};
         float initialLenght{1.5f};
         float gravity{-9.81f};
-        float airResistance{5.0f};
+        float airResistance{10000.0f};
         bool useGravity{true};
         bool useAirResistance{true};
     };

@@ -73,7 +73,7 @@ void Swing::Tick(float deltaTime)
     
     if (physicsData.useAirResistance)
     {
-        const glm::vec3 airResistanceForce = -velocity * physicsData.airResistance;
+        const glm::vec3 airResistanceForce = -velocity * physicsData.airResistance * deltaTime;
         totalForce += airResistanceForce;
     }
     
