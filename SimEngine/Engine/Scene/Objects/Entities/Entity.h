@@ -24,15 +24,20 @@ public:
     void DestroyChild(ObjectBase* child) override;
     
     void Move(const glm::vec3& moveDelta);
+    void Rotate(const glm::vec3& rotateDelta);
     void Rotate(float rotationDelta, const glm::vec3& axis);
     void Scale(const glm::vec3& scaleDelta);
     
+    void SetRotationMode(RotationMode newRotationMode);
     void SetPosition(const glm::vec3& newPosition);
-    void SetOrientation(const glm::quat& newOrientation);
+    void SetEulerRotation(const glm::vec3& newRotation);
+    void SetQuatRotation(const glm::quat& newQuatRotation);
     void SetScale(const glm::vec3& newScale);
     
+    RotationMode GetRotationMode() const { return rootComponent->GetRotationMode(); }
     const glm::vec3& GetPosition() const { return rootComponent->GetPosition(); }
-    const glm::quat& GetOrientation() const { return rootComponent->GetOrientation(); }
+    const glm::vec3& GetEulerRotation() const { return rootComponent->GetEulerRotation(); }
+    const glm::quat& GetQuatRotation() const { return rootComponent->GetQuatRotation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }
     
     virtual bool CanMove() const { return true; }

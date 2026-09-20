@@ -2,6 +2,7 @@
 
 #include "Scene/DefaultScene.h"
 
+class VectorVisualizerComponent;
 class BoxComponent;
 class Entity;
 
@@ -24,4 +25,6 @@ public:
 private:
     Entity* rigidBody;
     BoxComponent* box;
+    
+    VectorVisualizerComponent* omegaVis;
 };

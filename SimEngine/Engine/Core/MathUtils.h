@@ -1,7 +1,20 @@
 ﻿#pragma once
 
+enum class RotationMode
+{
+    EulerXYZ,
+    Quaternion
+};
+
 struct Transform
 {
+    void SetRotationMode(RotationMode newRotationMode)
+    {
+        rotationMode = newRotationMode;
+        shouldUpdateModelMatrix = true;
+    }
+    RotationMode GetRotationMode() const { return rotationMode; }
+    
     void SetPosition(const glm::vec3& newPosition)
     {
         position = newPosition;
@@ -9,12 +22,23 @@ struct Transform
     }
     const glm::vec3& GetPosition() const { return position; }
     
-    void SetOrientation(const glm::quat& newOrientation)
+    void SetQuatRotation(const glm::quat& newRotation)
     {
-        orientation = newOrientation;
+        assert(rotationMode == RotationMode::Quaternion);
+        
+        quatRotation = newRotation;
         shouldUpdateModelMatrix = true;
     }
-    const glm::quat& GetOrientation() const { return orientation; }
+    const glm::quat& GetQuatRotation() const { return quatRotation; }
+    
+    void SetEulerRotation(const glm::vec3& newEulerRotation)
+    {
+        assert(rotationMode == RotationMode::EulerXYZ);
+        
+        eulerRotation = newEulerRotation;
+        shouldUpdateModelMatrix = true;
+    }
+    const glm::vec3& GetEulerRotation() const { return eulerRotation; }
     
     void SetScale(const glm::vec3& newScale)
     {
@@ -39,14 +63,45 @@ private:
         cachedModelMatrix = glm::mat4(1.0f);
 
         cachedModelMatrix = glm::translate(cachedModelMatrix, position);
-        cachedModelMatrix *= glm::mat4_cast(orientation);
+        
+        switch (rotationMode)
+        {
+            case RotationMode::EulerXYZ:
+                {
+                    cachedModelMatrix = glm::rotate(cachedModelMatrix
+                        , glm::radians(eulerRotation.z)
+                        , glm::vec3(0.0f, 0.0f, 1.0f));
+                    
+                    cachedModelMatrix = glm::rotate(cachedModelMatrix
+                        , glm::radians(eulerRotation.y)
+                        , glm::vec3(0.0f, 1.0f, 0.0f));
+                    
+                    cachedModelMatrix = glm::rotate(cachedModelMatrix
+                        , glm::radians(eulerRotation.x)
+                        , glm::vec3(1.0f, 0.0f, 0.0f));      
+                    
+                    break;
+                }
+            
+            case RotationMode::Quaternion:
+                {
+                    cachedModelMatrix *= glm::mat4_cast(quatRotation);
+                    break;
+                }
+            default:
+                throw std::runtime_error("Invalid rotation mode");
+        }
+        
         cachedModelMatrix = glm::scale(cachedModelMatrix, scale);
         
         shouldUpdateModelMatrix = false;
     }
     
+    RotationMode rotationMode{RotationMode::EulerXYZ};
+    
     glm::vec3 position{};
-    glm::quat orientation = glm::identity<glm::quat>();
+    glm::vec3 eulerRotation{};
+    glm::quat quatRotation = glm::identity<glm::quat>();
     glm::vec3 scale{1.0f};
     
     mutable glm::mat4 cachedModelMatrix{glm::mat4(1.0f)};

@@ -24,6 +24,56 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
     }
 }
 
+void SceneComponent::Rotate(const glm::vec3& rotateDelta)
+{
+    if (MathUtils::IsNearlyZeroVector(rotateDelta))
+    {
+        return;
+    }
+    
+    transform.SetPosition(transform.GetEulerRotation() + rotateDelta);
+    UpdateVectors();
+
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->Rotate(rotateDelta);
+    }
+}
+
+void SceneComponent::SetRotationMode(RotationMode newRotationMode)
+{
+    transform.SetRotationMode(newRotationMode);
+    
+    UpdateVectors();
+
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->SetRotationMode(newRotationMode);
+    }
+}
+
+void SceneComponent::SetEulerRotation(const glm::vec3& newRotation)
+{
+    transform.SetEulerRotation(newRotation);
+    UpdateVectors();
+
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->SetEulerRotation(newRotation);
+    }
+}
+
+void SceneComponent::SetQuatRotation(const glm::quat& newQuatRotation)
+{
+    transform.SetQuatRotation(newQuatRotation);
+    UpdateVectors();
+
+    for (const auto& attachedComponent : attachedComponents)
+    {
+        attachedComponent->SetQuatRotation(newQuatRotation);
+    }
+}
+
 void SceneComponent::Rotate(float rotationDelta, const glm::vec3& axis)
 {
     if (MathUtils::IsNearlyZeroVector(axis))
@@ -32,7 +82,7 @@ void SceneComponent::Rotate(float rotationDelta, const glm::vec3& axis)
     }
     
     const glm::quat rot = glm::angleAxis(rotationDelta, glm::normalize(axis));
-    transform.SetOrientation(transform.GetOrientation() * rot);
+    transform.SetQuatRotation(transform.GetQuatRotation() * rot);
     
     UpdateVectors();
     
@@ -62,13 +112,6 @@ void SceneComponent::SetPosition(const glm::vec3& newPosition)
 {
     const auto moveDelta = newPosition - transform.GetPosition();
     Move(moveDelta);
-}
-
-void SceneComponent::SetOrientation(const glm::quat& newOrientation)
-{
-    transform.SetOrientation(newOrientation);
-    
-    UpdateVectors();
 }
 
 void SceneComponent::SetScale(const glm::vec3& newScale)

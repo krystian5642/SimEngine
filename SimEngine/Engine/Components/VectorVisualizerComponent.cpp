@@ -70,8 +70,8 @@ void VectorVisualizerComponent::SetDirection(const glm::vec3& newDirection)
     const float scale = scaleLenghtFactor * glm::length(newDirection);
     cylinderTransform.SetScale({scale, scaleFactor, scaleFactor});
         
-    /*const glm::vec3 newRotation = MathUtils::GetRotationFromDirection(newDirection);
-    cylinderTransform.SetRotation(newRotation);
+    const glm::vec3 newRotation = MathUtils::GetRotationFromDirection(newDirection);
+    cylinderTransform.SetEulerRotation(newRotation);
     
     auto modelMatrix = glm::mat4(1.0f);
         
@@ -80,8 +80,8 @@ void VectorVisualizerComponent::SetDirection(const glm::vec3& newDirection)
     
     glm::vec3 newPosition{scale, 0.0f, 0.0f};
     newPosition = glm::mat3(modelMatrix) * newPosition;
-    coneTransform.SetCartesianPosition(newPosition + cylinderTransform.GetCartesianPosition());
+    coneTransform.SetPosition(newPosition + cylinderTransform.GetPosition());
     
-    coneTransform.SetRotation(newRotation);
-    coneTransform.SetScale({scaleFactor, scaleFactor, scaleFactor});*/
+    coneTransform.SetEulerRotation(newRotation);
+    coneTransform.SetScale({scaleFactor, scaleFactor, scaleFactor});
 }

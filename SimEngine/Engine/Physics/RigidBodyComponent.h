@@ -34,6 +34,8 @@ public:
     void MoveParent(const glm::vec3& moveDelta);
     void RotateParent(float rotationDelta, const glm::vec3& axis);
     
+    const VelocityData& GetVelocityData() const { return velocity; }
+    
     GravityData gravityData;
     
 protected:

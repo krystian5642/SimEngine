@@ -33,20 +33,29 @@ void App::Run()
     
     auto win = &window;
     
-    ImGui_ImplGlfw_InitForOpenGL(win->GetGLFWWindow(), true);
+    ImGui_ImplGlfw_InitForOpenGL(win->GetGLFWWindow()
+        , true);
+    
     ImGui_ImplOpenGL3_Init("#version 460 core");
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = 1.5f;
+    
     lastFrameTime = glfwGetTime();
     while (!window.ShouldClose())
     {
         double currentFrameTime = glfwGetTime();
-        float deltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
+        
+        float deltaTime = static_cast<float>
+        (currentFrameTime - lastFrameTime);
+        
         lastFrameTime = currentFrameTime;
         
         deltaTime = std::min(deltaTime, maxDeltaTime);
         
         window.Update();
-        if (glfwGetWindowAttrib(window.GetGLFWWindow(), GLFW_ICONIFIED) != 0)
+        if (glfwGetWindowAttrib(window.GetGLFWWindow()
+            , GLFW_ICONIFIED) != 0)
         {
             ImGui_ImplGlfw_Sleep(10);
             continue;
@@ -68,22 +77,34 @@ void App::Run()
         
         ImGui::Text("Stats");
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::Text("Tick Time: %.3f ms", (tickTime2 - tickTime1) * 1000.0f);
-        ImGui::Text("Render Time: %.3f ms", (renderTime2 - renderTime1) * 1000.0f);
-        ImGui::Text("Total time: %.3f ms", (renderTime2 - tickTime1) * 1000.0f);
+        
+        ImGui::Text("Tick Time: %.3f ms", 
+            (tickTime2 - tickTime1) * 1000.0f);
+        
+        ImGui::Text("Render Time: %.3f ms"
+            , (renderTime2 - renderTime1) * 1000.0f);
+        
+        ImGui::Text("Total time: %.3f ms"
+            , (renderTime2 - tickTime1) * 1000.0f);
+        
         ImGui::Separator();
         
         auto currentScene = SceneManager::GetCurrentScene();
         
-        ImGui::Text("Object count: %zu", currentScene->GetObjectCount());
+        ImGui::Text("Object count: %zu"
+            , currentScene->GetObjectCount());
         
-        const auto& cameraPosition = currentScene->GetCameraPosition();
+        const auto& cameraPosition 
+            = currentScene->GetCameraPosition();
         
         float pitch, yaw;
         currentScene->GetCameraRotation(pitch, yaw);
         
-        ImGui::Text("Camera position: (%.3f, %.3f, %.3f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-        ImGui::Text("Camera rotation: (pitch %.3f, yaw %.3f)", pitch, yaw);
+        ImGui::Text("Camera position: (%.3f, %.3f, %.3f)"
+            , cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        
+        ImGui::Text("Camera rotation: (pitch %.3f, yaw %.3f)"
+            , pitch, yaw);
         
         ImGui::Separator();
         if (ImGui::Button(isPaused ? "Resume" : "Pause"))
@@ -100,12 +121,14 @@ void App::Run()
         
         ImGui::Separator();
         
-        ImGui::Text("Current scene: %s", currentScene->GetName().c_str());
+        ImGui::Text("Current scene: %s"
+            , currentScene->GetName().c_str());
         
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Test Scenes"))
         {
-            const auto scenes = SceneManager::GetSceneNames();
+            const auto scenes 
+                = SceneManager::GetSceneNames();
             for (const auto& scene : scenes)
             {
                 if (ImGui::Button(scene.c_str()))

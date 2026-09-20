@@ -12,6 +12,8 @@ void RigidBodyComponent::Init()
     MeshComponent::Init();
     
     parentEntity = dynamic_cast<Entity*>(parent);
+    parentEntity->SetRotationMode(RotationMode::Quaternion);
+    
     centerOfMass = parentEntity->GetPosition();
     
     RecalculateInertiaTensor();

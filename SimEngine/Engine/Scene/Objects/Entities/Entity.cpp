@@ -73,6 +73,21 @@ void Entity::Move(const glm::vec3& moveDelta)
     });
 }
 
+void Entity::Rotate(const glm::vec3& rotateDelta)
+{
+    if (MathUtils::IsNearlyZeroVector(rotateDelta))
+    {
+        return;    
+    }
+    
+    rootComponent->Rotate(rotateDelta);
+    
+    childEntities.ForEach([rotateDelta](Entity* child, int index)
+    {
+        child->Rotate(rotateDelta);
+    });
+}
+
 void Entity::Rotate(float rotationDelta, const glm::vec3& axis)
 {
     if (MathUtils::IsNearlyZeroVector(axis))
@@ -88,16 +103,6 @@ void Entity::Rotate(float rotationDelta, const glm::vec3& axis)
     });
 }
 
-void Entity::SetOrientation(const glm::quat& newOrientation)
-{
-    rootComponent->SetOrientation(newOrientation);
-    
-    childEntities.ForEach([&newOrientation](Entity* child, int index)
-    {
-        child->SetOrientation(newOrientation);
-    });
-}
-
 void Entity::Scale(const glm::vec3& scaleDelta)
 {
     rootComponent->Scale(scaleDelta);
@@ -108,6 +113,16 @@ void Entity::Scale(const glm::vec3& scaleDelta)
     });
 }
     
+void Entity::SetRotationMode(RotationMode newRotationMode)
+{
+    rootComponent->SetRotationMode(newRotationMode);
+    
+    childEntities.ForEach([newRotationMode](Entity* child, int index)
+    {
+        child->SetRotationMode(newRotationMode);
+    });
+}
+
 void Entity::SetPosition(const glm::vec3& newPosition)
 {
     rootComponent->SetPosition(newPosition);
@@ -117,7 +132,27 @@ void Entity::SetPosition(const glm::vec3& newPosition)
         child->SetPosition(newPosition);
     });
 }
+
+void Entity::SetEulerRotation(const glm::vec3& newRotation)
+{
+    rootComponent->SetEulerRotation(newRotation);
     
+    childEntities.ForEach([newRotation](Entity* child, int index)
+    {
+        child->SetEulerRotation(newRotation);
+    });
+}
+
+void Entity::SetQuatRotation(const glm::quat& newQuatRotation)
+{
+    rootComponent->SetQuatRotation(newQuatRotation);
+    
+    childEntities.ForEach([newQuatRotation](Entity* child, int index)
+    {
+        child->SetQuatRotation(newQuatRotation);
+    });
+}
+
 void Entity::SetScale(const glm::vec3& newScale)
 {
     rootComponent->SetScale(newScale);
