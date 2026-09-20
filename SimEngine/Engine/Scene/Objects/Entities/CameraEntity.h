@@ -9,7 +9,7 @@ class CameraComponent;
 class CameraEntity : public Entity
 {
 public:
-    CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name);
+    CameraEntity(const SceneObjectParams& params);
     
     void MoveForward(const InputData& inputData);
     void MoveBackward(const InputData& inputData);

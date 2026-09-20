@@ -5,6 +5,7 @@
 class Component : public SceneObject
 {
 public:
-    Component(ObjectBase* parent, Scene* scene, const std::string& name) : SceneObject(parent, scene, name) {}
+    using SceneObject::SceneObject;
+    
     virtual ~Component() = 0 {}
 };

@@ -6,7 +6,7 @@
 class SceneComponent : public RenderComponent
 {
 public:
-    SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    SceneComponent(const SceneObjectParams& params);
     
     void Draw() const override {}
 

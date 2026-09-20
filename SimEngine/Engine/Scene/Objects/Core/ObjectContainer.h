@@ -11,7 +11,7 @@ public:
     template <class ObjectClass>
     ObjectClass* AddObject(ObjectBase* parent, Scene* scene, bool isInitialized, const std::string& name)
     {
-        auto newObject = std::make_unique<ObjectClass>(parent, scene, name);
+        auto newObject = std::make_unique<ObjectClass>(SceneObjectParams{parent, scene, name});
         auto rawPtr = newObject.get();
         if (isInitialized)
         {

@@ -6,7 +6,7 @@
 class MeshEntity : public Entity
 {
 public:
-    MeshEntity(ObjectBase* parent, Scene* scene, const std::string& name);
+    MeshEntity(const SceneObjectParams& params);
     
     MeshComponent* meshComponent;
 };

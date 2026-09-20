@@ -4,8 +4,8 @@
 #include "Scene/Scene.h"
 #include "Rendering/Core/Shader.h"
 
-DirectionalLightObject::DirectionalLightObject(ObjectBase* parent, Scene* scene, const std::string& name)
-    : LightObjectBase(parent, scene, name)
+DirectionalLightObject::DirectionalLightObject(const SceneObjectParams& params)
+    : LightObjectBase(params)
 {
     lightCount++;
     

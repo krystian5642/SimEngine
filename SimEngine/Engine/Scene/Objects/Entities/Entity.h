@@ -14,12 +14,14 @@ class Component;
 class Entity : public SceneObject
 {
 public:
-    Entity(ObjectBase* parent, Scene* scene, const std::string& name);
+    Entity(const SceneObjectParams& params);
   
     void Init() override;
     void Start() override;
     void Tick(float deltaTime) override;
     void OnDestroy() override;
+    
+    void DrawUI() override;
     
     void DestroyChild(ObjectBase* child) override;
     

@@ -14,7 +14,7 @@ namespace UniformNames
 class PointLightObject : public LightObjectBase
 {
 public:
-    PointLightObject(ObjectBase* parent, Scene* scene, const std::string& name);
+    PointLightObject(const SceneObjectParams& params);
     ~PointLightObject() override;
 
     void Init() override;

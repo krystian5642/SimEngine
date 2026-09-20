@@ -2,9 +2,7 @@
 
 #include "Scene/DefaultScene.h"
 
-class VectorVisualizerComponent;
-class BoxComponent;
-class Entity;
+class CompoundRigidBody;
 
 #define SCENE_NAME inline const std::string
 
@@ -23,8 +21,5 @@ public:
     void DrawUI() override;
     
 private:
-    Entity* rigidBody;
-    BoxComponent* box;
-    
-    VectorVisualizerComponent* omegaVis;
+    CompoundRigidBody* rigidBody;
 };

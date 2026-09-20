@@ -8,7 +8,7 @@ class Material;
 class MeshComponent : public SceneComponent
 {
 public:
-    MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    using SceneComponent::SceneComponent;
 
     void Draw() const override;
     

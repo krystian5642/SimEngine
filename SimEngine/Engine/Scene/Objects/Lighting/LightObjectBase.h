@@ -15,8 +15,7 @@ struct LightData
 class LightObjectBase : public SceneObject
 {
 public:
-    LightObjectBase(ObjectBase* parent, Scene* scene, const std::string& name);
-    virtual ~LightObjectBase() {}
+    using SceneObject::SceneObject;
 
     virtual void Use(const Shader* shader) const = 0;
     

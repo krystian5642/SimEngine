@@ -8,7 +8,7 @@ class Line;
 class LineComponent : public RenderComponent
 {
 public:
-    LineComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    LineComponent(const SceneObjectParams& params);
     
     void Tick(float deltaTime) override;
     void Draw() const override;

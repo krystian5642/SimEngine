@@ -2,7 +2,16 @@
 
 #include "ObjectBase.h"
 
+#define GENERATE_CONSTRUCTOR(ClassName, DerivedClassName) \
+
 class SceneObject;
+
+struct SceneObjectParams
+{
+    ObjectBase* parent;
+    Scene* scene;
+    const std::string& name;
+};
 
 struct SceneObjectHandle
 {
@@ -17,9 +26,9 @@ class SceneObject : public ObjectBase
 {
     friend class Scene;
 public:
-    SceneObject(ObjectBase* parent, Scene* scene, const std::string& name);
+    SceneObject(const SceneObjectParams& params);
     
-    virtual void Init() {}
+    virtual void Init() { isInitialized = true; };
     virtual void Start() {}
     virtual void Tick(float deltaTime) {}
     virtual void OnDestroy();
@@ -29,6 +38,7 @@ public:
     void Destroy();
     
     const SceneObjectHandle& GetHandle() const { return handle; }
+    bool GetIsInitialized() const { return isInitialized; };
     
     bool tickWhenPaused{false};
     bool openUIByDefault{false};
@@ -38,4 +48,6 @@ protected:
     
 private:
     SceneObjectHandle handle;
+    
+    bool isInitialized{false};
 };

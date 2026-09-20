@@ -2,8 +2,8 @@
 
 #include "Scene/Objects/Entities/Entity.h"
 
-LineComponent::LineComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : RenderComponent(parent, scene, name)
+LineComponent::LineComponent(const SceneObjectParams& params)
+    : RenderComponent(params)
 {
     line = std::make_unique<Line>();
 }

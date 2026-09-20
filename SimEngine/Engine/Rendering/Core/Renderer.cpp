@@ -290,6 +290,11 @@ void Renderer::Render(const Scene* scene) const
     const auto& renderData = scene->GetRenderData();
     for (auto* renderComponent : renderData.renderComponents)
     {
+        if (!renderComponent->visible)
+        {
+            continue;
+        }
+        
         renderComponent->Draw();
     }
 }

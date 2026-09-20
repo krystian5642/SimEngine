@@ -7,8 +7,8 @@
 
 #include "Core/App.h"
 
-CameraEntity::CameraEntity(ObjectBase* parent, Scene* scene, const std::string& name)
-    : Entity(parent, scene, name)
+CameraEntity::CameraEntity(const SceneObjectParams& params)
+    : Entity(params)
 {
     cameraComponent = AddComponent<CameraComponent>();
     

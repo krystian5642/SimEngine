@@ -17,7 +17,7 @@ namespace UniformNames
 class DirectionalLightObject : public LightObjectBase
 {
 public:
-    DirectionalLightObject(ObjectBase* parent, Scene* scene, const std::string& name);
+    DirectionalLightObject(const SceneObjectParams& params);
     ~DirectionalLightObject() override;
 
     void Init() override;

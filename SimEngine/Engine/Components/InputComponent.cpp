@@ -2,8 +2,8 @@
 
 #include "Core/App.h"
 
-InputComponent::InputComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : Component(parent, scene, name)
+InputComponent::InputComponent(const SceneObjectParams& params)
+    : Component(params)
 {
     tickWhenPaused = true;
 }

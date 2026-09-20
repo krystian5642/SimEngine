@@ -8,8 +8,8 @@
 #include "Scene/SceneManager.h"
 #include "Scene/Objects/Entities/Entity.h"
 
-VectorVisualizerComponent::VectorVisualizerComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : RenderComponent(parent, scene, name)
+VectorVisualizerComponent::VectorVisualizerComponent(const SceneObjectParams& params)
+    : RenderComponent(params)
 {
     ShaderData shaderData;
     shaderData.vertShader = ShaderData::shadersFolder + "arrow.vert";

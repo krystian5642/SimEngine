@@ -37,7 +37,7 @@ private:
 class InputComponent : public Component
 {
 public:
-    InputComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    InputComponent(const SceneObjectParams& params);
  
     void Tick(float deltaTime) override;
 

@@ -2,11 +2,12 @@
 
 #include <GLFW/glfw3.h>
 
+#include "imgui.h"
 #include "Components/SceneComponent.h"
 #include "Core/App.h"
 
-Entity::Entity(ObjectBase* parent, Scene* scene, const std::string& name)
-    : SceneObject(parent, scene, name)
+Entity::Entity(const SceneObjectParams& params)
+    : SceneObject(params)
 {
     rootComponent = AddComponent<SceneComponent>("root");
 }
@@ -44,7 +45,32 @@ void Entity::OnDestroy()
     components.OnDestroy();
     childEntities.OnDestroy();
 }
+
+void Entity::DrawUI()
+{
+    SceneObject::DrawUI();
     
+    components.ForEach([](Component* component, int index)
+    {
+        const std::string& name = component->GetName();
+        const std::string label = name.empty() ? ("Component " + std::to_string(index)) : name;
+
+        ImGui::PushID(index);
+        
+        if (component->openUIByDefault)
+        {
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        }
+        
+        if (ImGui::TreeNode(label.c_str()))
+        {
+            component->DrawUI();
+            ImGui::TreePop();
+        }
+        ImGui::PopID();
+    });
+}
+
 void Entity::DestroyChild(ObjectBase* child)
 {
     auto* entity = dynamic_cast<Entity*>(child);

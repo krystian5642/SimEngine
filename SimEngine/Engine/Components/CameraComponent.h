@@ -14,7 +14,7 @@ struct PerspectiveProjectionData
 class CameraComponent : public Component
 {
 public:
-    CameraComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    CameraComponent(const SceneObjectParams& params);
     
     void Move(const glm::vec3& moveDelta);
     void Rotate(float pitchDelta, float yawDelta);

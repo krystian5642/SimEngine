@@ -3,8 +3,8 @@
 #include "MeshComponent.h"
 #include "Core/App.h"
 
-CameraComponent::CameraComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : Component(parent, scene, name)
+CameraComponent::CameraComponent(const SceneObjectParams& params)
+    : Component(params)
 {
     UpdateView();
     
@@ -27,6 +27,7 @@ void CameraComponent::Rotate(float pitchDelta, float yawDelta)
     
     SetRotation(pitch - pitchDelta, yaw - yawDelta);
 }
+
 void CameraComponent::SetPosition(const glm::vec3& newPosition)
 {
     position = newPosition;

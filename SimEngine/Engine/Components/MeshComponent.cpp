@@ -5,11 +5,6 @@
 #include "Rendering/Core/Mesh.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
-
-MeshComponent::MeshComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : SceneComponent(parent, scene, name)
-{
-}
     
 void MeshComponent::Draw() const
 {

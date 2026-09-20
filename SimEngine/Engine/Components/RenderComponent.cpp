@@ -1,11 +1,7 @@
 ﻿#include "RenderComponent.h"
 
+#include "imgui.h"
 #include "Scene/Scene.h"
-
-RenderComponent::RenderComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : Component(parent, scene, name)
-{
-}
 
 void RenderComponent::Init()
 {
@@ -15,4 +11,11 @@ void RenderComponent::Init()
 void RenderComponent::OnDestroy()
 {
     scene->UnregisterRenderComponent(this);
+}
+
+void RenderComponent::DrawUI()
+{
+    Component::DrawUI();
+    
+    ImGui::Checkbox("Visible", &visible);
 }

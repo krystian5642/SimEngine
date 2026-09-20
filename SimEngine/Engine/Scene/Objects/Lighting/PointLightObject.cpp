@@ -4,8 +4,8 @@
 #include "Rendering/Core/Shader.h"
 #include "Scene/Scene.h"
 
-PointLightObject::PointLightObject(ObjectBase* parent, Scene* scene, const std::string& name)
-    : LightObjectBase(parent, scene, name)
+PointLightObject::PointLightObject(const SceneObjectParams& params)
+    : LightObjectBase(params)
 {
     lightCount++;
     

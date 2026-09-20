@@ -5,12 +5,11 @@ SceneObject* SceneObjectHandle::Resolve() const
 {
     return scene->GetObjectByHandle(*this);
 }
-    
-SceneObject::SceneObject(ObjectBase* parent, Scene* scene, const std::string& name)
-    : ObjectBase(parent, name)
-    , scene(scene)
+
+SceneObject::SceneObject(const SceneObjectParams& params)
+    : ObjectBase(params.parent, params.name)
+    , scene(params.scene)
 {
-    handle = scene->RegisterObject(this);
 }
 
 void SceneObject::Destroy()

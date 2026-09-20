@@ -14,7 +14,7 @@ namespace UniformNames
 class VectorVisualizerComponent : public RenderComponent
 {
 public:
-    VectorVisualizerComponent(ObjectBase* parent, Scene* scene, const std::string& name);
+    VectorVisualizerComponent(const SceneObjectParams& params);
     
     void Tick(float deltaTime) override;
     

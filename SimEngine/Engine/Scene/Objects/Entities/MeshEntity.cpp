@@ -2,8 +2,8 @@
 
 #include "Components/MeshComponent.h"
 
-MeshEntity::MeshEntity(ObjectBase* parent, Scene* scene, const std::string& name)
-    : Entity(parent, scene, name)
+MeshEntity::MeshEntity(const SceneObjectParams& params)
+    : Entity(params)
 {
     meshComponent = AddComponent<MeshComponent>();
 }

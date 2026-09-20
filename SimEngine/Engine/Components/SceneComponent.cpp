@@ -2,8 +2,8 @@
 
 #include "Core/MathUtils.h"
 
-SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::string& name)
-    : RenderComponent(parent, scene, name)
+SceneComponent::SceneComponent(const SceneObjectParams& params)
+    : RenderComponent(params)
 {
     UpdateVectors();
 }
