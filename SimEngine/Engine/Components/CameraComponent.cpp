@@ -64,14 +64,14 @@ void CameraComponent::UpdateView()
     const float yawRadians = glm::radians(yaw);
     const float pitchRadians = glm::radians(pitch);
 
-    forward.x = sin(yawRadians);
+    forward.x = sin(yawRadians) * cos(pitchRadians);
     forward.y = sin(pitchRadians);
-    forward.z = cos(yawRadians) * cos(pitchRadians);
+    forward.z = -cos(yawRadians) * cos(pitchRadians);
 
     forward = glm::normalize(forward);
 
-    right = glm::cross(forward, {0.0f, 1.0f, 0.0f});
-    right = glm::normalize(right);
+    constexpr glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    right = glm::cross(forward, worldUp);
  
     up = glm::cross(right, forward);
 

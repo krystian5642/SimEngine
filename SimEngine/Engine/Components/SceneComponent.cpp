@@ -6,8 +6,6 @@ SceneComponent::SceneComponent(ObjectBase* parent, Scene* scene, const std::stri
     : RenderComponent(parent, scene, name)
 {
     UpdateVectors();
-    
-    coordinateSystem = std::make_unique<CartesianCoordinateSystem>();
 }
 
 void SceneComponent::Move(const glm::vec3& moveDelta)
@@ -17,7 +15,7 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
         return;
     }
     
-    transform.SetCartesianPosition(coordinateSystem->Move(moveDelta));
+    transform.SetPosition(transform.GetPosition() + moveDelta);
     UpdateVectors();
 
     for (const auto& attachedComponent : attachedComponents)
@@ -26,29 +24,21 @@ void SceneComponent::Move(const glm::vec3& moveDelta)
     }
 }
 
-void SceneComponent::Rotate(const glm::vec3& rotationDelta)
+void SceneComponent::Rotate(float rotationDelta, const glm::vec3& axis)
 {
-    if (MathUtils::IsNearlyZeroVector(rotationDelta))
+    if (MathUtils::IsNearlyZeroVector(axis))
     {
         return;
     }
     
-    transform.SetRotation(transform.GetRotation() + rotationDelta);
+    const glm::quat rot = glm::angleAxis(rotationDelta, glm::normalize(axis));
+    transform.SetOrientation(transform.GetOrientation() * rot);
+    
     UpdateVectors();
     
     for (const auto& attachedComponent : attachedComponents)
     {
-        attachedComponent->Rotate(rotationDelta);
-    }
-}
-
-void SceneComponent::Rotate(const glm::quat& rotationDelta)
-{
-    UpdateVectors();
-
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->Rotate(rotationDelta);
+        attachedComponent->Rotate(rotationDelta, axis);
     }
 }
 
@@ -70,46 +60,21 @@ void SceneComponent::Scale(const glm::vec3& scaleDelta)
 
 void SceneComponent::SetPosition(const glm::vec3& newPosition)
 {
-    const auto moveDelta = newPosition - coordinateSystem->GetPosition();
+    const auto moveDelta = newPosition - transform.GetPosition();
     Move(moveDelta);
 }
 
-void SceneComponent::SetRotation(const glm::vec3& newRotation)
+void SceneComponent::SetOrientation(const glm::quat& newOrientation)
 {
-    const auto rotationDelta = newRotation - transform.GetRotation();
-    Rotate(rotationDelta);
+    transform.SetOrientation(newOrientation);
+    
+    UpdateVectors();
 }
 
 void SceneComponent::SetScale(const glm::vec3& newScale)
 {
     const auto scaleDelta = newScale - transform.GetScale();
     Scale(scaleDelta);
-}
-
-void SceneComponent::SetCoordinateSystemType(CoordinateSystemType newType)
-{
-    switch (newType)
-    {
-    case CoordinateSystemType::Cartesian:
-        coordinateSystem = std::make_unique<CartesianCoordinateSystem>();
-        break;
-
-    case CoordinateSystemType::Cylindrical:
-        coordinateSystem = std::make_unique<CylindricalCoordinateSystem>();
-        break;
-        
-    case CoordinateSystemType::Spherical:
-        coordinateSystem = std::make_unique<SphericalCoordinateSystem>();
-        break;
-        
-    default:
-        throw std::runtime_error("Unknown coordinate system type");
-    }
-    
-    for (const auto& attachedComponent : attachedComponents)
-    {
-        attachedComponent->SetCoordinateSystemType(newType);
-    }
 }
 
 void SceneComponent::UpdateVectors()

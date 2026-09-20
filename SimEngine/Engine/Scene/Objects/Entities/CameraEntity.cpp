@@ -68,7 +68,7 @@ void CameraEntity::OnMouseMove(const InputData& inputData)
             return;
         }
         
-        cameraComponent->Rotate(pitchDelta, yawDelta);
+        cameraComponent->Rotate(pitchDelta, -yawDelta);
     }
 }
 

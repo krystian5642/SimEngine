@@ -16,23 +16,9 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::ForcesTest);
+    SceneManager::SetDefaultScene(SceneNames::RigidBodyTest);
     
-    REGISTER_SCENE(FallingBalls);
-    REGISTER_SCENE(Gravity);
-    REGISTER_SCENE(BallCollisions2D);
-    REGISTER_SCENE(BallCollisions3D);
-    REGISTER_SCENE(BallLauncher);
-    REGISTER_SCENE(CylindricalCoordinate);
-    REGISTER_SCENE(SphericalCoordinate);
-    REGISTER_SCENE(ArrowTest);
-    REGISTER_SCENE(CoriolisEffect);
-    REGISTER_SCENE(SpringTest);
-    REGISTER_SCENE(HarmonicOscillator_MasslessSpring);
-    REGISTER_SCENE(HarmonicOscillator_MassiveSpring);
-    REGISTER_SCENE(SegmentComponentTest);
-    REGISTER_SCENE(SwingTest);
-    REGISTER_SCENE(ForcesTest);
+    REGISTER_SCENE(RigidBodyTest);
 }
 
 void App::Run()

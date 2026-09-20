@@ -144,11 +144,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Components\SegmentComponent.cpp" />
-    <ClCompile Include="Engine\Components\SpringComponent.cpp" />
     <ClCompile Include="Engine\Components\VectorVisualizerComponent.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
-    <ClCompile Include="Engine\Components\CoordinateSystems\CoordinateSystems.cpp" />
     <ClCompile Include="Engine\Components\InputComponent.cpp" />
     <ClCompile Include="Engine\Components\LineComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
@@ -162,26 +159,18 @@
     <ClCompile Include="Engine\Core\Plot.cpp" />
     <ClCompile Include="Engine\Core\SimEngine.cpp" />
     <ClCompile Include="Engine\Core\Window.cpp" />
-    <ClCompile Include="Engine\ExampleScenes\BallLauncher.cpp" />
     <ClCompile Include="Engine\ExampleScenes\TestScenes.cpp" />
     <ClCompile Include="Engine\Managers\MaterialManager.cpp" />
     <ClCompile Include="Engine\Managers\MeshManager.cpp" />
-    <ClCompile Include="Engine\Physics\Collisions\PhysicsBoundsSystem.cpp" />
-    <ClCompile Include="Engine\Physics\Collisions\PhysicsCollisionSystem.cpp" />
-    <ClCompile Include="Engine\Physics\Gravity\GravitySystem.cpp" />
-    <ClCompile Include="Engine\Physics\Gravity\SimpleGravitySystem.cpp" />
-    <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.cpp" />
-    <ClCompile Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.cpp" />
-    <ClCompile Include="Engine\Physics\Objects\Swing.cpp" />
-    <ClCompile Include="Engine\Physics\PhysicsComponent.cpp" />
-    <ClCompile Include="Engine\Physics\PhysicsSystem.cpp" />
-    <ClCompile Include="Engine\Physics\PhysicsUtils.cpp" />
+    <ClCompile Include="Engine\Physics\RigidBodyComponent.cpp" />
+    <ClCompile Include="Engine\Physics\SphereComponent.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Line.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Material.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Mesh.cpp" />
     <ClCompile Include="Engine\Rendering\Core\MeshShader.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Renderer.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Shader.cpp" />
+    <ClCompile Include="Engine\Scene\DefaultScene.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Core\SceneObject.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Entities\CameraEntity.cpp" />
     <ClCompile Include="Engine\Scene\Objects\Entities\Entity.cpp" />
@@ -202,12 +191,9 @@
     <ClCompile Include="External\imgui\implot_items.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Components\SegmentComponent.h" />
-    <ClInclude Include="Engine\Components\SpringComponent.h" />
     <ClInclude Include="Engine\Components\VectorVisualizerComponent.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
-    <ClInclude Include="Engine\Components\CoordinateSystems\CoordinateSystems.h" />
     <ClInclude Include="Engine\Components\InputComponent.h" />
     <ClInclude Include="Engine\Components\LineComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
@@ -220,21 +206,12 @@
     <ClInclude Include="Engine\Core\PCH\pch.h" />
     <ClInclude Include="Engine\Core\Plot.h" />
     <ClInclude Include="Engine\Core\Window.h" />
-    <ClInclude Include="Engine\ExampleScenes\BallLauncher.h" />
     <ClInclude Include="Engine\ExampleScenes\TestScenes.h" />
     <ClInclude Include="Engine\Managers\AssetManager.h" />
     <ClInclude Include="Engine\Managers\MaterialManager.h" />
     <ClInclude Include="Engine\Managers\MeshManager.h" />
-    <ClInclude Include="Engine\Physics\Collisions\PhysicsBoundsSystem.h" />
-    <ClInclude Include="Engine\Physics\Collisions\PhysicsCollisionSystem.h" />
-    <ClInclude Include="Engine\Physics\Gravity\GravitySystem.h" />
-    <ClInclude Include="Engine\Physics\Gravity\SimpleGravitySystem.h" />
-    <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MassiveSpring.h" />
-    <ClInclude Include="Engine\Physics\Objects\HarmonicOscillator_MasslessSpring.h" />
-    <ClInclude Include="Engine\Physics\Objects\Swing.h" />
-    <ClInclude Include="Engine\Physics\PhysicsComponent.h" />
-    <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
-    <ClInclude Include="Engine\Physics\PhysicsUtils.h" />
+    <ClInclude Include="Engine\Physics\RigidBodyComponent.h" />
+    <ClInclude Include="Engine\Physics\SphereComponent.h" />
     <ClInclude Include="Engine\Rendering\Core\Line.h" />
     <ClInclude Include="Engine\Rendering\Core\Material.h" />
     <ClInclude Include="Engine\Rendering\Core\Mesh.h" />
@@ -242,6 +219,7 @@
     <ClInclude Include="Engine\Rendering\Core\Renderer.h" />
     <ClInclude Include="Engine\Rendering\Core\Shader.h" />
     <ClInclude Include="Engine\Rendering\UniformNames.h" />
+    <ClInclude Include="Engine\Scene\DefaultScene.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\ObjectBase.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\ObjectContainer.h" />
     <ClInclude Include="Engine\Scene\Objects\Core\SceneObject.h" />

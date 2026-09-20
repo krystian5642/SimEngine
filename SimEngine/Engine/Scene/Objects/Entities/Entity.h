@@ -24,20 +24,17 @@ public:
     void DestroyChild(ObjectBase* child) override;
     
     void Move(const glm::vec3& moveDelta);
-    void Rotate(const glm::vec3& rotationDelta);
-    void Rotate(const glm::quat& rotationDelta);
+    void Rotate(float rotationDelta, const glm::vec3& axis);
     void Scale(const glm::vec3& scaleDelta);
     
     void SetPosition(const glm::vec3& newPosition);
-    void SetRotation(const glm::vec3& newRotation);
+    void SetOrientation(const glm::quat& newOrientation);
     void SetScale(const glm::vec3& newScale);
     
-    const glm::vec3& GetPosition(bool getCartesianPosition = false) const { return rootComponent->GetPosition(getCartesianPosition); }
-    const glm::vec3& GetRotation() const { return rootComponent->GetRotation(); }
+    const glm::vec3& GetPosition() const { return rootComponent->GetPosition(); }
+    const glm::quat& GetOrientation() const { return rootComponent->GetOrientation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }
     
-    void SetCoordinateSystemType(CoordinateSystemType newType);
-
     virtual bool CanMove() const { return true; }
     
     template <class T>

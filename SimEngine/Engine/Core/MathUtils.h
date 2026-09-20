@@ -2,19 +2,19 @@
 
 struct Transform
 {
-    void SetCartesianPosition(const glm::vec3& newCartesianPosition)
+    void SetPosition(const glm::vec3& newPosition)
     {
-        cartesianPosition = newCartesianPosition;
+        position = newPosition;
         shouldUpdateModelMatrix = true;
     }
-    const glm::vec3& GetCartesianPosition() const { return cartesianPosition; }
+    const glm::vec3& GetPosition() const { return position; }
     
-    void SetRotation(const glm::vec3& newRotation)
+    void SetOrientation(const glm::quat& newOrientation)
     {
-        rotation = newRotation;
+        orientation = newOrientation;
         shouldUpdateModelMatrix = true;
     }
-    const glm::vec3& GetRotation() const { return rotation; }
+    const glm::quat& GetOrientation() const { return orientation; }
     
     void SetScale(const glm::vec3& newScale)
     {
@@ -38,19 +38,15 @@ private:
     {
         cachedModelMatrix = glm::mat4(1.0f);
 
-        cachedModelMatrix = glm::translate(cachedModelMatrix, cartesianPosition);
-        
-        cachedModelMatrix = glm::rotate(cachedModelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        cachedModelMatrix = glm::rotate(cachedModelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        cachedModelMatrix = glm::rotate(cachedModelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
+        cachedModelMatrix = glm::translate(cachedModelMatrix, position);
+        cachedModelMatrix *= glm::mat4_cast(orientation);
         cachedModelMatrix = glm::scale(cachedModelMatrix, scale);
         
         shouldUpdateModelMatrix = false;
     }
     
-    glm::vec3 cartesianPosition{};
-    glm::vec3 rotation{};
+    glm::vec3 position{};
+    glm::quat orientation = glm::identity<glm::quat>();
     glm::vec3 scale{1.0f};
     
     mutable glm::mat4 cachedModelMatrix{glm::mat4(1.0f)};

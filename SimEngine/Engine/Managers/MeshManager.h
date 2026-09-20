@@ -14,10 +14,14 @@ public:
 private:
     MeshManager();
 
-    static std::shared_ptr<Mesh> LoadCube();
+    // rigid bodies
     static std::shared_ptr<Mesh> LoadSphere();
-    static std::shared_ptr<Mesh> LoadPlane();
+    static std::shared_ptr<Mesh> LoadBox();
     static std::shared_ptr<Mesh> LoadCylinder();
+    static std::shared_ptr<Mesh> LoadCapsule();
+    static std::shared_ptr<Mesh> LoadPlane();
+    
+    // arrow
     static std::shared_ptr<Mesh> LoadArrowCylinder();
     static std::shared_ptr<Mesh> LoadArrowCone();
 };

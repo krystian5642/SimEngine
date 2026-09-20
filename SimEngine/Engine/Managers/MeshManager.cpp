@@ -77,22 +77,36 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& path, bool autoCe
 MeshManager::MeshManager() 
     : AssetManager<Mesh>()
 {
-    createAssetFuncs["cube"] = &MeshManager::LoadCube;
+    // rigid bodies
     createAssetFuncs["sphere"] = &MeshManager::LoadSphere;
-    createAssetFuncs["plane"] = &MeshManager::LoadPlane;
+    createAssetFuncs["box"] = &MeshManager::LoadBox;
     createAssetFuncs["cylinder"] = &MeshManager::LoadCylinder;
+    createAssetFuncs["capsule"] = &MeshManager::LoadCapsule;
+    createAssetFuncs["plane"] = &MeshManager::LoadPlane;
+    
+    // pointing arrow
     createAssetFuncs["arrow_cylinder"] = &MeshManager::LoadArrowCylinder;
     createAssetFuncs["arrow_cone"] = &MeshManager::LoadArrowCone;
 }
 
-std::shared_ptr<Mesh> MeshManager::LoadCube()
-{
-    return LoadMesh("Models/cube.obj");
-}
-
 std::shared_ptr<Mesh> MeshManager::LoadSphere()
 {
-    return LoadMesh("Models/sphere.obj");
+    return LoadMesh("Models/sphere.obj", false);
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadBox()
+{
+    return LoadMesh("Models/box.obj", false);
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadCylinder()
+{
+    return nullptr;
+}
+
+std::shared_ptr<Mesh> MeshManager::LoadCapsule()
+{
+    return nullptr;
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadPlane()
@@ -111,11 +125,6 @@ std::shared_ptr<Mesh> MeshManager::LoadPlane()
     };
     
     return std::make_shared<Mesh>(MeshData{vertices, indices});
-}
-
-std::shared_ptr<Mesh> MeshManager::LoadCylinder()
-{
-    return LoadMesh("Models/cylinder.obj", false);
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadArrowCylinder()

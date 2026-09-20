@@ -72,24 +72,29 @@ void Entity::Move(const glm::vec3& moveDelta)
         child->Move(moveDelta);
     });
 }
-    
-void Entity::Rotate(const glm::vec3& rotationDelta)
+
+void Entity::Rotate(float rotationDelta, const glm::vec3& axis)
 {
-    rootComponent->Rotate(rotationDelta);
-    
-    childEntities.ForEach([rotationDelta](Entity* child, int index)
+    if (MathUtils::IsNearlyZeroVector(axis))
     {
-        child->Rotate(rotationDelta);
+        return;
+    }
+    
+    rootComponent->Rotate(rotationDelta, axis);
+    
+    childEntities.ForEach([rotationDelta, axis](Entity* child, int index)
+    {
+        child->Rotate(rotationDelta, axis);
     });
 }
 
-void Entity::Rotate(const glm::quat& rotationDelta)
+void Entity::SetOrientation(const glm::quat& newOrientation)
 {
-    rootComponent->Rotate(rotationDelta);
+    rootComponent->SetOrientation(newOrientation);
     
-    childEntities.ForEach([rotationDelta](Entity* child, int index)
+    childEntities.ForEach([&newOrientation](Entity* child, int index)
     {
-        child->Rotate(rotationDelta);
+        child->SetOrientation(newOrientation);
     });
 }
 
@@ -113,16 +118,6 @@ void Entity::SetPosition(const glm::vec3& newPosition)
     });
 }
     
-void Entity::SetRotation(const glm::vec3& newRotation)
-{
-    rootComponent->SetRotation(newRotation);
-    
-    childEntities.ForEach([newRotation](Entity* child, int index)
-    {
-        child->SetRotation(newRotation);
-    });
-}
-    
 void Entity::SetScale(const glm::vec3& newScale)
 {
     rootComponent->SetScale(newScale);
@@ -130,15 +125,5 @@ void Entity::SetScale(const glm::vec3& newScale)
     childEntities.ForEach([newScale](Entity* child, int index)
     {
         child->SetScale(newScale);
-    });
-}
-
-void Entity::SetCoordinateSystemType(CoordinateSystemType newType)
-{
-    rootComponent->SetCoordinateSystemType(newType);
-    
-    childEntities.ForEach([newType](Entity* child, int index)
-    {
-        child->SetCoordinateSystemType(newType);
     });
 }

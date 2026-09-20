@@ -38,7 +38,7 @@ struct SceneObjectsData
 class Scene : public ObjectBase
 {
 public:
-    Scene(const std::string& name = "DefaultScene");
+    Scene(const std::string& name = "Empty Scene");
 
     virtual void Init();
     virtual void Start();
