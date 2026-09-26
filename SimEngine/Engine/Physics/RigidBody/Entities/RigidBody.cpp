@@ -37,21 +37,21 @@ void CompoundRigidBody::Init()
     centerOfMass *= invTotalMass;
 }
 
-void CompoundRigidBody::Tick(float deltaTime)
+void CompoundRigidBody::PhysicsTick(float physicsDeltaTime)
 {
-    Entity::Tick(deltaTime);
+    Entity::Tick(physicsDeltaTime);
     
     const glm::vec3 linearAcceleration = accumulatedForce * invTotalMass;
-    velocity.linearVelocity += linearAcceleration * deltaTime;
+    velocity.linearVelocity += linearAcceleration * physicsDeltaTime;
     
-    const glm::vec3 moveDelta = velocity.linearVelocity * deltaTime;
+    const glm::vec3 moveDelta = velocity.linearVelocity * physicsDeltaTime;
     Move(moveDelta);
     
     centerOfMass += moveDelta;
     
     const glm::vec3 angularAcceleration = invTotalInertiaTensor * (accumulatedTorque 
         - glm::cross(velocity.angularVelocity, totalInertiaTensor * velocity.angularVelocity));
-    velocity.angularVelocity += angularAcceleration * deltaTime;
+    velocity.angularVelocity += angularAcceleration * physicsDeltaTime;
     
     // const float rotationDelta = glm::length(velocity.angularVelocity) * deltaTime;
     // RotateParent(rotationDelta, velocity.angularVelocity)

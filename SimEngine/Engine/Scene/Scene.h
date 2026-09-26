@@ -40,6 +40,8 @@ class Scene : public ObjectBase
 public:
     Scene(const std::string& name = "Empty Scene");
 
+    static constexpr float physicsDeltaTime = 1.0f / 240.0f;
+    
     virtual void Init();
     virtual void Start();
     virtual void Tick(float deltaTime);
@@ -105,6 +107,8 @@ private:
     SceneObjectsData objectsData; // It is only used as a global handle when destroying objects
     
     CameraComponent* activeCamera{};
+    
+    float accumulatedPhysicsDeltaTime{0.0f};
     
     bool isInitialized{false};
 };

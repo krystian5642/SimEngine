@@ -22,7 +22,7 @@ public:
     RigidBodyShapeComponent* AddShape(const std::string& name = "Shape Component");
     
     void Init() override;
-    void Tick(float deltaTime) override;
+    void PhysicsTick(float physicsDeltaTime) override;
     
     void ApplyForce(const glm::vec3& force
         , bool velocityChange = true);

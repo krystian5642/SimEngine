@@ -30,6 +30,18 @@ void Scene::Start()
 void Scene::Tick(float deltaTime)
 {
     const auto isPaused = App::Get().isPaused;
+    if (!isPaused)
+    {
+        accumulatedPhysicsDeltaTime =
+            glm::min(0.3f, accumulatedPhysicsDeltaTime + deltaTime);
+        
+        while (accumulatedPhysicsDeltaTime > physicsDeltaTime)
+        {
+            objects.PhysicsTick(physicsDeltaTime);
+            accumulatedPhysicsDeltaTime -= physicsDeltaTime;
+        }
+    }
+    
     objects.Tick(deltaTime, isPaused);
 }
 

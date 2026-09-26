@@ -30,6 +30,7 @@ public:
     
     virtual void Init() { isInitialized = true; };
     virtual void Start() {}
+    virtual void PhysicsTick(float physicsDeltaTime) {}
     virtual void Tick(float deltaTime) {}
     virtual void OnDestroy();
     

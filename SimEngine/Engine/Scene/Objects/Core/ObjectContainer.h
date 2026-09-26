@@ -99,6 +99,14 @@ public:
         }
     }
     
+    void PhysicsTick(float physicsDeltaTime)
+    {
+        for (const auto& object : objects)
+        {
+            object->PhysicsTick(physicsDeltaTime);
+        }
+    }
+    
     void Tick(float deltaTime, bool isPaused)
     {
         for (const auto& object : objectsToAdd)
