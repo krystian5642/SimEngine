@@ -21,6 +21,4 @@ private:
     App();
     
     double lastFrameTime{};
-    
-    static constexpr auto maxDeltaTime = 1.0f / 60.0f;
 };

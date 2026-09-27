@@ -1,47 +1,42 @@
 ﻿#include "RigidBody.h"
-#include "Physics/RigidBody/Components/RigidBody/ShapeComponents.h"
-#include "Components/MeshComponent.h"
-#include "Components/LineComponent.h"
-#include "Components/VectorVisualizerComponent.h"
 
-CompoundRigidBody::CompoundRigidBody(const SceneObjectParams& params)
+#include "Components/VectorVisualizerComponent.h"
+#include "Physics/RigidBody/Components/RigidBody/ShapeComponents.h"
+
+RigidBody::RigidBody(const SceneObjectParams& params)
     : Entity(params)
 {
-    centerOfMassVisMesh = AddComponent<MeshComponent>("Center of Mass");
-    rotationAxisVisMesh = AddComponent<MeshComponent>("Rotation Axis");
+    box = AddComponent<BoxShapeComponent>("Box Shape");
+    box->SetSize({3.0f, 0.2f, 1.0f});
     
-    linearVelocityVisComp = AddComponent<VectorVisualizerComponent>("Linear Velocity");
-    angularVelocityVisComp = AddComponent<VectorVisualizerComponent>("Angular Velocity");
+    vis = AddComponent<VectorVisualizerComponent>();
+    vis->useParentLocationAsStart = true;
     
-    momentumVisComp = AddComponent<VectorVisualizerComponent>("Momentum");
-    angularMomentumVisComp = AddComponent<VectorVisualizerComponent>("Angular Momentum");
-    
-    centerOfMassVisLine = AddComponent<LineComponent>("Center of Mass Trajectory");
+    SetRotationMode(RotationMode::Quaternion);
 }
 
-void CompoundRigidBody::Init()
+void RigidBody::Init()
 {
     Entity::Init();
     
-    for (const auto* shape : shapes)
-    {
-        totalInertiaTensor += shape->GetInertiaTensor();
-        totalMass += shape->GetMass();
-        
-        centerOfMass += shape->GetMass() * shape->GetPosition();
-    }
+    initialInertiaTensor = box->GetInitialInertiaTensor();
+    mass = box->GetMass();
     
-    invTotalInertiaTensor = glm::inverse(totalInertiaTensor);
-    invTotalMass = 1.0f / totalMass;
-    
-    centerOfMass *= invTotalMass;
+    invMass = 1.0f / mass;
 }
 
-void CompoundRigidBody::PhysicsTick(float physicsDeltaTime)
+void RigidBody::PhysicsTick(float physicsDeltaTime)
 {
     Entity::Tick(physicsDeltaTime);
     
-    const glm::vec3 linearAcceleration = accumulatedForce * invTotalMass;
+    const glm::mat3 rotationMatrix = glm::mat3(GetRotationMatrix());
+    const glm::mat3 transRotationMatrix = glm::transpose(rotationMatrix);
+    
+    inertiaTensor = rotationMatrix * initialInertiaTensor * transRotationMatrix;
+    invInertiaTensor = glm::inverse(inertiaTensor);
+    
+    const glm::vec3 linearAcceleration = accumulatedForce * invMass;
+    
     velocity.linearVelocity += linearAcceleration * physicsDeltaTime;
     
     const glm::vec3 moveDelta = velocity.linearVelocity * physicsDeltaTime;
@@ -49,22 +44,25 @@ void CompoundRigidBody::PhysicsTick(float physicsDeltaTime)
     
     centerOfMass += moveDelta;
     
-    const glm::vec3 angularAcceleration = invTotalInertiaTensor * (accumulatedTorque 
-        - glm::cross(velocity.angularVelocity, totalInertiaTensor * velocity.angularVelocity));
+    const glm::vec3 angularAcceleration = invInertiaTensor * (accumulatedTorque
+            - glm::cross(velocity.angularVelocity, inertiaTensor * velocity.angularVelocity));
+        
     velocity.angularVelocity += angularAcceleration * physicsDeltaTime;
     
-    // const float rotationDelta = glm::length(velocity.angularVelocity) * deltaTime;
-    // RotateParent(rotationDelta, velocity.angularVelocity)
+    const float rotationDelta = glm::length(velocity.angularVelocity) * physicsDeltaTime;
+    Rotate(rotationDelta, velocity.angularVelocity);
+    
+    vis->SetDirection(inertiaTensor * velocity.angularVelocity);
     
     accumulatedForce = {};
     accumulatedTorque = {};
 }
 
-void CompoundRigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
+void RigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
 {
     if (velocityChange)
     {
-        velocity.linearVelocity += force / totalMass;
+        velocity.linearVelocity += force / mass;
     }
     else
     {
@@ -72,22 +70,24 @@ void CompoundRigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
     }
 }
 
-void CompoundRigidBody::ApplyTorque(const glm::vec3& force, const glm::vec3& location, bool velocityChange)
+void RigidBody::ApplyTorque(const glm::vec3& force, const glm::vec3& location, bool velocityChange)
 {
     const glm::vec3 torque = glm::cross(location - centerOfMass, force);
     if (velocityChange)
     {
-        velocity.angularVelocity += totalInertiaTensor * torque;
+        velocity.angularVelocity += inertiaTensor * torque;
     }
     else
     {
         accumulatedTorque += torque;
     }
+    
+    ApplyForce(force, velocityChange);
 }
 
-void CompoundRigidBody::UpdateVisualizationComponents()
+void RigidBody::UpdateVisualizationComponents()
 {
-    if (centerOfMassVisLine->visible)
+    /*if (centerOfMassVisLine->visible)
     {
         centerOfMassVisLine->GetLine()->AddPoint(centerOfMass);
     }
@@ -119,5 +119,5 @@ void CompoundRigidBody::UpdateVisualizationComponents()
     {
         angularMomentumVisComp->SetStart(centerOfMass);
         angularMomentumVisComp->SetDirection(totalInertiaTensor * velocity.angularVelocity);
-    }
+    }*/
 }

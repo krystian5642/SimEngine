@@ -51,8 +51,6 @@ void App::Run()
         
         lastFrameTime = currentFrameTime;
         
-        deltaTime = std::min(deltaTime, maxDeltaTime);
-        
         window.Update();
         if (glfwGetWindowAttrib(window.GetGLFWWindow()
             , GLFW_ICONIFIED) != 0)

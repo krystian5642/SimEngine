@@ -41,6 +41,7 @@ public:
     const glm::vec3& GetEulerRotation() const { return rootComponent->GetEulerRotation(); }
     const glm::quat& GetQuatRotation() const { return rootComponent->GetQuatRotation(); }
     const glm::vec3& GetScale() const { return rootComponent->GetScale(); }
+    const glm::mat4& GetRotationMatrix() const { return rootComponent->GetRotationMatrix(); }
     
     virtual bool CanMove() const { return true; }
     

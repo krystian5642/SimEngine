@@ -35,7 +35,7 @@ void Scene::Tick(float deltaTime)
         accumulatedPhysicsDeltaTime =
             glm::min(0.3f, accumulatedPhysicsDeltaTime + deltaTime);
         
-        while (accumulatedPhysicsDeltaTime > physicsDeltaTime)
+        while (accumulatedPhysicsDeltaTime >= physicsDeltaTime)
         {
             objects.PhysicsTick(physicsDeltaTime);
             accumulatedPhysicsDeltaTime -= physicsDeltaTime;

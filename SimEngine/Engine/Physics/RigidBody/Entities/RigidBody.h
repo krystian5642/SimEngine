@@ -1,11 +1,9 @@
 ﻿#pragma once
 
-#include "Components/MeshComponent.h"
 #include "Scene/Objects/Entities/Entity.h"
 
-class LineComponent;
 class VectorVisualizerComponent;
-class RigidBodyShapeComponent;
+class BoxShapeComponent;
 
 struct VelocityData
 {
@@ -13,13 +11,10 @@ struct VelocityData
     glm::vec3 angularVelocity{};
 };
 
-class CompoundRigidBody : public Entity
+class RigidBody : public Entity
 {
 public:
-    CompoundRigidBody(const SceneObjectParams& params);
-    
-    template<class ShapeClass>
-    RigidBodyShapeComponent* AddShape(const std::string& name = "Shape Component");
+    RigidBody(const SceneObjectParams& params);
     
     void Init() override;
     void PhysicsTick(float physicsDeltaTime) override;
@@ -31,16 +26,10 @@ public:
         , const glm::vec3& location
         , bool velocityChange = true);
     
-    MeshComponent* centerOfMassVisMesh;
-    MeshComponent* rotationAxisVisMesh;
+    VectorVisualizerComponent* vis;
     
-    VectorVisualizerComponent* linearVelocityVisComp;
-    VectorVisualizerComponent* angularVelocityVisComp;
-    
-    VectorVisualizerComponent* momentumVisComp;
-    VectorVisualizerComponent* angularMomentumVisComp;
-    
-    LineComponent* centerOfMassVisLine;
+protected:
+    BoxShapeComponent* box;
     
 private:
     void UpdateVisualizationComponents();
@@ -50,23 +39,11 @@ private:
     glm::vec3 accumulatedForce{};
     glm::vec3 accumulatedTorque{};
     
-    glm::mat3 totalInertiaTensor{};
-    glm::mat3 invTotalInertiaTensor{};
-    float totalMass{};
-    float invTotalMass{};
+    glm::mat3 initialInertiaTensor{};
+    glm::mat3 inertiaTensor{};
+    glm::mat3 invInertiaTensor{};
+    float mass{};
+    float invMass{};
     
     glm::vec3 centerOfMass{};
-    
-    std::vector<RigidBodyShapeComponent*> shapes;
 };
-
-template <class ShapeClass>
-RigidBodyShapeComponent* CompoundRigidBody::AddShape(const std::string& name)
-{
-    assert(!GetIsInitialized());
-    
-    auto shape = AddComponent<ShapeClass>(name);
-    shapes.push_back(shape);
-    
-    return shape;
-}

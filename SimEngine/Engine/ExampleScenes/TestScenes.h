@@ -2,7 +2,7 @@
 
 #include "Scene/DefaultScene.h"
 
-class CompoundRigidBody;
+class RigidBody;
 
 #define SCENE_NAME inline const std::string
 
@@ -21,5 +21,5 @@ public:
     void DrawUI() override;
     
 private:
-    CompoundRigidBody* rigidBody;
+    RigidBody* rigidBody;
 };

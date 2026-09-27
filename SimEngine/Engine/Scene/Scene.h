@@ -40,7 +40,7 @@ class Scene : public ObjectBase
 public:
     Scene(const std::string& name = "Empty Scene");
 
-    static constexpr float physicsDeltaTime = 1.0f / 240.0f;
+    static constexpr float physicsDeltaTime = 1.0f / 1000.0f;
     
     virtual void Init();
     virtual void Start();

@@ -34,7 +34,8 @@ public:
     const glm::quat& GetQuatRotation() const { return transform.GetQuatRotation(); }
     const glm::vec3& GetScale() const { return transform.GetScale(); }
     const glm::mat4& GetModelMatrix() const { return transform.GetModelMatrix(); }
-
+    const glm::mat4& GetRotationMatrix() const { return transform.GetRotationMatrix(); }
+    
 private:
     void UpdateVectors();
     

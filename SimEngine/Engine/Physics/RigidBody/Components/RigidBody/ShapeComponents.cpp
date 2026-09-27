@@ -12,7 +12,7 @@ void RigidBodyShapeComponent::Init()
 
 void RigidBodyShapeComponent::RecalculateInertiaTensor()
 {
-    inertiaTensor = CalculateInertiaTensor();
+    initialInertiaTensor = CalculateInitialInertiaTensor();
 }
 
 BoxShapeComponent::BoxShapeComponent(const SceneObjectParams& params)
@@ -22,7 +22,7 @@ BoxShapeComponent::BoxShapeComponent(const SceneObjectParams& params)
     material = MaterialManager::Get().GetAssetByName("emerald");
 }
 
-glm::mat3 BoxShapeComponent::CalculateInertiaTensor() const
+glm::mat3 BoxShapeComponent::CalculateInitialInertiaTensor() const
 {
     const float a2 = size.x * size.x;
     const float b2 = size.y * size.y;
@@ -43,7 +43,7 @@ SphereShapeComponent::SphereShapeComponent(const SceneObjectParams& params)
     material = MaterialManager::Get().GetAssetByName("emerald");
 }
 
-glm::mat3 SphereShapeComponent::CalculateInertiaTensor() const
+glm::mat3 SphereShapeComponent::CalculateInitialInertiaTensor() const
 {
     constexpr float sphereFactor = 2.0f / 5.0f;
     const float I = sphereFactor * mass * radius * radius;

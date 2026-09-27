@@ -12,6 +12,8 @@ struct Transform
     {
         rotationMode = newRotationMode;
         shouldUpdateModelMatrix = true;
+        
+        RefreshRotationMatrix();
     }
     RotationMode GetRotationMode() const { return rotationMode; }
     
@@ -28,6 +30,8 @@ struct Transform
         
         quatRotation = newRotation;
         shouldUpdateModelMatrix = true;
+        
+        RefreshRotationMatrix();
     }
     const glm::quat& GetQuatRotation() const { return quatRotation; }
     
@@ -37,6 +41,8 @@ struct Transform
         
         eulerRotation = newEulerRotation;
         shouldUpdateModelMatrix = true;
+        
+        RefreshRotationMatrix();
     }
     const glm::vec3& GetEulerRotation() const { return eulerRotation; }
     
@@ -57,41 +63,48 @@ struct Transform
         return cachedModelMatrix;
     }
     
+    const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
+    
+    
 private:
+    void RefreshRotationMatrix() const
+    {
+        switch (rotationMode)
+        {
+        case RotationMode::EulerXYZ:
+            {
+                rotationMatrix = glm::mat4(1.0f);
+                
+                rotationMatrix = glm::rotate(rotationMatrix
+                    , glm::radians(eulerRotation.z)
+                    , glm::vec3(0.0f, 0.0f, 1.0f));
+                    
+                rotationMatrix = glm::rotate(rotationMatrix
+                    , glm::radians(eulerRotation.y)
+                    , glm::vec3(0.0f, 1.0f, 0.0f));
+                    
+                rotationMatrix = glm::rotate(rotationMatrix
+                    , glm::radians(eulerRotation.x)
+                    , glm::vec3(1.0f, 0.0f, 0.0f));      
+                    
+                break;
+            }
+            
+        case RotationMode::Quaternion:
+            {
+                rotationMatrix = glm::mat4_cast(quatRotation);
+                break;
+            }
+        default:
+            throw std::runtime_error("Invalid rotation mode");
+        }    
+    }
+    
     void RefreshModelMatrix() const
     {
         cachedModelMatrix = glm::mat4(1.0f);
-
         cachedModelMatrix = glm::translate(cachedModelMatrix, position);
-        
-        switch (rotationMode)
-        {
-            case RotationMode::EulerXYZ:
-                {
-                    cachedModelMatrix = glm::rotate(cachedModelMatrix
-                        , glm::radians(eulerRotation.z)
-                        , glm::vec3(0.0f, 0.0f, 1.0f));
-                    
-                    cachedModelMatrix = glm::rotate(cachedModelMatrix
-                        , glm::radians(eulerRotation.y)
-                        , glm::vec3(0.0f, 1.0f, 0.0f));
-                    
-                    cachedModelMatrix = glm::rotate(cachedModelMatrix
-                        , glm::radians(eulerRotation.x)
-                        , glm::vec3(1.0f, 0.0f, 0.0f));      
-                    
-                    break;
-                }
-            
-            case RotationMode::Quaternion:
-                {
-                    cachedModelMatrix *= glm::mat4_cast(quatRotation);
-                    break;
-                }
-            default:
-                throw std::runtime_error("Invalid rotation mode");
-        }
-        
+        cachedModelMatrix *= rotationMatrix;
         cachedModelMatrix = glm::scale(cachedModelMatrix, scale);
         
         shouldUpdateModelMatrix = false;
@@ -101,8 +114,10 @@ private:
     
     glm::vec3 position{};
     glm::vec3 eulerRotation{};
-    glm::quat quatRotation = glm::identity<glm::quat>();
+    glm::quat quatRotation{glm::identity<glm::quat>()};
     glm::vec3 scale{1.0f};
+    
+    mutable glm::mat4 rotationMatrix{glm::mat4(1.0f)};
     
     mutable glm::mat4 cachedModelMatrix{glm::mat4(1.0f)};
     mutable bool shouldUpdateModelMatrix{false};
