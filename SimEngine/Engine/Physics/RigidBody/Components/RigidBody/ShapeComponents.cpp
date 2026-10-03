@@ -3,26 +3,32 @@
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 
-void RigidBodyShapeComponent::Init()
+ShapeComponent::ShapeComponent(const SceneObjectParams& params, const std::string& meshName,
+    const std::string& materialName)
+        : MeshComponent(params)
+{
+    mesh = MeshManager::Get().GetAssetByName(meshName);
+    material = MaterialManager::Get().GetAssetByName(materialName);
+}
+
+void ShapeComponent::Init()
 {
     MeshComponent::Init();
     
     RecalculateInertiaTensor();
 }
 
-void RigidBodyShapeComponent::RecalculateInertiaTensor()
+void ShapeComponent::RecalculateInertiaTensor()
 {
     initialInertiaTensor = CalculateInitialInertiaTensor();
 }
 
-BoxShapeComponent::BoxShapeComponent(const SceneObjectParams& params)
-    : RigidBodyShapeComponent(params)
+BoxComponent::BoxComponent(const SceneObjectParams& params)
+    : ShapeComponent(params, "box", "emerald")
 {
-    mesh = MeshManager::Get().GetAssetByName("box");
-    material = MaterialManager::Get().GetAssetByName("emerald");
 }
 
-glm::mat3 BoxShapeComponent::CalculateInitialInertiaTensor() const
+glm::mat3 BoxComponent::CalculateInitialInertiaTensor() const
 {
     const float a2 = size.x * size.x;
     const float b2 = size.y * size.y;
@@ -36,16 +42,57 @@ glm::mat3 BoxShapeComponent::CalculateInitialInertiaTensor() const
     return tensor;
 }
 
-SphereShapeComponent::SphereShapeComponent(const SceneObjectParams& params)
-    : RigidBodyShapeComponent(params)
+SphereComponent::SphereComponent(const SceneObjectParams& params)
+    : ShapeComponent(params, "sphere", "emerald")
 {
-    mesh = MeshManager::Get().GetAssetByName("sphere");
-    material = MaterialManager::Get().GetAssetByName("emerald");
 }
 
-glm::mat3 SphereShapeComponent::CalculateInitialInertiaTensor() const
+glm::mat3 SphereComponent::CalculateInitialInertiaTensor() const
 {
     constexpr float sphereFactor = 2.0f / 5.0f;
     const float I = sphereFactor * mass * radius * radius;
     return{I};
+}
+
+CylinderComponent::CylinderComponent(const SceneObjectParams& params)
+    : ShapeComponent(params, "cylinder", "emerald")
+{
+}
+
+glm::mat3 CylinderComponent::CalculateInitialInertiaTensor() const
+{
+    const float a = mass * radius * radius;
+    const float b = mass * height * height;
+    
+    constexpr float cylinderFactor1 = 1.0f / 4.0f;
+    constexpr float cylinderFactor2 = 1.0f / 12.0f;
+    constexpr float cylinderFactor3 = 1.0f / 2.0f;
+    
+    glm::mat3 tensor{0.0f};
+    tensor[0][0] = cylinderFactor1 * a + cylinderFactor2 * b;
+    tensor[1][1] = cylinderFactor3 * a;
+    tensor[2][2] = tensor[0][0];
+    return tensor;
+}
+
+CapsuleComponent::CapsuleComponent(const SceneObjectParams& params)
+    : ShapeComponent(params, "capsule", "emerald")
+{
+}
+
+glm::mat3 CapsuleComponent::CalculateInitialInertiaTensor() const
+{
+    /// poczli to pozniej, to jest źle!!!!!!!!!!!!!!
+    const float a = mass * sphereRadius * sphereRadius;
+    const float b = mass * sphereRadius * sphereRadius;
+    
+    constexpr float cylinderFactor1 = 1.0f / 4.0f;
+    constexpr float cylinderFactor2 = 1.0f / 12.0f;
+    constexpr float cylinderFactor3 = 1.0f / 2.0f;
+    
+    glm::mat3 tensor{0.0f};
+    tensor[0][0] = cylinderFactor1 * a + cylinderFactor2 * b;
+    tensor[1][1] = cylinderFactor3 * a;
+    tensor[2][2] = tensor[0][0];
+    return tensor;
 }

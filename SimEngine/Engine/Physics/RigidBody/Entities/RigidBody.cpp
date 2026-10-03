@@ -6,8 +6,8 @@
 RigidBody::RigidBody(const SceneObjectParams& params)
     : Entity(params)
 {
-    box = AddComponent<BoxShapeComponent>("Box Shape");
-    box->SetSize({3.0f, 0.2f, 1.0f});
+    box = AddComponent<CapsuleComponent>("Box Shape");
+    //box->SetSize({3.0f, 0.2f, 1.0f});
     
     vis = AddComponent<VectorVisualizerComponent>();
     vis->useParentLocationAsStart = true;
@@ -82,7 +82,7 @@ void RigidBody::ApplyTorque(const glm::vec3& force, const glm::vec3& location, b
         accumulatedTorque += torque;
     }
     
-    ApplyForce(force, velocityChange);
+    //ApplyForce(force, velocityChange);
 }
 
 void RigidBody::UpdateVisualizationComponents()

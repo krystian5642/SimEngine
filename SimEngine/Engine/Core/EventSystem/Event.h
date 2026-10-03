@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <functional>
-#include <memory>
-#include <utility>
-
 #define DECLARE_SIMPLE_EVENT(EventName, ...) \
     class EventName : public SimEngine::Event<__VA_ARGS__> {};
 

@@ -101,12 +101,12 @@ std::shared_ptr<Mesh> MeshManager::LoadBox()
 
 std::shared_ptr<Mesh> MeshManager::LoadCylinder()
 {
-    return nullptr;
+    return LoadMesh("Models/cylinder.obj", false);
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadCapsule()
 {
-    return nullptr;
+    return LoadMesh("Models/capsule.obj", false);
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadPlane()

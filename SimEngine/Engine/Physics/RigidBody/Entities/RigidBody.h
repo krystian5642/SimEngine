@@ -2,8 +2,8 @@
 
 #include "Scene/Objects/Entities/Entity.h"
 
+class CapsuleComponent;
 class VectorVisualizerComponent;
-class BoxShapeComponent;
 
 struct VelocityData
 {
@@ -29,7 +29,7 @@ public:
     VectorVisualizerComponent* vis;
     
 protected:
-    BoxShapeComponent* box;
+    CapsuleComponent* box;
     
 private:
     void UpdateVisualizationComponents();

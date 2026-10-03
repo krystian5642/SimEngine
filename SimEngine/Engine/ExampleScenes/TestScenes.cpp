@@ -24,7 +24,7 @@ void RigidBodyTestScene::DrawUI()
     
     if (ImGui::Button("Apply Force"))
     {
-        rigidBody->ApplyTorque({0.0f, 2.0f, 0.4f}
+        rigidBody->ApplyTorque({0.0f, 10.0f, 2.4f}
             , {2.0f, 0.0f, 0.0f});
     }
 }

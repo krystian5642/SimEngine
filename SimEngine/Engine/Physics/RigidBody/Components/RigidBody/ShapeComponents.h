@@ -2,10 +2,12 @@
 
 #include "Components/MeshComponent.h"
 
-class RigidBodyShapeComponent : public MeshComponent
+class ShapeComponent : public MeshComponent
 {
 public:
-    using MeshComponent::MeshComponent;
+    ShapeComponent(const SceneObjectParams& params
+        , const std::string& meshName
+        , const std::string& materialName);
     
     void Init() override;
     
@@ -21,10 +23,10 @@ protected:
     float mass{1.0f};
 };
 
-class BoxShapeComponent : public RigidBodyShapeComponent
+class BoxComponent : public ShapeComponent
 {
 public:
-    BoxShapeComponent(const SceneObjectParams& params);
+    BoxComponent(const SceneObjectParams& params);
     
     void SetSize(const glm::vec3& newSize)
     {
@@ -38,13 +40,37 @@ protected:
     glm::vec3 size{1.0f};
 };
 
-class SphereShapeComponent : public RigidBodyShapeComponent
+class SphereComponent : public ShapeComponent
 {
 public:
-    SphereShapeComponent(const SceneObjectParams& params);
+    SphereComponent(const SceneObjectParams& params);
     
 protected:
     glm::mat3 CalculateInitialInertiaTensor() const override;
     
     float radius{0.5f};
+};
+
+class CylinderComponent : public ShapeComponent
+{
+public:
+    CylinderComponent(const SceneObjectParams& params);
+    
+protected:
+    glm::mat3 CalculateInitialInertiaTensor() const override;
+    
+    float radius{0.5f};
+    float height{1.0f};
+};
+
+class CapsuleComponent : public ShapeComponent
+{
+public:
+    CapsuleComponent(const SceneObjectParams& params);
+    
+protected:
+    glm::mat3 CalculateInitialInertiaTensor() const override;
+    
+    float sphereRadius{0.5f};
+    float cylinderHeight{1.0f};
 };
