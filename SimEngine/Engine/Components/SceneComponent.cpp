@@ -6,6 +6,8 @@ SceneComponent::SceneComponent(const SceneObjectParams& params)
     : RenderComponent(params)
 {
     UpdateVectors();
+    
+    visible.SetOnChangedEvent(this, &SceneComponent::OnVisibleChanged);
 }
 
 void SceneComponent::Move(const glm::vec3& moveDelta)
@@ -126,6 +128,14 @@ void SceneComponent::UpdateVectors()
     
     right = glm::normalize(glm::cross(forward, {0.0f, 1.0f, 0.0f}));
     up = glm::cross(right, forward);
+}
+
+void SceneComponent::OnVisibleChanged(bool newVisible)
+{
+    for (auto* attachedComponent : attachedComponents)
+    {
+        attachedComponent->visible = newVisible;
+    }
 }
 
 void SceneComponent::AttachComponent(SceneComponent* component)

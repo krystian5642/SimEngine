@@ -6,8 +6,11 @@
 RigidBody::RigidBody(const SceneObjectParams& params)
     : Entity(params)
 {
+    openUIByDefault = true;
+    
     box = AddComponent<CapsuleComponent>("Box Shape");
-    //box->SetSize({3.0f, 0.2f, 1.0f});
+    box->propertyChangedEvent.BindRaw(this, &RigidBody::UpdateProperties);
+    box->openUIByDefault = true;
     
     vis = AddComponent<VectorVisualizerComponent>();
     vis->useParentLocationAsStart = true;
@@ -19,10 +22,12 @@ void RigidBody::Init()
 {
     Entity::Init();
     
-    initialInertiaTensor = box->GetInitialInertiaTensor();
-    mass = box->GetMass();
-    
+    localInertiaTensor = box->CalculateLocalInertiaTensor();
+    mass = box->mass;
     invMass = 1.0f / mass;
+
+    inertiaTensor = localInertiaTensor;
+    invInertiaTensor = glm::inverse(localInertiaTensor);
 }
 
 void RigidBody::PhysicsTick(float physicsDeltaTime)
@@ -32,7 +37,7 @@ void RigidBody::PhysicsTick(float physicsDeltaTime)
     const glm::mat3 rotationMatrix = glm::mat3(GetRotationMatrix());
     const glm::mat3 transRotationMatrix = glm::transpose(rotationMatrix);
     
-    inertiaTensor = rotationMatrix * initialInertiaTensor * transRotationMatrix;
+    inertiaTensor = rotationMatrix * localInertiaTensor * transRotationMatrix;
     invInertiaTensor = glm::inverse(inertiaTensor);
     
     const glm::vec3 linearAcceleration = accumulatedForce * invMass;
@@ -75,11 +80,16 @@ void RigidBody::ApplyTorque(const glm::vec3& force, const glm::vec3& location, b
     const glm::vec3 torque = glm::cross(location - centerOfMass, force);
     if (velocityChange)
     {
-        velocity.angularVelocity += inertiaTensor * torque;
+        velocity.angularVelocity += invInertiaTensor * torque;
     }
     else
     {
         accumulatedTorque += torque;
+    }
+    
+    for (auto* property : box->GetProperties())
+    {
+        property->readOnly = true;
     }
     
     //ApplyForce(force, velocityChange);
@@ -120,4 +130,12 @@ void RigidBody::UpdateVisualizationComponents()
         angularMomentumVisComp->SetStart(centerOfMass);
         angularMomentumVisComp->SetDirection(totalInertiaTensor * velocity.angularVelocity);
     }*/
+}
+
+void RigidBody::UpdateProperties()
+{
+    localInertiaTensor = box->CalculateLocalInertiaTensor();
+    mass = box->mass;
+    
+    invMass = 1.0f / mass;
 }

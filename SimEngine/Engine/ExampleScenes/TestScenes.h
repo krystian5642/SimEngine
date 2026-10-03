@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Core/Properties/ClassProperty.h"
 #include "Scene/DefaultScene.h"
 
 class RigidBody;
@@ -15,11 +16,9 @@ class RigidBodyTestScene : public DefaultScene
 {
 public:
     RigidBodyTestScene(const std::string& name = SceneNames::RigidBodyTest);
-    
-    void Tick(float deltaTime) override;
-    
-    void DrawUI() override;
-    
+
 private:
     RigidBody* rigidBody;
+    
+    PROPERTY(FunctionProperty, applyTorque)
 };

@@ -1,11 +1,9 @@
 ﻿#pragma once
 
 #define DECLARE_SIMPLE_EVENT(EventName, ...) \
-    class EventName : public SimEngine::Event<__VA_ARGS__> {};
+    class EventName : public Event<__VA_ARGS__> {};
 
-namespace SimEngine
-{
-    struct EventId
+struct EventId
     {
         EventId() : id(nextId++)
         {
@@ -38,6 +36,31 @@ namespace SimEngine
         };
 
     public:
+        Event() = default;
+        
+        Event(Callback callback)
+        {
+            BindLambda(callback);
+        }
+        
+        template<class T>
+        Event(const std::shared_ptr<T>& owner, Callback callback)
+        {
+            BindLambda(owner, callback);
+        }
+        
+        template<class T>
+        Event(const std::shared_ptr<T>& obj, void(T::* method)(Args...))
+        {
+            BindSafe(obj, method);
+        }
+        
+        template<class T>
+        Event(T* obj, void(T::* method)(Args...))
+        {
+            BindRaw(obj, method);
+        }
+        
         void Invoke(Args... args)
         {
             for (auto& [eventId, handler] : handlers)
@@ -129,14 +152,13 @@ namespace SimEngine
 
         std::vector<std::pair<EventId, EventHandler>> handlers;
     };
-}
 
 namespace std
 {
     template<>
-    struct hash<SimEngine::EventId>
+    struct hash<EventId>
     {
-        std::size_t operator()(const SimEngine::EventId& e) const noexcept
+        std::size_t operator()(const EventId& e) const noexcept
         {
             return std::hash<int>{}(e.id);
         }

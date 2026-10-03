@@ -68,6 +68,15 @@ void Scene::DrawUI()
         }
         ImGui::PopID();
     });
+    
+    ImGui::PushID(this);
+    for (auto* property : properties)
+    {
+        ImGui::BeginDisabled(property->readOnly);
+        property->DrawUI();
+        ImGui::EndDisabled();
+    }
+    ImGui::PopID();
 }
 
 void Scene::DestroyChild(ObjectBase* child)

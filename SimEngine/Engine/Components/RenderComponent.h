@@ -1,18 +1,17 @@
 ﻿#pragma once
 
 #include "Component.h"
+#include "Core/Properties/ClassProperty.h"
 
 class RenderComponent : public Component
 {
 public:
-    using Component::Component;
+    RenderComponent(const SceneObjectParams& params);
     
     void Init() override;
     void OnDestroy() override;
 
     virtual void Draw() const = 0;
     
-    void DrawUI() override;
-    
-    bool visible{true};
+    PROPERTY(BoolProperty, visible, true)
 };

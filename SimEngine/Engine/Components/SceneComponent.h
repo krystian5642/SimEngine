@@ -39,6 +39,8 @@ public:
 private:
     void UpdateVectors();
     
+    void OnVisibleChanged(bool newVisible);
+    
     Transform transform;
     
     glm::vec3 forward;

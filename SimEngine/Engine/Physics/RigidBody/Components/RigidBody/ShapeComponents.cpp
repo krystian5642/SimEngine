@@ -9,26 +9,22 @@ ShapeComponent::ShapeComponent(const SceneObjectParams& params, const std::strin
 {
     mesh = MeshManager::Get().GetAssetByName(meshName);
     material = MaterialManager::Get().GetAssetByName(materialName);
-}
-
-void ShapeComponent::Init()
-{
-    MeshComponent::Init();
     
-    RecalculateInertiaTensor();
+    mass.SetOnChangedEvent(this, &ShapeComponent::OnSetMass);
 }
 
-void ShapeComponent::RecalculateInertiaTensor()
+void ShapeComponent::OnSetMass(float newMass)
 {
-    initialInertiaTensor = CalculateInitialInertiaTensor();
+    propertyChangedEvent.Invoke();
 }
 
 BoxComponent::BoxComponent(const SceneObjectParams& params)
     : ShapeComponent(params, "box", "emerald")
 {
+    size.SetOnChangedEvent(this, &BoxComponent::OnSetSize);
 }
 
-glm::mat3 BoxComponent::CalculateInitialInertiaTensor() const
+glm::mat3 BoxComponent::CalculateLocalInertiaTensor() const
 {
     const float a2 = size.x * size.x;
     const float b2 = size.y * size.y;
@@ -42,24 +38,42 @@ glm::mat3 BoxComponent::CalculateInitialInertiaTensor() const
     return tensor;
 }
 
+void BoxComponent::OnSetSize(const glm::vec3& newSize)
+{
+    propertyChangedEvent.Invoke();
+}
+
 SphereComponent::SphereComponent(const SceneObjectParams& params)
     : ShapeComponent(params, "sphere", "emerald")
 {
+    radius.SetOnChangedEvent(this, &SphereComponent::OnSetRadius);
 }
 
-glm::mat3 SphereComponent::CalculateInitialInertiaTensor() const
+glm::mat3 SphereComponent::CalculateLocalInertiaTensor() const
 {
     constexpr float sphereFactor = 2.0f / 5.0f;
     const float I = sphereFactor * mass * radius * radius;
     return{I};
 }
 
+void SphereComponent::OnSetRadius(float newRadius)
+{
+    const float diameter = 2.0f * newRadius;
+    SetScale(glm::vec3{diameter});
+    
+    propertyChangedEvent.Invoke();
+}
+
 CylinderComponent::CylinderComponent(const SceneObjectParams& params)
     : ShapeComponent(params, "cylinder", "emerald")
 {
+    radius.SetOnChangedEvent(this, &CylinderComponent::OnSetRadius);
+    height.SetOnChangedEvent(this, &CylinderComponent::OnSetHeight);
+    
+    propertyChangedEvent.Invoke();
 }
 
-glm::mat3 CylinderComponent::CalculateInitialInertiaTensor() const
+glm::mat3 CylinderComponent::CalculateLocalInertiaTensor() const
 {
     const float a = mass * radius * radius;
     const float b = mass * height * height;
@@ -75,12 +89,29 @@ glm::mat3 CylinderComponent::CalculateInitialInertiaTensor() const
     return tensor;
 }
 
+void CylinderComponent::OnSetRadius(float newRadius)
+{
+    const float diameter = 2.0f * newRadius;
+    SetScale(glm::vec3{diameter, height.Get(), diameter});
+    
+    propertyChangedEvent.Invoke();
+}
+
+void CylinderComponent::OnSetHeight(float newHeight)
+{
+    SetScale(glm::vec3{radius.Get(), newHeight, radius.Get()});
+    
+    propertyChangedEvent.Invoke();
+}
+
 CapsuleComponent::CapsuleComponent(const SceneObjectParams& params)
     : ShapeComponent(params, "capsule", "emerald")
 {
+    sphereRadius.SetOnChangedEvent(this, &CapsuleComponent::OnSetSphereRadius);
+    cylinderHeight.SetOnChangedEvent(this, &CapsuleComponent::OnSetCylinderHeight);
 }
 
-glm::mat3 CapsuleComponent::CalculateInitialInertiaTensor() const
+glm::mat3 CapsuleComponent::CalculateLocalInertiaTensor() const
 {
     /// poczli to pozniej, to jest źle!!!!!!!!!!!!!!
     const float a = mass * sphereRadius * sphereRadius;
@@ -95,4 +126,20 @@ glm::mat3 CapsuleComponent::CalculateInitialInertiaTensor() const
     tensor[1][1] = cylinderFactor3 * a;
     tensor[2][2] = tensor[0][0];
     return tensor;
+}
+
+void CapsuleComponent::OnSetSphereRadius(float newSphereRadius)
+{
+    const float diameter = 2.0f * newSphereRadius;
+    SetScale(glm::vec3{diameter, cylinderHeight.Get(), diameter});
+    
+    propertyChangedEvent.Invoke();
+}
+
+void CapsuleComponent::OnSetCylinderHeight(float newCylinderHeight)
+{
+    const float diameter = 2.0f * sphereRadius;
+    SetScale(glm::vec3{diameter, newCylinderHeight, diameter});
+    
+    propertyChangedEvent.Invoke();
 }

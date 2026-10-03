@@ -34,12 +34,14 @@ protected:
 private:
     void UpdateVisualizationComponents();
     
+    void UpdateProperties();
+    
     VelocityData velocity;
     
     glm::vec3 accumulatedForce{};
     glm::vec3 accumulatedTorque{};
     
-    glm::mat3 initialInertiaTensor{};
+    glm::mat3 localInertiaTensor{};
     glm::mat3 inertiaTensor{};
     glm::mat3 invInertiaTensor{};
     float mass{};

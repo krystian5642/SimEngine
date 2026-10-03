@@ -1,7 +1,5 @@
 ﻿#include "App.h"
 
-#include "imgui_impl_glfw.h"
-#include "imgui.h"
 #include "imgui_impl_opengl3.h"
 
 #include "Scene/SceneManager.h"
@@ -10,6 +8,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "imgui_impl_glfw.h"
 #include "implot.h"
 
 #define REGISTER_SCENE(name) SceneManager::RegisterScene(SceneNames::name, []() -> std::unique_ptr<Scene> { return std::make_unique<name##Scene>(); })

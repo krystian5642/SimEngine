@@ -28,13 +28,13 @@ class SceneObject : public ObjectBase
 public:
     SceneObject(const SceneObjectParams& params);
     
-    virtual void Init() { isInitialized = true; };
+    virtual void Init() { isInitialized = true; }
     virtual void Start() {}
     virtual void PhysicsTick(float physicsDeltaTime) {}
     virtual void Tick(float deltaTime) {}
     virtual void OnDestroy();
     
-    virtual void DrawUI() {}
+    virtual void DrawUI();
     
     void Destroy();
     

@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include "Components/MeshComponent.h"
+#include "Core/Properties/ClassProperty.h"
+
+DECLARE_SIMPLE_EVENT(PropertyChangedEvent)
 
 class ShapeComponent : public MeshComponent
 {
@@ -9,18 +12,14 @@ public:
         , const std::string& meshName
         , const std::string& materialName);
     
-    void Init() override;
+    PROPERTY(FloatProperty, mass, 1.0f, "%.3f kg", 0.01f, 20.0f)
     
-    const glm::mat3& GetInitialInertiaTensor() const { return initialInertiaTensor; }
-    float GetMass() const { return mass; }
+    PropertyChangedEvent propertyChangedEvent;
     
-protected:
-    void RecalculateInertiaTensor();
+    virtual glm::mat3 CalculateLocalInertiaTensor() const = 0;
     
-    virtual glm::mat3 CalculateInitialInertiaTensor() const = 0;
-    
-    glm::mat3 initialInertiaTensor{};
-    float mass{1.0f};
+private:
+    void OnSetMass(float newMass);
 };
 
 class BoxComponent : public ShapeComponent
@@ -28,16 +27,12 @@ class BoxComponent : public ShapeComponent
 public:
     BoxComponent(const SceneObjectParams& params);
     
-    void SetSize(const glm::vec3& newSize)
-    {
-        size = newSize;
-        SetScale(size);
-    }
+    PROPERTY(Vec3Property, size, glm::vec3{1.0f})
     
-protected:
-    glm::mat3 CalculateInitialInertiaTensor() const override;
+    glm::mat3 CalculateLocalInertiaTensor() const override;
     
-    glm::vec3 size{1.0f};
+private:
+    void OnSetSize(const glm::vec3& newSize);
 };
 
 class SphereComponent : public ShapeComponent
@@ -45,10 +40,12 @@ class SphereComponent : public ShapeComponent
 public:
     SphereComponent(const SceneObjectParams& params);
     
-protected:
-    glm::mat3 CalculateInitialInertiaTensor() const override;
+    PROPERTY(FloatProperty, radius, 0.5f, "%.3f m", 0.01f, 5.0f)
     
-    float radius{0.5f};
+    glm::mat3 CalculateLocalInertiaTensor() const override;
+    
+private:
+    void OnSetRadius(float newRadius);
 };
 
 class CylinderComponent : public ShapeComponent
@@ -56,11 +53,14 @@ class CylinderComponent : public ShapeComponent
 public:
     CylinderComponent(const SceneObjectParams& params);
     
-protected:
-    glm::mat3 CalculateInitialInertiaTensor() const override;
+    PROPERTY(FloatProperty, radius, 0.5f, "%.3f m", 0.01f, 5.0f)
+    PROPERTY(FloatProperty, height, 1.0f, "%.3f m", 0.01f, 5.0f)
     
-    float radius{0.5f};
-    float height{1.0f};
+    glm::mat3 CalculateLocalInertiaTensor() const override;
+  
+private:
+    void OnSetRadius(float newRadius);
+    void OnSetHeight(float newHeight);
 };
 
 class CapsuleComponent : public ShapeComponent
@@ -68,9 +68,12 @@ class CapsuleComponent : public ShapeComponent
 public:
     CapsuleComponent(const SceneObjectParams& params);
     
-protected:
-    glm::mat3 CalculateInitialInertiaTensor() const override;
+    PROPERTY(FloatProperty, sphereRadius, 0.5f, "%.3f m", 0.01f, 5.0f)
+    PROPERTY(FloatProperty, cylinderHeight, 1.0f, "%.3f m", 0.01f, 5.0f)
     
-    float sphereRadius{0.5f};
-    float cylinderHeight{1.0f};
+    glm::mat3 CalculateLocalInertiaTensor() const override;
+    
+private:
+    void OnSetSphereRadius(float newSphereRadius);
+    void OnSetCylinderHeight(float newCylinderHeight);
 };
