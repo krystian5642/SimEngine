@@ -54,7 +54,7 @@ public:
     float GetPointSize() const;
     
     void SetBlendingEnabled(bool enable);
-    void SetDepthTestEnabled(bool enable);
+    void SetDepthMaskEnabled(bool enable);
     
     const std::shared_ptr<const Shader>& GetBaseShader() const { return sceneShaders.meshShader; }
     

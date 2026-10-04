@@ -1,7 +1,10 @@
 ﻿#include "TestScenes.h"
 
 #include "Components/CameraComponent.h"
+#include "Managers/MaterialManager.h"
+#include "Managers/MeshManager.h"
 #include "Physics/RigidBody/Entities/RigidBody.h"
+#include "Scene/Objects/Entities/MeshEntity.h"
 
 RigidBodyTestScene::RigidBodyTestScene(const std::string& name)
     : DefaultScene(name)
@@ -16,4 +19,12 @@ RigidBodyTestScene::RigidBodyTestScene(const std::string& name)
         rigidBody->ApplyTorque({-0.3f, 0.3f, 0.6f}
         , {0.3f, 0.0f, 0.0f});
     });
+    
+    auto plane = AddObject<MeshEntity>();
+    
+    plane->meshComponent->mesh = MeshManager::Get().GetAssetByName("plane");
+    plane->meshComponent->material = MaterialManager::Get().GetAssetByName("chrome");
+    
+    plane->SetScale({7.0f, 1.0f, 7.0f});
+    plane->Move({0.0f, -2.0f, 0.0f});
 }

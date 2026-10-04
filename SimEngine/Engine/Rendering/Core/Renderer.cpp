@@ -132,7 +132,7 @@ void Renderer::SetBlendingEnabled(bool enable)
     }
 }
 
-void Renderer::SetDepthTestEnabled(bool enable)
+void Renderer::SetDepthMaskEnabled(bool enable)
 {
     glDepthMask(enable ? GL_TRUE : GL_FALSE);
 }
@@ -308,12 +308,14 @@ void Renderer::Render(const Scene* scene)
     };
     
     SetBlendingEnabled(false);
-    SetDepthTestEnabled(true);
+    SetDepthMaskEnabled(true);
     RenderComponents(renderData.opaqueRenderComponents);
     
     SetBlendingEnabled(true);
-    SetDepthTestEnabled(false);
+    SetDepthMaskEnabled(false);
     RenderComponents(renderData.transparentRenderComponents);
+    
+    SetDepthMaskEnabled(true);
 }
 
 void Renderer::ResetRenderBuffer()
