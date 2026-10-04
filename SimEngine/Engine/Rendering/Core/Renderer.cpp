@@ -119,7 +119,7 @@ float Renderer::GetPointSize() const
     return size;
 }
 
-void Renderer::EnableBlending(bool enable)
+void Renderer::SetBlendingEnabled(bool enable)
 {
     if (enable)
     {
@@ -130,6 +130,11 @@ void Renderer::EnableBlending(bool enable)
     {
         glDisable(GL_BLEND);
     }
+}
+
+void Renderer::SetDepthTestEnabled(bool enable)
+{
+    glDepthMask(enable ? GL_TRUE : GL_FALSE);
 }
 
 void Renderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
@@ -220,7 +225,7 @@ void Renderer::InitRenderBuffer(int bufferWidth, int bufferHeight)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Renderer::RenderScene(const Scene* scene) const
+void Renderer::RenderScene(const Scene* scene)
 {
     glEnable(GL_DEPTH_TEST);
     
@@ -285,18 +290,30 @@ void Renderer::InitSceneShaders()
     sceneShaders.screenShader = std::make_shared<Shader>(screenShaderData);
 }
 
-void Renderer::Render(const Scene* scene) const
+void Renderer::Render(const Scene* scene)
 {
     const auto& renderData = scene->GetRenderData();
-    for (auto* renderComponent : renderData.renderComponents)
+    
+    auto RenderComponents = [](const auto& renderComponents)
     {
-        if (!renderComponent->visible)
+        for (auto* renderComponent : renderComponents)
         {
-            continue;
-        }
+            if (!renderComponent->visible)
+            {
+                continue;
+            }
         
-        renderComponent->Draw();
-    }
+            renderComponent->Draw();
+        }
+    };
+    
+    SetBlendingEnabled(false);
+    SetDepthTestEnabled(true);
+    RenderComponents(renderData.opaqueRenderComponents);
+    
+    SetBlendingEnabled(true);
+    SetDepthTestEnabled(false);
+    RenderComponents(renderData.transparentRenderComponents);
 }
 
 void Renderer::ResetRenderBuffer()

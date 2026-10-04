@@ -33,10 +33,6 @@ void VectorVisualizerComponent::Tick(float deltaTime)
 
 void VectorVisualizerComponent::Draw() const
 {
-    auto& renderer = App::Get().renderer;
-    
-    renderer.EnableBlending(true);
-    
     shader->BindAndValidate();
     shader->SetVec4f(UniformNames::arrowColor, color);
     
@@ -55,8 +51,11 @@ void VectorVisualizerComponent::Draw() const
     coneMesh->Draw();
     
     shader->Unbind();
-    
-    renderer.EnableBlending(false);
+}
+
+bool VectorVisualizerComponent::IsTransparent() const
+{
+    return color.a < 1.0f;
 }
 
 void VectorVisualizerComponent::SetStart(const glm::vec3& newStart)

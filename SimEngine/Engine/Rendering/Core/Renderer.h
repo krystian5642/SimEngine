@@ -53,7 +53,8 @@ public:
     void SetPointSize(float size);
     float GetPointSize() const;
     
-    void EnableBlending(bool enable);
+    void SetBlendingEnabled(bool enable);
+    void SetDepthTestEnabled(bool enable);
     
     const std::shared_ptr<const Shader>& GetBaseShader() const { return sceneShaders.meshShader; }
     
@@ -62,10 +63,10 @@ public:
 private:
     void InitRenderBuffer(int bufferWidth, int bufferHeight);
     
-    void RenderScene(const Scene* scene) const;
+    void RenderScene(const Scene* scene);
     void InitSceneShaders();
     
-    void Render(const Scene* scene) const;
+    void Render(const Scene* scene);
     
     void ResetRenderBuffer();
     

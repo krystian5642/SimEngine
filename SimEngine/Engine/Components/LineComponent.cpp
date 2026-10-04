@@ -23,3 +23,8 @@ void LineComponent::Draw() const
 {
     line->Draw();
 }
+
+bool LineComponent::IsTransparent() const
+{
+    return line->IsTransparent();
+}

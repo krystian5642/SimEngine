@@ -14,7 +14,8 @@ public:
     Line();
     ~Line();
     
-    virtual void Draw() const;
+    void Draw() const;
+    bool IsTransparent() const;
     
     const std::vector<glm::vec3>& GetPoints() const { return points; }
     void SetPoints(const std::vector<glm::vec3>& newPoints);
@@ -23,7 +24,7 @@ public:
     
     void AddPoint(const glm::vec3& point);
     
-    glm::vec3 color{1.0f};
+    glm::vec4 color{1.0f};
     float thickness{1.0f};
     float maxLength{-1.0f};
     

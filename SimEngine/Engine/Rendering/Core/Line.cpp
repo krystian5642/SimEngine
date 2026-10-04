@@ -52,7 +52,7 @@ void Line::Draw() const
 
     shader->SetMat4f(UniformNames::projection, projection);
     shader->SetMat4f(UniformNames::view, view);
-    shader->SetVec3f(UniformNames::lineColor, color);
+    shader->SetVec4f(UniformNames::lineColor, color);
     
     glLineWidth(thickness);
     glBindVertexArray(VAO);
@@ -62,6 +62,11 @@ void Line::Draw() const
     
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+bool Line::IsTransparent() const
+{
+    return color.w < 1.0f;
 }
 
 void Line::SetPoints(const std::vector<glm::vec3>& newPoints)

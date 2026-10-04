@@ -21,7 +21,8 @@ struct SceneLightsData
 
 struct SceneRenderData
 {
-    std::vector<const RenderComponent*> renderComponents;
+    std::vector<const RenderComponent*> opaqueRenderComponents;
+    std::vector<const RenderComponent*> transparentRenderComponents;
 };
 
 struct SceneObjectSlot

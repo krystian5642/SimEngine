@@ -12,6 +12,7 @@ public:
     
     void Tick(float deltaTime) override;
     void Draw() const override;
+    bool IsTransparent() const override;
     
     bool followParent{false};
     

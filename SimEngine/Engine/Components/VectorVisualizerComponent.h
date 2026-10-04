@@ -19,6 +19,7 @@ public:
     void Tick(float deltaTime) override;
     
     void Draw() const override;
+    bool IsTransparent() const override;
     
     void SetStart(const glm::vec3& newStart);
     void SetDirection(const glm::vec3& newDirection);

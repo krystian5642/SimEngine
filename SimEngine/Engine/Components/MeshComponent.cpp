@@ -44,3 +44,8 @@ void MeshComponent::Draw() const
     
     shader->Unbind();
 }
+
+bool MeshComponent::IsTransparent() const
+{
+    return material->data.color.w < 1.0f;
+}

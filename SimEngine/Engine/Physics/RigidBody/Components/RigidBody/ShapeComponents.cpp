@@ -2,13 +2,15 @@
 #include "ShapeComponents.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
+#include "Rendering/Core/Material.h"
 
 ShapeComponent::ShapeComponent(const SceneObjectParams& params, const std::string& meshName,
-    const std::string& materialName)
+                               const std::string& materialName)
         : MeshComponent(params)
 {
     mesh = MeshManager::Get().GetAssetByName(meshName);
-    material = MaterialManager::Get().GetAssetByName(materialName);
+    material = MaterialManager::Get().GetAssetByName(materialName, true);
+    material->data.color.w = 0.7f;
     
     mass.SetOnChangedEvent(this, &ShapeComponent::OnSetMass);
 }

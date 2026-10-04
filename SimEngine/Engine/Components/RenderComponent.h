@@ -12,6 +12,7 @@ public:
     void OnDestroy() override;
 
     virtual void Draw() const = 0;
+    virtual bool IsTransparent() const = 0;
     
     PROPERTY(BoolProperty, visible, true)
 };

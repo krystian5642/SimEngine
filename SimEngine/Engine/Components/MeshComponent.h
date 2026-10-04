@@ -11,6 +11,7 @@ public:
     using SceneComponent::SceneComponent;
 
     void Draw() const override;
+    bool IsTransparent() const override;
     
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Material> material;

@@ -27,7 +27,7 @@ struct PointLight
 
 struct Material
 {
-    vec3 color;
+    vec4 color;
 };
 
 uniform Material material;
@@ -47,9 +47,9 @@ vec3 CalcLightColorByDirection(LightData lightData, vec3 direction)
     vec3 lightDir = normalize(direction);
     
     float diffuseFactor = max(dot(lightDir, normal), 0.0) * lightData.diffuseIntensity;
-    vec3 diffuseColor = diffuseFactor * lightData.color * material.color;
+    vec3 diffuseColor = diffuseFactor * lightData.color * vec3(material.color);
     
-    vec3 ambientColor = lightData.ambientIntensity * lightData.color * material.color;
+    vec3 ambientColor = lightData.ambientIntensity * lightData.color * vec3(material.color);
     
     return ambientColor + diffuseColor;
 }
@@ -94,5 +94,5 @@ void main()
     vec3 directionalLightColor = CalcDirectionalLightColor();
     vec3 pointLightColor = CalcPointLightColor();
 
-    FragColor = vec4(directionalLightColor + pointLightColor, 1.0);
+    FragColor = vec4(directionalLightColor + pointLightColor, material.color.a);
 }

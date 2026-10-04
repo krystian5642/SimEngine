@@ -118,12 +118,26 @@ void Scene::UnregisterPointLight(PointLightObject* pointLight)
     
 void Scene::RegisterRenderComponent(const RenderComponent* renderComponent)
 {
-    renderData.renderComponents.push_back(renderComponent);
+    if (renderComponent->IsTransparent())
+    {
+        renderData.transparentRenderComponents.push_back(renderComponent);
+    }
+    else
+    {
+        renderData.opaqueRenderComponents.push_back(renderComponent);
+    }
 }
     
 void Scene::UnregisterRenderComponent(const RenderComponent* renderComponent)
 {
-    std::erase(renderData.renderComponents, renderComponent);
+    if (renderComponent->IsTransparent())
+    {
+        std::erase(renderData.transparentRenderComponents, renderComponent);
+    }
+    else
+    {
+        std::erase(renderData.opaqueRenderComponents, renderComponent);
+    }
 }
     
 SceneObjectHandle Scene::RegisterObject(SceneObject* object)

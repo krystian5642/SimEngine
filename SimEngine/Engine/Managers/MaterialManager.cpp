@@ -16,7 +16,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.07568f, 0.61424f, 0.07568f};
+        data.color = {0.07568f, 0.61424f, 0.07568f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -26,7 +26,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.54f, 0.89f, 0.63f};
+        data.color = {0.54f, 0.89f, 0.63f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -36,7 +36,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.18275f, 0.17f, 0.22525f};
+        data.color = {0.18275f, 0.17f, 0.22525f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -46,7 +46,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {1.0f, 0.829f, 0.829f};
+        data.color = {1.0f, 0.829f, 0.829f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -56,7 +56,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.61424f, 0.04136f, 0.04136f};
+        data.color = {0.61424f, 0.04136f, 0.04136f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -66,7 +66,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.396f, 0.74151f, 0.69102f};
+        data.color = {0.396f, 0.74151f, 0.69102f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -76,7 +76,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.780392f, 0.568627f, 0.113725f};
+        data.color = {0.780392f, 0.568627f, 0.113725f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -86,7 +86,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.714f, 0.4284f, 0.18144f};
+        data.color = {0.714f, 0.4284f, 0.18144f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -96,7 +96,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.4f, 0.4f, 0.4f};
+        data.color = {0.4f, 0.4f, 0.4f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -106,7 +106,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.7038f, 0.27048f, 0.0828f};
+        data.color = {0.7038f, 0.27048f, 0.0828f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -116,7 +116,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.75164f, 0.60648f, 0.22648f};
+        data.color = {0.75164f, 0.60648f, 0.22648f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -126,7 +126,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.50754f, 0.50754f, 0.50754f};
+        data.color = {0.50754f, 0.50754f, 0.50754f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);
@@ -136,7 +136,7 @@ MaterialManager::MaterialManager()
     {
         MaterialData data;
         
-        data.color = {0.1038f, 0.17048f, 0.1828f};
+        data.color = {0.1038f, 0.17048f, 0.1828f, 1.0f};
         data.shader = App::Get().renderer.GetBaseShader();
         
         return std::make_shared<Material>(data);

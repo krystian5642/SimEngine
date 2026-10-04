@@ -9,6 +9,7 @@ public:
     SceneComponent(const SceneObjectParams& params);
     
     void Draw() const override {}
+    bool IsTransparent() const override { return false; }
 
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotateDelta);
