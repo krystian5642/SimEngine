@@ -28,6 +28,19 @@ void Entity::Start()
     childEntities.Start();
 }
 
+void Entity::PhysicsTick(float physicsDeltaTime)
+{
+    SceneObject::PhysicsTick(physicsDeltaTime);
+    
+    const auto isPaused = App::Get().isPaused;
+    
+    if (!isPaused)
+    {
+        components.PhysicsTick(physicsDeltaTime);
+        childEntities.PhysicsTick(physicsDeltaTime);
+    }
+}
+
 void Entity::Tick(float deltaTime)
 {
     SceneObject::Tick(deltaTime);

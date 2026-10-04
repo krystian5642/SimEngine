@@ -18,6 +18,7 @@ public:
   
     void Init() override;
     void Start() override;
+    void PhysicsTick(float deltaTime);
     void Tick(float deltaTime) override;
     void OnDestroy() override;
     

@@ -3,7 +3,8 @@
 #include "Components/VectorVisualizerComponent.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
-#include "Physics/RigidBody/Components/RigidBody/ShapeComponents.h"
+#include "Physics/RigidBody/Components/ShapeComponents.h"
+#include "Physics/RigidBody/Components/RigidBodyComponent.h"
 
 RigidBody::RigidBody(const SceneObjectParams& params)
     : Entity(params)
@@ -13,6 +14,8 @@ RigidBody::RigidBody(const SceneObjectParams& params)
     shape = AddComponent<CylinderComponent>("Shape");
     shape->propertyChangedEvent.BindRaw(this, &RigidBody::UpdateProperties);
     shape->openUIByDefault = true;
+    
+    rigidBodyComponent = AddComponent<RigidBodyComponent>("Rigid Body Component");
     
     CreateVisualizationComponents();
     
@@ -25,43 +28,12 @@ void RigidBody::Init()
 {
     Entity::Init();
     
-    localInertiaTensor = shape->CalculateLocalInertiaTensor();
-    mass = shape->mass;
-    invMass = 1.0f / mass;
-
-    inertiaTensor = localInertiaTensor;
-    invInertiaTensor = glm::inverse(localInertiaTensor);
+    UpdateProperties();
 }
 
 void RigidBody::PhysicsTick(float physicsDeltaTime)
 {
-    Entity::Tick(physicsDeltaTime);
-    
-    const glm::mat3 rotationMatrix = glm::mat3(GetRotationMatrix());
-    const glm::mat3 transRotationMatrix = glm::transpose(rotationMatrix);
-    
-    inertiaTensor = rotationMatrix * localInertiaTensor * transRotationMatrix;
-    invInertiaTensor = glm::inverse(inertiaTensor);
-    
-    const glm::vec3 linearAcceleration = accumulatedForce * invMass;
-    
-    velocity.linearVelocity += linearAcceleration * physicsDeltaTime;
-    
-    const glm::vec3 moveDelta = velocity.linearVelocity * physicsDeltaTime;
-    Move(moveDelta);
-    
-    centerOfMass += moveDelta;
-    
-    const glm::vec3 angularAcceleration = invInertiaTensor * (accumulatedTorque
-            - glm::cross(velocity.angularVelocity, inertiaTensor * velocity.angularVelocity));
-        
-    velocity.angularVelocity += angularAcceleration * physicsDeltaTime;
-    
-    const float rotationDelta = glm::length(velocity.angularVelocity) * physicsDeltaTime;
-    Rotate(rotationDelta, velocity.angularVelocity);
-    
-    accumulatedForce = {};
-    accumulatedTorque = {};
+    Entity::PhysicsTick(physicsDeltaTime);
     
     if (showVisualizationComponents)
     {
@@ -71,54 +43,38 @@ void RigidBody::PhysicsTick(float physicsDeltaTime)
 
 void RigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
 {
-    if (velocityChange)
-    {
-        velocity.linearVelocity += force / mass;
-    }
-    else
-    {
-        accumulatedForce += force;
-    }
+    rigidBodyComponent->ApplyForce(force, velocityChange);
 }
 
-void RigidBody::ApplyTorque(const glm::vec3& force, const glm::vec3& location, bool velocityChange)
+void RigidBody::ApplyForceAtLocation(const glm::vec3& force, const glm::vec3& location
+    , bool velocityChange)
 {
-    const glm::vec3 torque = glm::cross(location - centerOfMass, force);
-    if (velocityChange)
-    {
-        velocity.angularVelocity += invInertiaTensor * torque;
-    }
-    else
-    {
-        accumulatedTorque += torque;
-    }
-    
-    for (auto* property : shape->GetProperties())
-    {
-        property->readOnly = true;
-    }
-    
-    ApplyForce(force, velocityChange);
+    rigidBodyComponent->ApplyForceAtLocation(force, location, velocityChange);
 }
 
 void RigidBody::UpdateVisualizationComponents()
 {
+    const glm::vec3& centerOfMass = rigidBodyComponent->GetCenterOfMass();
+    const glm::vec3& linearVelocity = rigidBodyComponent->GetLinearVelocity();
+    const glm::vec3& angularVelocity = rigidBodyComponent->GetAngularVelocity();
+    const glm::vec3 angularMomentum = rigidBodyComponent->CalculateAngularMomentum();
+    
     if (linearVelocityVisComp->visible)
     {
         linearVelocityVisComp->SetStart(centerOfMass);
-        linearVelocityVisComp->SetDirection(velocity.linearVelocity);
+        linearVelocityVisComp->SetDirection(linearVelocity);
     }
     
     if (angularVelocityVisComp->visible)
     {
         angularVelocityVisComp->SetStart(centerOfMass);
-        angularVelocityVisComp->SetDirection(velocity.angularVelocity);
+        angularVelocityVisComp->SetDirection(angularVelocity);
     }
     
     if (angularMomentumVisComp->visible)
     {
         angularMomentumVisComp->SetStart(centerOfMass);
-        angularMomentumVisComp->SetDirection(inertiaTensor * velocity.angularVelocity);
+        angularMomentumVisComp->SetDirection(angularMomentum);
     }
     
     if (centerOfMassVisLine->visible)
@@ -134,10 +90,7 @@ void RigidBody::UpdateVisualizationComponents()
 
 void RigidBody::UpdateProperties()
 {
-    localInertiaTensor = shape->CalculateLocalInertiaTensor();
-    mass = shape->mass;
-    
-    invMass = 1.0f / mass;
+    rigidBodyComponent->UpdateShapeProperties(shape);
 }
 
 void RigidBody::OnShowVisualizationComponents(bool newShowVisualizers)
