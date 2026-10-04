@@ -35,6 +35,7 @@ public:
     virtual void OnDestroy();
     
     virtual void DrawUI();
+    virtual glm::vec3 GetUIColor() const { return glm::vec3{1.0f}; }
     
     void Destroy();
     

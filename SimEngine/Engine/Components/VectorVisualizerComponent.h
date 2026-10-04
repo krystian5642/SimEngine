@@ -21,10 +21,12 @@ public:
     void Draw() const override;
     bool IsTransparent() const override;
     
+    glm::vec3 GetUIColor() const override { return color; }
+    
     void SetStart(const glm::vec3& newStart);
     void SetDirection(const glm::vec3& newDirection);
     
-    glm::vec4 color{1.0f, 0.0f, 0.0f, 0.9f};
+    glm::vec4 color{1.0f, 0.0f, 0.0f, 1.0f};
     float scaleLenghtFactor{1.0f};
     float scaleFactor{1.0f};
     bool useParentLocationAsStart{false};
@@ -36,4 +38,6 @@ private:
     
     Transform cylinderTransform;
     Transform coneTransform;
+    
+    glm::vec3 currentDirection{1.0f, 0.0f, 0.0f};
 };

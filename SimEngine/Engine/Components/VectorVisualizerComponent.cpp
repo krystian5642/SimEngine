@@ -61,11 +61,13 @@ bool VectorVisualizerComponent::IsTransparent() const
 void VectorVisualizerComponent::SetStart(const glm::vec3& newStart)
 {
     cylinderTransform.SetPosition(newStart);
-    coneTransform.SetPosition(newStart);
+    SetDirection(currentDirection);
 }
 
 void VectorVisualizerComponent::SetDirection(const glm::vec3& newDirection)
 {
+    currentDirection = newDirection;
+    
     const float scale = scaleLenghtFactor * glm::length(newDirection);
     cylinderTransform.SetScale({scale, scaleFactor, scaleFactor});
         

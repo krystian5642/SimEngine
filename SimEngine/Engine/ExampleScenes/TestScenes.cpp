@@ -16,8 +16,8 @@ RigidBodyTestScene::RigidBodyTestScene(const std::string& name)
     
     applyTorque.Set([this]()
     {
-        rigidBody->ApplyTorque({-0.3f, 0.3f, 0.6f}
-        , {0.3f, 0.0f, 0.0f});
+        rigidBody->ApplyTorque({-0.8f, 0.2f, 0.1f}
+        , {0.4f, 0.0f, 0.1f});
     });
     
     auto plane = AddObject<MeshEntity>();

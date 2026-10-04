@@ -10,7 +10,7 @@ ShapeComponent::ShapeComponent(const SceneObjectParams& params, const std::strin
 {
     mesh = MeshManager::Get().GetAssetByName(meshName);
     material = MaterialManager::Get().GetAssetByName(materialName, true);
-    material->data.color.w = 0.8f;
+    material->data.color.w = 0.6f;
     
     mass.SetOnChangedEvent(this, &ShapeComponent::OnSetMass);
 }
@@ -101,7 +101,8 @@ void CylinderComponent::OnSetRadius(float newRadius)
 
 void CylinderComponent::OnSetHeight(float newHeight)
 {
-    SetScale(glm::vec3{radius.Get(), newHeight, radius.Get()});
+    const float diameter = 2.0f * radius.Get();
+    SetScale(glm::vec3{diameter, newHeight, diameter});
     
     propertyChangedEvent.Invoke();
 }

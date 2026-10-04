@@ -14,6 +14,8 @@ public:
     void Draw() const override;
     bool IsTransparent() const override;
     
+    glm::vec3 GetUIColor() const override { return GetLine()->color; }
+    
     bool followParent{false};
     
     Line* GetLine() const { return line.get(); }

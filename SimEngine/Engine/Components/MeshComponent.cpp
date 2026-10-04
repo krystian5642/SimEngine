@@ -49,3 +49,8 @@ bool MeshComponent::IsTransparent() const
 {
     return material->data.color.w < 1.0f;
 }
+
+glm::vec3 MeshComponent::GetUIColor() const
+{
+    return material->data.color;
+}

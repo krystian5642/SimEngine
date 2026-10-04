@@ -62,11 +62,16 @@ void Entity::DrawUI()
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         }
         
+        const glm::vec3 UIColor = component->GetUIColor();
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(UIColor.r, UIColor.g
+            , UIColor.b, 1.0f));
         if (ImGui::TreeNode(label.c_str()))
         {
             component->DrawUI();
             ImGui::TreePop();
         }
+        ImGui::PopStyleColor();
+        
         ImGui::PopID();
     });
 }

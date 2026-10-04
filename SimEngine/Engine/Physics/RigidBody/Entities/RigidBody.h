@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Components/LineComponent.h"
 #include "Scene/Objects/Entities/Entity.h"
 
-class CapsuleComponent;
+class MeshComponent;
+class ShapeComponent;
 class VectorVisualizerComponent;
 
 struct VelocityData
@@ -26,15 +28,26 @@ public:
         , const glm::vec3& location
         , bool velocityChange = true);
     
-    VectorVisualizerComponent* vis;
+    PROPERTY(BoolProperty, showVisualizationComponents, true)
+    
+    VectorVisualizerComponent* linearVelocityVisComp;
+    VectorVisualizerComponent* angularVelocityVisComp;
+    VectorVisualizerComponent* angularMomentumVisComp;
+    
+    LineComponent* centerOfMassVisLine;
+    MeshComponent* centerOfMassVisMesh;
     
 protected:
-    CapsuleComponent* box;
+    ShapeComponent* shape;
     
 private:
     void UpdateVisualizationComponents();
     
     void UpdateProperties();
+    
+    void OnShowVisualizationComponents(bool newShowVisualizers);
+    
+    void CreateVisualizationComponents();
     
     VelocityData velocity;
     
@@ -48,4 +61,7 @@ private:
     float invMass{};
     
     glm::vec3 centerOfMass{};
+    
+private:
+    std::vector<RenderComponent*> visualizationComponents;
 };
