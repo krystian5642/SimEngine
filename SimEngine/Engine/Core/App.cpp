@@ -15,9 +15,11 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::RigidBodyTest);
+    SceneManager::SetDefaultScene(SceneNames::Spring);
     
     REGISTER_SCENE(RigidBodyTest);
+    REGISTER_SCENE(GravityAndPlanets);
+    REGISTER_SCENE(Spring);
 }
 
 void App::Run()

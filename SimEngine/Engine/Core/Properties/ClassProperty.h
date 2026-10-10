@@ -45,6 +45,7 @@ public:
     virtual void DrawUI() = 0;
     
     bool readOnly{false};
+    bool visible{true};
     
 protected:
     std::string name{};
@@ -63,7 +64,7 @@ public:
     
     ClassProperty& operator=(ClassProperty const& other)
     {
-        currentValue = other.currentValue;
+        Set(other.currentValue);
         return *this;
     }
     
@@ -128,34 +129,34 @@ class NumericProperty : public ClassProperty<T>
 {
 public:
     NumericProperty(ObjectBase& owner, const std::string& propertyName
-        , const T& defaultValue = T{}, const char* format = "%.3f"
-        , const T& min = T(-1000)
-        , const T& max = T(1000))
+        , const T& defaultValue = T{}, const T& min = T(-1000)
+        , const T& max = T(1000), const char* format = "%.3f")
             : ClassProperty<T>(owner, propertyName, defaultValue)
-            , valueFormat(format)
             , minValue(min)
             , maxValue(max)
+            , valueFormat(format)
     {
     }
     
     using ClassProperty<T>::operator=;
     
-    const char* valueFormat;
     T minValue;
     T maxValue;
+    const char* valueFormat;
 };
 
 class Vec3Property : public ClassProperty<glm::vec3>
 {
 public:
     Vec3Property(ObjectBase& owner, const std::string& propertyName
-        , const glm::vec3& defaultValue = glm::vec3{}, const char* format = "%.3f"
-        , float min = -100000.0f, float max = 100000.0f, float speed = 0.1f)
+        , const glm::vec3& defaultValue = glm::vec3{}
+        , float min = -100000.0f, float max = 100000.0f
+        , float speed = 0.1f, const char* format = "%.3f")
             : ClassProperty(owner, propertyName, defaultValue)
-                , valueFormat(format)
                 , minValue(min)
                 , maxValue(max)
                 , sliderSpeed(speed)
+                , valueFormat(format)
     {
     }
     
@@ -167,16 +168,32 @@ public:
     const float& y = currentValue.y;
     const float& z = currentValue.z;
     
-    const char* valueFormat;
     float minValue;
     float maxValue;
     float sliderSpeed;
+    const char* valueFormat;
 };
 
 class FloatProperty : public NumericProperty<float>
 {
 public:
     using NumericProperty::NumericProperty;
+    using NumericProperty::operator=;
+    
+    void DrawUI() override;
+};
+
+class IntProperty : public NumericProperty<int>
+{
+public:
+    IntProperty(ObjectBase& owner, const std::string& propertyName
+        , int defaultValue = 0, int min = -10000.0f
+        , int max = 10000.0f, const char* format = "%d")
+            : NumericProperty<int>(owner, propertyName
+                , defaultValue, min, max, format)
+    {
+    }
+    
     using NumericProperty::operator=;
     
     void DrawUI() override;

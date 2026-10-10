@@ -4,7 +4,7 @@
 #include "Managers/MaterialManager.h"
 #include "Managers/MeshManager.h"
 #include "Physics/RigidBody/Components/ShapeComponents.h"
-#include "Physics/RigidBody/Components/RigidBodyComponent.h"
+#include "Physics/Gravity/Components/SimpleGravityComponent.h"
 
 RigidBody::RigidBody(const SceneObjectParams& params)
     : Entity(params)
@@ -15,7 +15,7 @@ RigidBody::RigidBody(const SceneObjectParams& params)
     shape->propertyChangedEvent.BindRaw(this, &RigidBody::UpdateProperties);
     shape->openUIByDefault = true;
     
-    rigidBodyComponent = AddComponent<RigidBodyComponent>("Rigid Body Component");
+    rigidBodyComponent = AddComponent<SimpleGravityComponent>("Rigid Body Component");
     
     CreateVisualizationComponents();
     

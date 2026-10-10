@@ -1,8 +1,8 @@
 ﻿#include "SceneObject.h"
 
-#include "imgui.h"
 #include "Scene/Scene.h"
 #include "Core/Properties/ClassProperty.h"
+#include "Core/UICommon/UICommon.h"
 
 SceneObject* SceneObjectHandle::Resolve() const
 {
@@ -27,12 +27,5 @@ void SceneObject::OnDestroy()
 
 void SceneObject::DrawUI()
 {
-    ImGui::PushID(this);
-    for (auto* property : properties)
-    {
-        ImGui::BeginDisabled(property->readOnly);
-        property->DrawUI();
-        ImGui::EndDisabled();
-    }
-    ImGui::PopID();
+    UICommon::DrawProperties(this, properties);
 }

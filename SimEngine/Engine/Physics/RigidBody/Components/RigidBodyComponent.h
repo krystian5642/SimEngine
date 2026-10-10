@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Physics/MovementComponent.h"
-#include "Physics/PhysicsComponent.h"
 
 class ShapeComponent;
 
@@ -14,7 +13,7 @@ public:
     
     void ApplyForceAtLocation(const glm::vec3& force
         , const glm::vec3& location
-        , bool velocityChange = true);
+        , bool velocityChange = false);
 
     void UpdateShapeProperties(const ShapeComponent* shape);
     
@@ -24,6 +23,10 @@ public:
     const glm::mat3& GetInverseInertiaTensor() const { return invInertiaTensor; }
     
     glm::vec3 CalculateAngularMomentum() const { return inertiaTensor * angularVelocity; }
+    
+    void SetAngularVelocity(const glm::vec3& newAngularVelocity) { angularVelocity = newAngularVelocity; }
+    
+    PROPERTY(BoolProperty, canRotate, true)
     
     bool forceAtLocationAffectsLinearMotion{true};
     

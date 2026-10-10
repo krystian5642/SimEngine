@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "Components/SceneComponent.h"
 #include "Core/App.h"
+#include "Core/UICommon/UICommon.h"
 
 Entity::Entity(const SceneObjectParams& params)
     : SceneObject(params)
@@ -63,30 +64,7 @@ void Entity::DrawUI()
 {
     SceneObject::DrawUI();
     
-    components.ForEach([](Component* component, int index)
-    {
-        const std::string& name = component->GetName();
-        const std::string label = name.empty() ? ("Component " + std::to_string(index)) : name;
-
-        ImGui::PushID(index);
-        
-        if (component->openUIByDefault)
-        {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        }
-        
-        const glm::vec3 UIColor = component->GetUIColor();
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(UIColor.r, UIColor.g
-            , UIColor.b, 1.0f));
-        if (ImGui::TreeNode(label.c_str()))
-        {
-            component->DrawUI();
-            ImGui::TreePop();
-        }
-        ImGui::PopStyleColor();
-        
-        ImGui::PopID();
-    });
+    UICommon::DrawObjects(components, "Component");
 }
 
 void Entity::DestroyChild(ObjectBase* child)

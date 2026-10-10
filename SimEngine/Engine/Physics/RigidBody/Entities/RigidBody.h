@@ -3,7 +3,7 @@
 #include "Components/LineComponent.h"
 #include "Scene/Objects/Entities/Entity.h"
 
-class RigidBodyComponent;
+class SimpleGravityComponent;
 class MeshComponent;
 class ShapeComponent;
 class VectorVisualizerComponent;
@@ -25,7 +25,8 @@ public:
     
     PROPERTY(BoolProperty, showVisualizationComponents, true)
     
-    RigidBodyComponent* rigidBodyComponent;
+    SimpleGravityComponent* rigidBodyComponent;
+    ShapeComponent* shape;
     
     VectorVisualizerComponent* linearVelocityVisComp;
     VectorVisualizerComponent* angularVelocityVisComp;
@@ -33,11 +34,6 @@ public:
     
     LineComponent* centerOfMassVisLine;
     MeshComponent* centerOfMassVisMesh;
-    
-    ShapeComponent* GetShapeComponent() const { return shape; }
-    
-protected:
-    ShapeComponent* shape;
     
 private:
     void UpdateVisualizationComponents();

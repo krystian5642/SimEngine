@@ -8,4 +8,5 @@ public:
     
 protected:
     CameraComponent* camera;
+    DirectionalLightObject* light;
 };

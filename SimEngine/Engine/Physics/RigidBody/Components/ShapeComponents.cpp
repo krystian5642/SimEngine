@@ -10,7 +10,6 @@ ShapeComponent::ShapeComponent(const SceneObjectParams& params, const std::strin
 {
     mesh = MeshManager::Get().GetAssetByName(meshName);
     material = MaterialManager::Get().GetAssetByName(materialName, true);
-    material->data.color.w = 0.6f;
     
     mass.SetOnChangedEvent(this, &ShapeComponent::OnSetMass);
 }

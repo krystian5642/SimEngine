@@ -44,6 +44,7 @@ public:
     
     bool tickWhenPaused{false};
     bool openUIByDefault{false};
+    bool drawUI{true};
     
 protected:
     Scene* const scene;

@@ -13,7 +13,7 @@ DefaultScene::DefaultScene(const std::string& name)
     camera = AddObject<CameraEntity>("Camera")->GetCameraComponent();
     camera->SetAsActiveCamera();
     
-    auto light = AddObject<DirectionalLightObject>("Directional Light");
+    light = AddObject<DirectionalLightObject>("Directional Light");
     light->SetDirection({0.1f, -60.0f, 0.1f});
     light->lightData.ambientIntensity = 0.5f;
     light->lightData.diffuseIntensity = 0.8f;

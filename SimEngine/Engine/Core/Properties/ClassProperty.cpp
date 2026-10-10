@@ -1,10 +1,10 @@
 ﻿
 #include "ClassProperty.h"
-#include "imgui.h"
+#include "Core/UICommon/UICommon.h"
 
 void BoolProperty::DrawUI()
 {
-    if (ImGui::Checkbox(name.c_str(), &currentValue))
+    if (UICommon::DrawBool(name.c_str(), currentValue))
     {
         InvokeOnChangedEvent();
     }
@@ -12,7 +12,8 @@ void BoolProperty::DrawUI()
 
 void Vec3Property::DrawUI()
 {
-    if (ImGui::DragFloat3(name.c_str(), &currentValue.x, sliderSpeed, minValue, maxValue, valueFormat))
+    if (UICommon::DrawVec3(name.c_str(), currentValue, sliderSpeed
+        , minValue, maxValue, valueFormat))
     {
         InvokeOnChangedEvent();
     }
@@ -20,7 +21,17 @@ void Vec3Property::DrawUI()
 
 void FloatProperty::DrawUI()
 {
-    if (ImGui::SliderFloat(name.c_str(), &currentValue, minValue, maxValue, valueFormat))
+    if (UICommon::DrawFloat(name.c_str(), currentValue, minValue
+        , maxValue, valueFormat))
+    {
+        InvokeOnChangedEvent();
+    }
+}
+
+void IntProperty::DrawUI()
+{
+    if (UICommon::DrawInt(name.c_str(), currentValue, minValue
+        , maxValue, valueFormat))
     {
         InvokeOnChangedEvent();
     }
@@ -28,8 +39,5 @@ void FloatProperty::DrawUI()
 
 void FunctionProperty::DrawUI()
 {
-    if (ImGui::Button(name.c_str()))
-    {
-        currentValue();
-    }
+    UICommon::DrawButton(name.c_str(), currentValue);
 }

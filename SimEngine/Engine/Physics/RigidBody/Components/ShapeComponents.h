@@ -12,7 +12,7 @@ public:
         , const std::string& meshName
         , const std::string& materialName);
     
-    PROPERTY(FloatProperty, mass, 1.0f, "%.3f kg", 0.01f, 20.0f)
+    PROPERTY(FloatProperty, mass, 1.0f, 0.01f, 20.0f, "%.3f kg")
     
     PropertyChangedEvent propertyChangedEvent;
     
@@ -40,7 +40,7 @@ class SphereComponent : public ShapeComponent
 public:
     SphereComponent(const SceneObjectParams& params);
     
-    PROPERTY(FloatProperty, radius, 0.5f, "%.3f m", 0.01f, 5.0f)
+    PROPERTY(FloatProperty, radius, 0.5f, 0.01f, 5.0f, "%.3f m")
     
     glm::mat3 CalculateLocalInertiaTensor() const override;
     
@@ -53,8 +53,8 @@ class CylinderComponent : public ShapeComponent
 public:
     CylinderComponent(const SceneObjectParams& params);
     
-    PROPERTY(FloatProperty, radius, 0.5f, "%.3f m", 0.01f, 5.0f)
-    PROPERTY(FloatProperty, height, 1.0f, "%.3f m", 0.01f, 5.0f)
+    PROPERTY(FloatProperty, radius, 0.5f, 0.01f, 5.0f, "%.3f m")
+    PROPERTY(FloatProperty, height, 1.0f, 0.01f, 5.0f, "%.3f m")
     
     glm::mat3 CalculateLocalInertiaTensor() const override;
   
@@ -68,8 +68,8 @@ class CapsuleComponent : public ShapeComponent
 public:
     CapsuleComponent(const SceneObjectParams& params);
     
-    PROPERTY(FloatProperty, sphereRadius, 0.5f, "%.3f m", 0.01f, 5.0f)
-    PROPERTY(FloatProperty, cylinderHeight, 1.0f, "%.3f m", 0.01f, 5.0f)
+    PROPERTY(FloatProperty, sphereRadius, 0.5f, 0.01f, 5.0f, "%.3f m")
+    PROPERTY(FloatProperty, cylinderHeight, 1.0f, 0.01f, 5.0f, "%.3f m")
     
     glm::mat3 CalculateLocalInertiaTensor() const override;
     

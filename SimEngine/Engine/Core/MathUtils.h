@@ -142,7 +142,7 @@ public:
         return glm::vec3{value, value, value};
     }
     
-    static glm::vec3 GetRotationFromDirection(glm::vec3 direction)
+    static glm::vec3 MakeRotFromX(glm::vec3 direction)
     {
         direction = glm::normalize(direction);
         

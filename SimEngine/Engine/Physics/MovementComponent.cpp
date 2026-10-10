@@ -2,20 +2,25 @@
 #include "MovementComponent.h"
 #include "Scene/Objects/Entities/Entity.h"
 
+void MovementComponent::Init()
+{
+    PhysicsComponent::Init();
+    
+    centerOfMass = parentEntity->GetPosition();
+}
+
 void MovementComponent::PhysicsTick(float physicsDeltaTime)
 {
-    glm::vec3 linearAcceleration = accumulatedForce / mass;
-    if (enableGravity)
+    if (canMove)
     {
-        linearAcceleration += glm::vec3{0.0f, gravity, 0.0f};
+        glm::vec3 linearAcceleration = accumulatedForce / mass;
+        linearVelocity += linearAcceleration * physicsDeltaTime;
+    
+        const glm::vec3 moveDelta = linearVelocity * physicsDeltaTime;
+        parentEntity->Move(moveDelta);
+    
+        centerOfMass += moveDelta;
     }
-    
-    linearVelocity += linearAcceleration * physicsDeltaTime;
-    
-    const glm::vec3 moveDelta = linearVelocity * physicsDeltaTime;
-    parentEntity->Move(moveDelta);
-    
-    centerOfMass += moveDelta;
     
     accumulatedForce = {};
 }
@@ -32,7 +37,8 @@ void MovementComponent::ApplyForce(const glm::vec3& force, bool velocityChange)
     }
 }
 
-void MovementComponent::SetMass(float newMass)
+void MovementComponent::SetPosition(const glm::vec3& position)
 {
-    mass = newMass;
+    centerOfMass = position;
+    parentEntity->SetPosition(position);
 }

@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "Components/CameraComponent.h"
 #include "Core/App.h"
+#include "Core/UICommon/UICommon.h"
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
 #include "Scene/Objects/Lighting/PointLightObject.h"
 #include "Scene/Objects/Entities/CameraEntity.h"
@@ -30,6 +31,8 @@ void Scene::Start()
 void Scene::Tick(float deltaTime)
 {
     const auto isPaused = App::Get().isPaused;
+    objects.Tick(deltaTime, isPaused);
+    
     if (!isPaused)
     {
         accumulatedPhysicsDeltaTime =
@@ -41,42 +44,14 @@ void Scene::Tick(float deltaTime)
             accumulatedPhysicsDeltaTime -= physicsDeltaTime;
         }
     }
-    
-    objects.Tick(deltaTime, isPaused);
 }
 
 void Scene::DrawUI()
 {
-    ImGui::Text("Objects count : %d", objects.GetCount());
-    
-    objects.ForEach([](SceneObject* object, int index)
-    {
-        const std::string& name = object->GetName();
-        const std::string label = name.empty() ? ("Object " + std::to_string(index)) : name;
-
-        ImGui::PushID(index);
-        
-        if (object->openUIByDefault)
-        {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        }
-        
-        if (ImGui::TreeNode(label.c_str()))
-        {
-            object->DrawUI();
-            ImGui::TreePop();
-        }
-        ImGui::PopID();
-    });
-    
-    ImGui::PushID(this);
-    for (auto* property : properties)
-    {
-        ImGui::BeginDisabled(property->readOnly);
-        property->DrawUI();
-        ImGui::EndDisabled();
-    }
-    ImGui::PopID();
+    UICommon::DrawLabelFormatted("Objects count : %d", objects.GetCount());
+ 
+    UICommon::DrawProperties(this, properties);
+    UICommon::DrawObjects(objects, "Object");
 }
 
 void Scene::DestroyChild(ObjectBase* child)

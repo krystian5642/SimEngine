@@ -9,19 +9,22 @@ void RigidBodyComponent::PhysicsTick(float physicsDeltaTime)
 {
     MovementComponent::PhysicsTick(physicsDeltaTime);
     
-    const glm::mat3 rotationMatrix = glm::mat3(parentEntity->GetRotationMatrix());
-    const glm::mat3 transRotationMatrix = glm::transpose(rotationMatrix);
+    if (canRotate)
+    {
+        const glm::mat3 rotationMatrix = glm::mat3(parentEntity->GetRotationMatrix());
+        const glm::mat3 transRotationMatrix = glm::transpose(rotationMatrix);
     
-    inertiaTensor = rotationMatrix * localInertiaTensor * transRotationMatrix;
-    invInertiaTensor = glm::inverse(inertiaTensor);
+        inertiaTensor = rotationMatrix * localInertiaTensor * transRotationMatrix;
+        invInertiaTensor = glm::inverse(inertiaTensor);
     
-    const glm::vec3 angularAcceleration = invInertiaTensor * (accumulatedTorque
-            - glm::cross(angularVelocity, inertiaTensor * angularVelocity));
+        const glm::vec3 angularAcceleration = invInertiaTensor * (accumulatedTorque
+                - glm::cross(angularVelocity, inertiaTensor * angularVelocity));
         
-    angularVelocity += angularAcceleration * physicsDeltaTime;
+        angularVelocity += angularAcceleration * physicsDeltaTime;
     
-    const float rotationDelta = glm::length(angularVelocity) * physicsDeltaTime;
-    parentEntity->Rotate(rotationDelta, angularVelocity);
+        const float rotationDelta = glm::length(angularVelocity) * physicsDeltaTime;
+        parentEntity->Rotate(rotationDelta, angularVelocity);
+    }
     
     accumulatedTorque = {};
 }

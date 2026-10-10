@@ -1,6 +1,7 @@
 ﻿#include "Line.h"
 
 #include "Shader.h"
+#include "Core/UICommon/UICommon.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
 
@@ -67,6 +68,17 @@ void Line::Draw() const
 bool Line::IsTransparent() const
 {
     return color.w < 1.0f;
+}
+
+void Line::DrawUI()
+{
+    UICommon::DrawColor("Color", color);
+    UICommon::DrawFloat("Thickness", thickness, 0.01f, 5.0f, "%.3f");
+    
+    if (drawMaxLenght)
+    {
+        UICommon::DrawFloat("Max Length", maxLength, -1.0f, 100.0f, "%.3f m");
+    }
 }
 
 void Line::SetPoints(const std::vector<glm::vec3>& newPoints)
@@ -139,4 +151,9 @@ void Line::AddPoint(const glm::vec3& point)
         }
         points.push_back(point);
     }
+}
+
+void Line::Reserve(size_t size)
+{
+    points.reserve(size);
 }

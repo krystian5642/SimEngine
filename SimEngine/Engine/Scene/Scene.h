@@ -40,8 +40,6 @@ class Scene : public ObjectBase
 {
 public:
     Scene(const std::string& name = "Empty Scene");
-
-    static constexpr float physicsDeltaTime = 1.0f / 1000.0f;
     
     virtual void Init();
     virtual void Start();
@@ -98,6 +96,8 @@ public:
     
     size_t GetObjectCount() const { return objects.GetCount(); }
     bool GetIsInitialized() const { return isInitialized; }
+    
+    float physicsDeltaTime{1.0f / 1000.0f};
 
 protected:
     ObjectContainer<SceneObject> objects;

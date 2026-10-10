@@ -71,7 +71,7 @@ void VectorVisualizerComponent::SetDirection(const glm::vec3& newDirection)
     const float scale = scaleLenghtFactor * glm::length(newDirection);
     cylinderTransform.SetScale({scale, scaleFactor, scaleFactor});
         
-    const glm::vec3 newRotation = MathUtils::GetRotationFromDirection(newDirection);
+    const glm::vec3 newRotation = MathUtils::MakeRotFromX(newDirection);
     cylinderTransform.SetEulerRotation(newRotation);
     
     auto modelMatrix = glm::mat4(1.0f);
