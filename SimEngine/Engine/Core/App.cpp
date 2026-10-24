@@ -15,11 +15,12 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::Spring);
+    SceneManager::SetDefaultScene(SceneNames::CoupledSprings);
     
     REGISTER_SCENE(RigidBodyTest);
     REGISTER_SCENE(GravityAndPlanets);
-    REGISTER_SCENE(Spring);
+    REGISTER_SCENE(SpringPendulum);
+    REGISTER_SCENE(CoupledSprings);
 }
 
 void App::Run()

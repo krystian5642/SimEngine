@@ -10,6 +10,6 @@ public:
     
     void PhysicsTick(float physicsDeltaTime) override;
     
-    PROPERTY(BoolProperty, enableGravity)
+    PROPERTY(BoolProperty, enableGravity, true)
     PROPERTY(FloatProperty, gravity, -9.81f, -20.0f, 20.0f, "%.2f m/s²")
 };

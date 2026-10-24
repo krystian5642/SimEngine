@@ -1,9 +1,7 @@
 ﻿#pragma once
 
-#include "Components/SpringComponent.h"
 #include "Core/Properties/ClassProperty.h"
 #include "Scene/DefaultScene.h"
-#include "Scene/Objects/Entities/Entity.h"
 
 class SimpleGravityComponent;
 class PhysicsSpringComponent;
@@ -15,7 +13,8 @@ namespace SceneNames
 {
     SCENE_NAME RigidBodyTest = "Rigid Body Test";
     SCENE_NAME GravityAndPlanets = "Gravity And Planets";
-    SCENE_NAME Spring = "Spring";
+    SCENE_NAME SpringPendulum = "Spring Pendulum";
+    SCENE_NAME CoupledSprings = "Coupled Springs";
 }
 
 class RigidBodyTestScene : public DefaultScene
@@ -35,14 +34,18 @@ public:
     GravityAndPlanetsScene(const std::string& name = SceneNames::GravityAndPlanets);
 };
 
-class SpringScene : public DefaultScene
+class SpringPendulumScene : public DefaultScene
 {
 public:
-    SpringScene(const std::string& name = SceneNames::Spring);
+    SpringPendulumScene(const std::string& name = SceneNames::SpringPendulum);
+};
+
+class CoupledSpringsScene : public DefaultScene
+{
+public:
+    CoupledSpringsScene(const std::string& name = SceneNames::CoupledSprings);
     
 private:
-    PhysicsSpringComponent* spring;
-    SimpleGravityComponent* body;
-    
     PROPERTY(FunctionProperty, applyForce)
 };
+

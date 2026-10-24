@@ -11,7 +11,9 @@
 #include "Physics/RigidBody/Entities/RigidBody.h"
 #include "Scene/Objects/Entities/MeshEntity.h"
 #include "Physics/RigidBody/Components/ShapeComponents.h"
-#include "Physics/Spring/PhysicsSpringComponent.h"
+#include "Physics/Spring/Components/PhysicsSpringComponent.h"
+#include "Physics/Spring/Entities/CoupledSprings.h"
+#include "Physics/Spring/Entities/SpringPendulum.h"
 #include "Rendering/Core/Material.h"
 #include "Scene/Objects/Lighting/DirectionalLightObject.h"
 
@@ -100,14 +102,9 @@ GravityAndPlanetsScene::GravityAndPlanetsScene(const std::string& name)
     }
 }
 
-SpringScene::SpringScene(const std::string& name)
+SpringPendulumScene::SpringPendulumScene(const std::string& name)
     : DefaultScene(name)
 {
-    applyForce.Set([this]()
-    {
-        body->ApplyForce({-4.0f, 0.0f, -2.0f}, true);
-    });
-    
     physicsDeltaTime = 1.0f / 120.0f;
     
     light->SetDirection({0.4f, 2.0f, -1.1f});
@@ -115,34 +112,36 @@ SpringScene::SpringScene(const std::string& name)
     camera->SetPosition({-2.3f, -1.6f, 21.f});
     camera->SetRotation(0.0f, 4.0f);
     
-    auto gravSys = AddObject<SimpleGravitySystem>("Simple Gravity System");
-    gravSys->enableGravity = true;
-    
-    auto springObj = AddObject<Entity>();
-    springObj->openUIByDefault = true;
-    
-    spring = springObj->AddComponent<PhysicsSpringComponent>("Physics Spring Component");
-    spring->radius = 0.4f;
-    spring->coilsNum = 13.0f;
-    spring->openUIByDefault = true;
-    spring->GetSpringLine()->thickness = 2.0f;
-    spring->GetSpringLine()->color = glm::vec4{1.0f, 0.9f, 0.3f, 1.0f};
-    spring->GetSpringLine()->thickness = 3.0f;
-    
-    auto meshCube = springObj->AddComponent<MeshComponent>();
-    meshCube->mesh = MeshManager::Get().GetAssetByName("box");
-    meshCube->material = MaterialManager::Get().GetAssetByName("bronze");
-    meshCube->Move(glm::vec3(0.0f, 0.0f, 0.0f));
-    meshCube->SetScale(glm::vec3{3.5f, 0.6f, 3.5f});
-    
-    auto ball2 = AddObject<Entity>();
-    auto sphere2 = ball2->AddComponent<SphereComponent>();
-    body = ball2->AddComponent<SimpleGravityComponent>();
-    body->UpdateShapeProperties(sphere2);
-    body->enableGravity = true;
-    
-    ball2->SetPosition(spring->end);
-    spring->AttachComponentToEnd(body);
-    
-    ball2->SetScale(glm::vec3{1.3});
+    AddObject<SimpleGravitySystem>("Simple Gravity System");
+    AddObject<SpringPendulum>();
 }
+
+CoupledSpringsScene::CoupledSpringsScene(const std::string& name)
+    : DefaultScene(name)
+{
+    physicsDeltaTime = 1.0f / 120.0f;
+    
+    light->SetDirection({0.4f, 2.0f, -1.1f});
+    
+    camera->SetPosition({-9.0f, -10.0f, 60.f});
+    camera->SetRotation(-0.5f, 4.0f);
+    
+    AddObject<SimpleGravitySystem>("Simple Gravity System");
+    AddObject<CoupledSprings>("Coupled Springs");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

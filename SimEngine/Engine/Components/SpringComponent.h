@@ -19,7 +19,7 @@ public:
     PROPERTY(Vec3Property, start, glm::vec3{0.0f})
     PROPERTY(Vec3Property, end, glm::vec3{0.0f, -5.0f, 0.0f})
     PROPERTY(FloatProperty, radius, 1.0f, 0.01f, 10.0f, "%.3f m")
-    PROPERTY(FloatProperty, deltaAngle, 0.1f, 0.01f, 90.0f, "%.3f deg")
+    PROPERTY(FloatProperty, deltaAngle, 10.0f, 0.5f, 90.0f, "%.3f deg")
     
 private:
     template<class T>

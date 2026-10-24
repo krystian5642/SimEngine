@@ -2,7 +2,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include "imgui.h"
 #include "Components/SceneComponent.h"
 #include "Core/App.h"
 #include "Core/UICommon/UICommon.h"
@@ -65,6 +64,7 @@ void Entity::DrawUI()
     SceneObject::DrawUI();
     
     UICommon::DrawObjects(components, "Component");
+    UICommon::DrawObjects(childEntities, "Child Entity");
 }
 
 void Entity::DestroyChild(ObjectBase* child)

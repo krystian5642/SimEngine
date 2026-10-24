@@ -18,7 +18,7 @@ public:
   
     void Init() override;
     void Start() override;
-    void PhysicsTick(float deltaTime) override;
+    void PhysicsTick(float physicsDeltaTime) override;
     void Tick(float deltaTime) override;
     void OnDestroy() override;
     
@@ -45,6 +45,15 @@ public:
     const glm::mat4& GetRotationMatrix() const { return rootComponent->GetRotationMatrix(); }
     
     virtual bool CanMove() const { return true; }
+    
+    void Clear()
+    {
+        components.Clear();
+        childEntities.Clear();
+        
+        rootComponent = nullptr;
+        rootComponent = AddComponent<SceneComponent>("root");
+    }
     
     template <class T>
     T* AddChild(const std::string& childName = "")

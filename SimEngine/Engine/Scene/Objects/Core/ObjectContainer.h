@@ -151,6 +151,22 @@ public:
         }
     }
     
+    void Clear()
+    {
+        auto clearContainer = [](auto& container)
+        {
+            for (const auto& object : container)
+            {
+                object->OnDestroy();
+            }
+            container.clear();
+        };
+        
+        clearContainer(objects);
+        clearContainer(objectsToAdd);
+        clearContainer(objectsToRemove);
+    }
+    
     size_t GetCount() const { return objects.size(); }
 
 private:
