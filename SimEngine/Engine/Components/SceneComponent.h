@@ -14,6 +14,7 @@ public:
     void Move(const glm::vec3& moveDelta);
     void Rotate(const glm::vec3& rotateDelta);
     void Rotate(float rotationDelta, const glm::vec3& axis);
+    void Rotate(const glm::quat& quatRotationDelta);
     void Scale(const glm::vec3& scaleDelta);
     
     void SetRotationMode(RotationMode newRotationMode);

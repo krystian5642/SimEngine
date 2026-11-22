@@ -8,10 +8,9 @@
 #include "Physics/Gravity/Components/GravityComponent.h"
 #include "Physics/Gravity/Systems/GravitySystem.h"
 #include "Physics/Gravity/Systems/SimpleGravitySystem.h"
-#include "Physics/RigidBody/Entities/RigidBody.h"
+#include "Physics/RigidBody/Entities/CompoundRigidBody.h"
 #include "Scene/Objects/Entities/MeshEntity.h"
 #include "Physics/RigidBody/Components/ShapeComponents.h"
-#include "Physics/Spring/Components/PhysicsSpringComponent.h"
 #include "Physics/Spring/Entities/CoupledSprings.h"
 #include "Physics/Spring/Entities/SpringPendulum.h"
 #include "Rendering/Core/Material.h"
@@ -23,25 +22,12 @@ RigidBodyTestScene::RigidBodyTestScene(const std::string& name)
     auto gravSys = AddObject<SimpleGravitySystem>("Simple Gravity System");
     gravSys->enableGravity = false;
     
-    rigidBody = AddObject<RigidBody>("Rigid Body");
-    rigidBody->shape->material->data.color.w = 0.6f;
-    //rigidBody->rigidBodyComponent->forceAtLocationAffectsLinearMotion = false;
+    auto rigidBody = AddObject<CompoundRigidBody>("Rigid Body");
+    auto shape = rigidBody->AddComponent<CapsuleComponent>("Shape Component");
+    shape->material->data.color.w = 0.6f;
     
     camera->SetPosition({-1.5f, 4.7f, 8.7f});
     camera->SetRotation(-27.0f, 14.0f);
-    
-    applyTorque.Set([this]()
-    {
-        rigidBody->ApplyForceAtLocation({-0.8f, 0.2f, 0.1f}
-            , {0.4f, 0.0f, 0.1f});
-        
-        const auto& properties 
-            = rigidBody->shape->GetProperties();
-        for (auto* property : properties)
-        {
-            property->readOnly = true;
-        }
-    });
     
     auto plane = AddObject<MeshEntity>();
     
@@ -79,8 +65,6 @@ GravityAndPlanetsScene::GravityAndPlanetsScene(const std::string& name)
     grav->canMove = false;*/
     grav->canRotate = false;
     
-    grav->UpdateShapeProperties(sphere);
-
     for (int i = 0; i < 350; i++)
     {
         auto moon = AddObject<Entity>();
@@ -92,8 +76,6 @@ GravityAndPlanetsScene::GravityAndPlanetsScene(const std::string& name)
         grav = moon->AddComponent<GravityComponent>();
         //grav->canAttract = false;
         grav->canRotate = false;
-        
-        grav->UpdateShapeProperties(sphere);
         
         moon->SetPosition({100.0f, 1.0f, -10.0f + 0.3f * i});
         moon->SetScale(MathUtils::RandomScalarVec3(0.4f, 1.0f));
@@ -130,15 +112,46 @@ CoupledSpringsScene::CoupledSpringsScene(const std::string& name)
     AddObject<CoupledSprings>("Coupled Springs");
 }
 
-
-
-
-
-
-
-
-
-
+RigidBodyTShapeScene::RigidBodyTShapeScene(const std::string& name)
+    : DefaultScene(name)
+{
+    physicsDeltaTime = 1.0f / 1000.0f;
+    
+    camera->SetPosition({0.0f, 5.0f, 13.0f});
+    camera->SetRotation(-20.0f, 1.0f);
+    
+    auto gravSys = AddObject<SimpleGravitySystem>("Simple Gravity System");
+    gravSys->enableGravity = false;
+    
+    auto rigidBody = AddObject<CompoundRigidBody>("Compound Rigid Body");
+    auto box1 = rigidBody->AddComponent<BoxComponent>("Box 1");
+    auto box2 = rigidBody->AddComponent<BoxComponent>("Box 2");
+    
+    box1->material->data.color.a = box2->material->data.color.a = 0.8f;
+    
+    rigidBody->angularVelocityToSet = glm::vec3{8.0f, 0.001f, 0.001f};
+    
+    glm::vec3 centerOfMass1 = {0.0f, 0.0f, 0.0f};
+    glm::vec3 centerOfMass2 = {2.0f, 0.0f, 0.0f};
+    
+    glm::vec3 size1 = glm::vec3(1.0f, 1.0f, 4.0f);
+    glm::vec3 size2 = glm::vec3(4.0f, 0.3f, 0.3f);
+    
+    box1->SetPosition(centerOfMass1);
+    box1->size = size1;
+    box1->mass = 10.0f;
+    
+    box2->SetPosition(centerOfMass2);
+    box2->size = size2;
+    
+    auto plane = AddObject<MeshEntity>();
+    
+    plane->meshComponent->mesh = MeshManager::Get().GetAssetByName("plane");
+    plane->meshComponent->material = MaterialManager::Get().GetAssetByName("chrome");
+    
+    plane->SetScale({7.0f, 1.0f, 7.0f});
+    plane->Move({0.0f, -2.0f, 0.0f});
+}
 
 
 

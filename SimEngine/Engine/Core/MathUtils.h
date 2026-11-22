@@ -151,6 +151,11 @@ public:
 
         return glm::vec3(0.0f, yaw, pitch);
     }
+    
+    static bool IsNearlyEqual(float a, float b, float epsilon = EPS)
+    {
+        return glm::abs(a - b) <= epsilon;
+    }
 };
 
 template <class T>

@@ -125,6 +125,16 @@ void Entity::Rotate(float rotationDelta, const glm::vec3& axis)
     });
 }
 
+void Entity::Rotate(const glm::quat& quatRotationDelta)
+{
+    rootComponent->Rotate(quatRotationDelta);
+    
+    childEntities.ForEach([&quatRotationDelta](Entity* child, int index)
+    {
+        child->Rotate(quatRotationDelta);
+    });
+}
+
 void Entity::Scale(const glm::vec3& scaleDelta)
 {
     rootComponent->Scale(scaleDelta);

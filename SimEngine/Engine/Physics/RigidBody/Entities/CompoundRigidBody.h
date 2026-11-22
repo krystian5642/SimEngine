@@ -8,12 +8,11 @@ class MeshComponent;
 class ShapeComponent;
 class VectorVisualizerComponent;
 
-class RigidBody : public Entity
+class CompoundRigidBody : public Entity
 {
 public:
-    RigidBody(const SceneObjectParams& params);
+    CompoundRigidBody(const SceneObjectParams& params);
     
-    void Init() override;
     void PhysicsTick(float physicsDeltaTime) override;
     
     void ApplyForce(const glm::vec3& force
@@ -25,8 +24,15 @@ public:
     
     PROPERTY(BoolProperty, showVisualizationComponents, true)
     
+    PROPERTY(FunctionProperty, setLinearVelocity)
+    PROPERTY(Vec3Property, linearVelocityToSet, glm::vec3(1.0f, 1.0f, 1.0f))
+    
+    PROPERTY(FunctionProperty, setAngularVelocity)
+    PROPERTY(Vec3Property, angularVelocityToSet, glm::vec3(1.0f, 1.0f, 1.0f))
+    
+    PROPERTY(FunctionProperty, setBothAngularAndLinearVelocity)
+    
     SimpleGravityComponent* rigidBodyComponent;
-    ShapeComponent* shape;
     
     VectorVisualizerComponent* linearVelocityVisComp;
     VectorVisualizerComponent* angularVelocityVisComp;
@@ -37,9 +43,10 @@ public:
     
 private:
     void UpdateVisualizationComponents();
-    void UpdateProperties();
     void OnShowVisualizationComponents(bool newShowVisualizers);
     void CreateVisualizationComponents();
+    
+    void SetPhysicsPropertiesToReadOnly();
     
     std::vector<RenderComponent*> visualizationComponents;
 };

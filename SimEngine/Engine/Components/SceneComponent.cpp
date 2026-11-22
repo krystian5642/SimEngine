@@ -84,13 +84,18 @@ void SceneComponent::Rotate(float rotationDelta, const glm::vec3& axis)
     }
     
     const glm::quat rot = glm::angleAxis(rotationDelta, glm::normalize(axis));
-    transform.SetQuatRotation(rot * transform.GetQuatRotation());
+    Rotate(rot);
+}
+
+void SceneComponent::Rotate(const glm::quat& quatRotationDelta)
+{
+    transform.SetQuatRotation(quatRotationDelta * transform.GetQuatRotation());
 
     UpdateVectors();
     
     for (const auto& attachedComponent : attachedComponents)
     {
-        attachedComponent->Rotate(rotationDelta, axis);
+        attachedComponent->Rotate(quatRotationDelta);
     }
 }
 

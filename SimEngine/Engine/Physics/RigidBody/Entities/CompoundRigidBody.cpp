@@ -1,4 +1,4 @@
-﻿#include "RigidBody.h"
+﻿#include "CompoundRigidBody.h"
 
 #include "Components/VectorVisualizerComponent.h"
 #include "Managers/MaterialManager.h"
@@ -6,32 +6,41 @@
 #include "Physics/RigidBody/Components/ShapeComponents.h"
 #include "Physics/Gravity/Components/SimpleGravityComponent.h"
 
-RigidBody::RigidBody(const SceneObjectParams& params)
+CompoundRigidBody::CompoundRigidBody(const SceneObjectParams& params)
     : Entity(params)
 {
     openUIByDefault = true;
     
-    shape = AddComponent<CylinderComponent>("Shape");
-    shape->propertyChangedEvent.BindRaw(this, &RigidBody::UpdateProperties);
-    shape->openUIByDefault = true;
-    
     rigidBodyComponent = AddComponent<SimpleGravityComponent>("Rigid Body Component");
+    rigidBodyComponent->openUIByDefault = true;
     
     CreateVisualizationComponents();
     
     SetRotationMode(RotationMode::Quaternion);
     
-    showVisualizationComponents.SetOnChangedEvent(this, &RigidBody::OnShowVisualizationComponents);
-}
-
-void RigidBody::Init()
-{
-    Entity::Init();
+    showVisualizationComponents.SetOnChangedEvent(this, &CompoundRigidBody::OnShowVisualizationComponents);
     
-    UpdateProperties();
+    setLinearVelocity.Set([this]()
+    {
+        rigidBodyComponent->SetLinearVelocity(linearVelocityToSet);
+        SetPhysicsPropertiesToReadOnly();
+    });
+    
+    setAngularVelocity.Set([this]()
+    {
+        rigidBodyComponent->SetAngularVelocity(angularVelocityToSet);
+        SetPhysicsPropertiesToReadOnly();
+    });
+    
+    setBothAngularAndLinearVelocity.Set([this]()
+    {
+        rigidBodyComponent->SetLinearVelocity(linearVelocityToSet);
+        rigidBodyComponent->SetAngularVelocity(angularVelocityToSet);
+        SetPhysicsPropertiesToReadOnly();
+    });
 }
 
-void RigidBody::PhysicsTick(float physicsDeltaTime)
+void CompoundRigidBody::PhysicsTick(float physicsDeltaTime)
 {
     Entity::PhysicsTick(physicsDeltaTime);
     
@@ -41,18 +50,18 @@ void RigidBody::PhysicsTick(float physicsDeltaTime)
     }
 }
 
-void RigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
+void CompoundRigidBody::ApplyForce(const glm::vec3& force, bool velocityChange)
 {
     rigidBodyComponent->ApplyForce(force, velocityChange);
 }
 
-void RigidBody::ApplyForceAtLocation(const glm::vec3& force, const glm::vec3& location
+void CompoundRigidBody::ApplyForceAtLocation(const glm::vec3& force, const glm::vec3& location
     , bool velocityChange)
 {
     rigidBodyComponent->ApplyForceAtLocation(force, location, velocityChange);
 }
 
-void RigidBody::UpdateVisualizationComponents()
+void CompoundRigidBody::UpdateVisualizationComponents()
 {
     const glm::vec3& centerOfMass = rigidBodyComponent->GetCenterOfMass();
     const glm::vec3& linearVelocity = rigidBodyComponent->GetLinearVelocity();
@@ -88,12 +97,7 @@ void RigidBody::UpdateVisualizationComponents()
     }
 }
 
-void RigidBody::UpdateProperties()
-{
-    rigidBodyComponent->UpdateShapeProperties(shape);
-}
-
-void RigidBody::OnShowVisualizationComponents(bool newShowVisualizers)
+void CompoundRigidBody::OnShowVisualizationComponents(bool newShowVisualizers)
 {
     for (auto* visualizationComponent : visualizationComponents)
     {
@@ -102,7 +106,7 @@ void RigidBody::OnShowVisualizationComponents(bool newShowVisualizers)
     }
 }
 
-void RigidBody::CreateVisualizationComponents()
+void CompoundRigidBody::CreateVisualizationComponents()
 {
     linearVelocityVisComp = AddComponent<VectorVisualizerComponent>("Linear Velocity");
     linearVelocityVisComp->useParentLocationAsStart = false;
@@ -115,6 +119,7 @@ void RigidBody::CreateVisualizationComponents()
     angularVelocityVisComp->useParentLocationAsStart = false;
     angularVelocityVisComp->scaleLenghtFactor = 1.0f;
     angularVelocityVisComp->scaleFactor = 0.5f;
+    angularVelocityVisComp->scaleLenghtFactor = 0.8f;
     angularVelocityVisComp->color = {1.0f, 0.0f, 0.0f, 1.0f};
     visualizationComponents.push_back(angularVelocityVisComp);
 
@@ -122,6 +127,7 @@ void RigidBody::CreateVisualizationComponents()
     angularMomentumVisComp->useParentLocationAsStart = false;
     angularMomentumVisComp->scaleLenghtFactor = 7.0f;
     angularMomentumVisComp->scaleFactor = 0.5f;
+    angularMomentumVisComp->scaleLenghtFactor = 0.07f;
     angularMomentumVisComp->color = {1.0f, 0.8f, 0.0f, 1.0f};
     visualizationComponents.push_back(angularMomentumVisComp);
 
@@ -137,4 +143,23 @@ void RigidBody::CreateVisualizationComponents()
     centerOfMassVisMesh->material = MaterialManager::Get().GetAssetByName("ruby");
     centerOfMassVisMesh->SetScale(glm::vec3{0.2f});
     visualizationComponents.push_back(centerOfMassVisMesh);
+}
+
+void CompoundRigidBody::SetPhysicsPropertiesToReadOnly()
+{
+    std::vector<ShapeComponent*> shapes;
+    GetComponentsByClass<ShapeComponent>(shapes);
+    
+    for (auto* shape : shapes)
+    {
+        const auto& properties = shape->GetProperties();
+        for (auto* property : properties)
+        {
+            property->readOnly = true;
+        }
+    }
+    
+    setLinearVelocity.readOnly = setAngularVelocity.readOnly 
+    = linearVelocityToSet.readOnly = angularVelocityToSet.readOnly 
+    = setBothAngularAndLinearVelocity.readOnly = true;
 }

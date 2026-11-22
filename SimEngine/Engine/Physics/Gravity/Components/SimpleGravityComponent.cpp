@@ -5,20 +5,20 @@
 #include "Physics/Gravity/Systems/SimpleGravitySystem.h"
 
 SimpleGravityComponent::SimpleGravityComponent(const SceneObjectParams& params)
-    : RigidBodyComponent(params)
+    : CompoundRigidBodyComponent(params)
 {
 }
 
 void SimpleGravityComponent::Init()
 {
-    RigidBodyComponent::Init();
+    CompoundRigidBodyComponent::Init();
     
     Register<SimpleGravitySystem>();
 }
 
 void SimpleGravityComponent::OnDestroy()
 {
-    RigidBodyComponent::OnDestroy();
+    CompoundRigidBodyComponent::OnDestroy();
     
     Unregister<SimpleGravitySystem>();
 }

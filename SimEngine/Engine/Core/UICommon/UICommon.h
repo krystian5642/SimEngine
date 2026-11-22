@@ -10,9 +10,15 @@ namespace UICommon
 
     bool DrawVec3(const char* label, glm::vec3& value
         , float speed, float min, float max, const char* format);
+    
+    void DrawVec3ReadOnly(const char* label, const glm::vec3& value, const char* format = "%.3f");
+    
+    void DrawMat3ReadOnly(const char* label, const glm::mat3& value, const char* format = "%.3f");
+    
+    void DrawFloatReadOnly(const char* label, float value, const char* format = "%.3f");
 
     bool DrawFloat(const char* label, float& value
-        , float min, float max, const char* format);
+                   , float min, float max, const char* format = "%.3f");
 
     bool DrawInt(const char* label, int& value
         , int min, int max, const char* format);

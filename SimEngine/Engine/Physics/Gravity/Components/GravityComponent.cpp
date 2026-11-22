@@ -3,7 +3,7 @@
 #include "Physics/Gravity/Systems/GravitySystem.h"
 
 GravityComponent::GravityComponent(const SceneObjectParams& params)
-    : RigidBodyComponent(params)
+    : CompoundRigidBodyComponent(params)
 {
     canRotate = false;
 }

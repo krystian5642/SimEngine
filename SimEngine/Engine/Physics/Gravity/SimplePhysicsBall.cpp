@@ -14,6 +14,5 @@ SimplePhysicsBall::SimplePhysicsBall(const SceneObjectParams& params)
     
     sphere = AddComponent<SphereComponent>();
     physicsBody = AddComponent<SimpleGravityComponent>();
-    physicsBody->UpdateShapeProperties(sphere);
     physicsBody->enableGravity = true;
 }

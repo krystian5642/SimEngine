@@ -3,9 +3,11 @@
 #include "Core/Properties/ClassProperty.h"
 #include "Scene/DefaultScene.h"
 
+class Entity;
+class MeshComponent;
 class SimpleGravityComponent;
 class PhysicsSpringComponent;
-class RigidBody;
+class CompoundRigidBody;
 
 #define SCENE_NAME inline const std::string
 
@@ -15,17 +17,13 @@ namespace SceneNames
     SCENE_NAME GravityAndPlanets = "Gravity And Planets";
     SCENE_NAME SpringPendulum = "Spring Pendulum";
     SCENE_NAME CoupledSprings = "Coupled Springs";
+    SCENE_NAME RigidBodyTShape = "Rigid Body T Shape";
 }
 
 class RigidBodyTestScene : public DefaultScene
 {
 public:
     RigidBodyTestScene(const std::string& name = SceneNames::RigidBodyTest);
-
-private:
-    RigidBody* rigidBody;
-    
-    PROPERTY(FunctionProperty, applyTorque)
 };
 
 class GravityAndPlanetsScene : public DefaultScene
@@ -44,8 +42,11 @@ class CoupledSpringsScene : public DefaultScene
 {
 public:
     CoupledSpringsScene(const std::string& name = SceneNames::CoupledSprings);
-    
-private:
-    PROPERTY(FunctionProperty, applyForce)
+};
+
+class RigidBodyTShapeScene : public DefaultScene
+{
+public:
+    RigidBodyTShapeScene(const std::string& name = SceneNames::RigidBodyTShape);
 };
 

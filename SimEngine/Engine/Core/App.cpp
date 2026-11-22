@@ -15,12 +15,13 @@
 
 App::App()
 {
-    SceneManager::SetDefaultScene(SceneNames::CoupledSprings);
+    SceneManager::SetDefaultScene(SceneNames::RigidBodyTShape);
     
     REGISTER_SCENE(RigidBodyTest);
     REGISTER_SCENE(GravityAndPlanets);
     REGISTER_SCENE(SpringPendulum);
     REGISTER_SCENE(CoupledSprings);
+    REGISTER_SCENE(RigidBodyTShape);
 }
 
 void App::Run()
@@ -41,7 +42,8 @@ void App::Run()
     ImGui_ImplOpenGL3_Init("#version 460 core");
 
     ImGuiIO& io = ImGui::GetIO();
-    io.FontGlobalScale = 1.5f;
+    ImFont* font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
+    io.FontGlobalScale = 1.3f;
     
     lastFrameTime = glfwGetTime();
     while (!window.ShouldClose())

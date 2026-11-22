@@ -14,12 +14,7 @@ public:
     
     PROPERTY(FloatProperty, mass, 1.0f, 0.01f, 20.0f, "%.3f kg")
     
-    PropertyChangedEvent propertyChangedEvent;
-    
     virtual glm::mat3 CalculateLocalInertiaTensor() const = 0;
-    
-private:
-    void OnSetMass(float newMass);
 };
 
 class BoxComponent : public ShapeComponent

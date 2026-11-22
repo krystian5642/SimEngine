@@ -485,7 +485,7 @@
     <ClCompile Include="Engine\Physics\MovementComponent.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsSystem.cpp" />
-    <ClCompile Include="Engine\Physics\RigidBody\Components\RigidBodyComponent.cpp" />
+    <ClCompile Include="Engine\Physics\RigidBody\Components\CompoundRigidBodyComponent.cpp" />
     <ClCompile Include="Engine\Physics\RigidBody\Components\ShapeComponents.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -565,7 +565,7 @@
       <AdditionalOptions>/utf-8 </AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Engine\Physics\RigidBody\Entities\RigidBody.cpp" />
+    <ClCompile Include="Engine\Physics\RigidBody\Entities\CompoundRigidBody.cpp" />
     <ClCompile Include="Engine\Physics\Spring\Components\PhysicsSpringComponent.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -704,9 +704,9 @@
     <ClInclude Include="Engine\Physics\MovementComponent.h" />
     <ClInclude Include="Engine\Physics\PhysicsComponent.h" />
     <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
-    <ClInclude Include="Engine\Physics\RigidBody\Components\RigidBodyComponent.h" />
+    <ClInclude Include="Engine\Physics\RigidBody\Components\CompoundRigidBodyComponent.h" />
     <ClInclude Include="Engine\Physics\RigidBody\Components\ShapeComponents.h" />
-    <ClInclude Include="Engine\Physics\RigidBody\Entities\RigidBody.h" />
+    <ClInclude Include="Engine\Physics\RigidBody\Entities\CompoundRigidBody.h" />
     <ClInclude Include="Engine\Physics\Spring\Components\PhysicsSpringComponent.h" />
     <ClInclude Include="Engine\Physics\Spring\Entities\CoupledSprings.h" />
     <ClInclude Include="Engine\Physics\Spring\Entities\SpringPendulum.h" />

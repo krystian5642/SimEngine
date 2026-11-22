@@ -14,7 +14,43 @@ namespace UICommon
     {
         return ImGui::DragFloat3(label, &value.x, speed, min, max, format);
     }
-
+    
+    void DrawVec3ReadOnly(const char* label, const glm::vec3& value, const char* format)
+    {
+        ImGui::Text("%s", label);
+        
+        ImGui::PushID(label);
+        ImGui::BeginDisabled();
+        ImGui::InputFloat3("", const_cast<float*>(&value.x), format);
+        ImGui::PopID();
+        ImGui::EndDisabled();
+        
+        ImGui::NewLine();
+    }
+    
+    void DrawMat3ReadOnly(const char* label, const glm::mat3& value, const char* format)
+    {
+        ImGui::Text("%s", label);
+        
+        ImGui::BeginDisabled();
+        for (int i = 0; i < 3; ++i)
+        {
+            ImGui::PushID(label + i);
+            ImGui::InputFloat3("##col", const_cast<float*>(&value[i].x), format);
+            ImGui::PopID();
+        }
+        ImGui::EndDisabled();
+        
+        ImGui::NewLine();
+    }
+    
+    void DrawFloatReadOnly(const char* label, float value, const char* format)
+    {
+        ImGui::Text("%s", label);
+        ImGui::Text(format, value);
+        ImGui::NewLine();
+    }
+    
     bool DrawFloat(const char* label, float& value
         , float min, float max, const char* format)
     {

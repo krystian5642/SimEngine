@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Physics/RigidBody/Components/RigidBodyComponent.h"
+#include "Physics/RigidBody/Components/CompoundRigidBodyComponent.h"
 
-class GravityComponent : public RigidBodyComponent
+class GravityComponent : public CompoundRigidBodyComponent
 {
 public:
     GravityComponent(const SceneObjectParams& params);
